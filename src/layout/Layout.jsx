@@ -3,9 +3,11 @@ import Navbar from "./../components/Navbar";
 
 const Layout = () => {
     return (
-        <div className="px-12 bg-gray-100">
+        <div className="bg-gray-100 ">
             <Navbar />
-            <Outlet />
+            <div className="px-12">
+                <Outlet />
+            </div>
         </div>
     );
 };
