@@ -1,14 +1,23 @@
+import { motion } from "framer-motion";
 import { FaFacebook, FaGithub, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import profile from "../assets/profile.jpg";
 
 export default function Hero() {
     return (
-        <section
+        <motion.section
             id="hero"
             className="flex flex-col items-center min-h-screen md:justify-between md:flex-row"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
         >
-            <div className="p-4 mt-4 md:w-1/2">
+            <motion.div
+                className="p-4 mt-4 md:w-1/2"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1, delay: 0.3 }}
+            >
                 <p className="text-xl font-inter">Hello, I&apos;am Sajjad!</p>
                 <h1 className="text-4xl font-bold font-poppins">
                     Turning <span className="italic font-bodoni">Ideas</span>{" "}
@@ -23,7 +32,12 @@ export default function Hero() {
                 <p className="mt-4 text-sm italic font-poppins">
                     Let’s shape the future—one line of code at a time.
                 </p>
-                <div className="flex mt-6 space-x-4">
+                <motion.div
+                    className="flex mt-6 space-x-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1, delay: 0.6 }}
+                >
                     <Link
                         to="https://www.linkedin.com/in/sajjadul-islam-910b35227"
                         target="_blank"
@@ -52,16 +66,21 @@ export default function Hero() {
                     >
                         <FaInstagram className="text-2xl text-blue-400" />
                     </Link>
-                </div>
-            </div>
+                </motion.div>
+            </motion.div>
 
-            <div className="flex justify-center w-full p-4 md:w-1/2">
+            <motion.div
+                className="flex justify-center w-full p-4 md:w-1/2"
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1, delay: 0.3 }}
+            >
                 <img
                     src={profile}
                     alt="Profile"
                     className="object-cover rounded-md h-72 w-60"
                 />
-            </div>
-        </section>
+            </motion.div>
+        </motion.section>
     );
 }

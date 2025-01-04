@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import aboutMe from "../assets/Myself.jpg";
 
 const About = () => {
     return (
@@ -23,7 +24,7 @@ const About = () => {
                         transition={{ delay: 0.3, duration: 0.8 }}
                     >
                         <img
-                            src="/path-to-your-photo.jpg"
+                            src={aboutMe}
                             alt="Sajjad"
                             className="w-64 h-auto mx-auto rounded-lg shadow-lg md:mx-0"
                         />

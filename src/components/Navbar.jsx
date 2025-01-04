@@ -75,6 +75,7 @@ const Navbar = () => {
                     <Link
                         to="skills"
                         smooth={true}
+                        offset={-80}
                         className="relative duration-500 ease-in-out cursor-pointer group"
                     >
                         Skills
@@ -83,6 +84,7 @@ const Navbar = () => {
                     <Link
                         to="projects"
                         smooth={true}
+                        offset={-80}
                         className="relative duration-500 ease-in-out cursor-pointer group"
                     >
                         Projects
@@ -91,6 +93,7 @@ const Navbar = () => {
                     <Link
                         to="contact"
                         smooth={true}
+                        offset={-80}
                         className="relative duration-500 ease-in-out cursor-pointer group"
                     >
                         Contact
@@ -142,6 +145,7 @@ const Navbar = () => {
                                         <Link
                                             to={section}
                                             smooth={true}
+                                            offset={-80}
                                             className="relative duration-500 ease-in-out cursor-pointer group"
                                             onClick={toggleMobileMenu}
                                         >
