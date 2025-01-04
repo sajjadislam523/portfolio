@@ -13,7 +13,7 @@ const Projects = () => {
     return (
         <section id="projects" className="py-16">
             <div className="mx-auto max-w-7xl">
-                <h2 className="mb-8 text-3xl font-bold text-center">
+                <h2 className="mb-8 text-3xl font-bold text-center font-poppins">
                     Projects
                 </h2>
                 {/* <div className="grid gap-8 md:grid-cols-3">

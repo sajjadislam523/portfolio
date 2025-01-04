@@ -13,6 +13,7 @@ import {
     FaNodeJs,
     FaReact,
 } from "react-icons/fa";
+import { IoLogoFirebase } from "react-icons/io5";
 import { SiJavascript, SiMongodb, SiTailwindcss } from "react-icons/si";
 
 const Skills = () => {
@@ -42,7 +43,7 @@ const Skills = () => {
             id: 4,
             icon: <SiMongodb className="text-4xl text-green-600" />,
             name: "MongoDB",
-            description: "NoSQL database for modern web applications.",
+            description: "NoSQL database for modern web.",
             proficiency: "75%",
         },
         {
@@ -73,6 +74,14 @@ const Skills = () => {
             description: "Version control system for collaboration.",
             proficiency: "85%",
         },
+        {
+            id: 9,
+            icon: <IoLogoFirebase className="text-4xl text-orange-500" />,
+            name: "Firebase",
+            description:
+                "Cloud platform for backend services like authentication and database.",
+            proficiency: "80%",
+        },
     ];
 
     return (
@@ -82,7 +91,8 @@ const Skills = () => {
                     My Skills
                 </h2>
                 <p className="mt-2 text-gray-600 text-start font-inter">
-                    Here’s a quick overview of the skills I’ve acquired and
+                    Here’s a quick overview of the skills I’ve acquired and{" "}
+                    <br />
                     continuously improve, showcasing my technical proficiency.
                 </p>
                 <div className="grid grid-cols-1 gap-6 mt-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -103,10 +113,10 @@ const Skills = () => {
                                     {skill.icon}
                                 </CardHeader>
                                 <CardContent>
-                                    <CardTitle className="text-center">
+                                    <CardTitle className="text-center font-poppins">
                                         {skill.name}
                                     </CardTitle>
-                                    <CardDescription className="text-sm text-center">
+                                    <CardDescription className="text-sm text-center font-inter">
                                         {skill.description}
                                     </CardDescription>
                                     <div className="w-full h-2 mt-4 bg-gray-200 rounded-full">
@@ -120,7 +130,7 @@ const Skills = () => {
                                             style={{ width: skill.proficiency }}
                                         ></motion.div>
                                     </div>
-                                    <p className="mt-2 text-sm font-medium text-center text-gray-600">
+                                    <p className="mt-2 text-sm font-medium text-center text-gray-600 font-inter">
                                         {skill.proficiency}
                                     </p>
                                 </CardContent>
