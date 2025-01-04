@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { FaFacebook, FaGithub, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -38,35 +39,81 @@ export default function Hero() {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1, delay: 0.6 }}
                 >
-                    <Link
-                        to="https://www.linkedin.com/in/sajjadul-islam-910b35227"
-                        target="_blank"
-                        rel="noreferrer"
+                    <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ type: "spring", stiffness: 300 }}
                     >
-                        <FaLinkedin className="text-2xl text-blue-500" />
-                    </Link>
-                    <Link
-                        to="https://github.com/sajjadislam523"
-                        target="_blank"
-                        rel="noreferrer"
+                        <Link
+                            to="https://www.linkedin.com/in/sajjadul-islam-910b35227"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            <FaLinkedin className="text-2xl " />
+                        </Link>
+                    </motion.div>
+                    <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ type: "spring", stiffness: 300 }}
                     >
-                        <FaGithub className="text-2xl text-gray-800" />
-                    </Link>
-                    <Link
-                        to="https://facebook.com"
-                        target="_blank"
-                        rel="noreferrer"
+                        <Link
+                            to="https://github.com/sajjadislam523"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            <FaGithub className="text-2xl " />
+                        </Link>
+                    </motion.div>
+                    <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ type: "spring", stiffness: 300 }}
                     >
-                        <FaFacebook className="text-2xl text-blue-400" />
-                    </Link>
-                    <Link
-                        to="https://instagram.com"
-                        target="_blank"
-                        rel="noreferrer"
+                        <Link
+                            to="https://facebook.com"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            <FaFacebook className="text-2xl " />
+                        </Link>
+                    </motion.div>
+                    <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ type: "spring", stiffness: 300 }}
                     >
-                        <FaInstagram className="text-2xl text-blue-400" />
-                    </Link>
+                        <Link
+                            to="https://instagram.com"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            <FaInstagram className="text-2xl" />
+                        </Link>
+                    </motion.div>
                 </motion.div>
+                <div className="flex mt-4 lg:hidden">
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{
+                            ease: "easeInOut",
+                            duration: 0.4,
+                        }}
+                        whileHover={{
+                            scale: 1.05,
+                            transition: { duration: 0.3, ease: "easeOut" },
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                        className="flex mt-4 lg:hidden"
+                    >
+                        <Button
+                            as={Link}
+                            to="/resume.pdf"
+                            download
+                            variant="outline"
+                            className="px-6 py-2 text-sm font-medium uppercase transition-all bg-gray-100 rounded-full hover:bg-black hover:text-white"
+                        >
+                            Resume
+                        </Button>
+                    </motion.div>
+                </div>
             </motion.div>
 
             <motion.div

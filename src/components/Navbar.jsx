@@ -156,23 +156,6 @@ const Navbar = () => {
                                     </motion.div>
                                 )
                             )}
-                            <motion.div
-                                variants={menuItemVariants}
-                                initial="hidden"
-                                animate="visible"
-                                custom={4}
-                            >
-                                <Button
-                                    as={Link}
-                                    to="/resume.pdf"
-                                    download
-                                    variant="outline"
-                                    className="uppercase transition-all bg-gray-100 duration-500 ease-[cubic-bezier(0.33, 1, 0.68, 1)] rounded-full hover:bg-black hover:text-white"
-                                    onClick={toggleMobileMenu}
-                                >
-                                    Resume
-                                </Button>
-                            </motion.div>
                         </div>
                     </motion.div>
                 )}
