@@ -6,9 +6,9 @@ export default function Hero() {
     return (
         <section
             id="hero"
-            className="flex flex-col items-center justify-between min-h-screen md:flex-row"
+            className="flex flex-col items-center min-h-screen md:justify-between md:flex-row"
         >
-            <div className="p-4 md:w-1/2">
+            <div className="p-4 mt-4 md:w-1/2">
                 <p className="text-xl font-inter">Hello, I&apos;am Sajjad!</p>
                 <h1 className="text-4xl font-bold font-poppins">
                     Turning <span className="italic font-bodoni">Ideas</span>{" "}
@@ -55,7 +55,7 @@ export default function Hero() {
                 </div>
             </div>
 
-            <div className="flex justify-center p-4 md:w-1/2">
+            <div className="flex justify-center w-full p-4 md:w-1/2">
                 <img
                     src={profile}
                     alt="Profile"

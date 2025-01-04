@@ -34,12 +34,28 @@ const Navbar = () => {
         }),
     };
 
+    const navbarVariants = {
+        hidden: { opacity: 0, y: -50 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.8, ease: "easeOut" },
+        },
+    };
+
     return (
-        <nav className="sticky z-50 flex items-center max-w-6xl mx-auto bg-gray-100 border rounded-full shadow-md bg-opacity-90 top-5">
+        <motion.nav
+            className="sticky z-50 flex items-center mx-auto bg-gray-100 border rounded-full shadow-md max-w-7xl bg-opacity-90 top-5"
+            variants={navbarVariants}
+            initial="hidden"
+            animate="visible"
+        >
             <div className="flex items-center justify-between w-full px-10 py-4">
                 {/* Logo */}
                 <Link
                     to="hero"
+                    smooth={true}
+                    offset={-80}
                     className="flex gap-1 text-2xl font-medium cursor-pointer font-poppins"
                 >
                     Sajjad
@@ -50,6 +66,7 @@ const Navbar = () => {
                     <Link
                         to="about"
                         smooth={true}
+                        offset={-80}
                         className="relative duration-500 ease-in-out cursor-pointer group"
                     >
                         About
@@ -146,7 +163,7 @@ const Navbar = () => {
                                     to="/resume.pdf"
                                     download
                                     variant="outline"
-                                    className="uppercase transition-all duration-500 ease-[cubic-bezier(0.33, 1, 0.68, 1)] rounded-full hover:bg-black hover:text-white"
+                                    className="uppercase transition-all bg-gray-100 duration-500 ease-[cubic-bezier(0.33, 1, 0.68, 1)] rounded-full hover:bg-black hover:text-white"
                                     onClick={toggleMobileMenu}
                                 >
                                     Resume
@@ -156,7 +173,7 @@ const Navbar = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </nav>
+        </motion.nav>
     );
 };
 
