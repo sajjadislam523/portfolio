@@ -1,0 +1,132 @@
+[
+    {
+        "id": 1,
+        "image": "https://i.ibb.co/r5bwLT0/image.png",
+        "projectName": "TraceBack - Lost and Found Website",
+        "description": "A web application designed to connect people who have lost items with those who have found them. It enables users to post details about lost and found items, fostering a community-driven approach to recovering lost possessions.",
+        "liveURL": "https://traceback-lost-and-found.example.com",
+        "features": [
+            "Secure login and registration with Firebase Authentication",
+            "Post Lost & Found Items with detailed information",
+            "Real-time updates for marking items as 'Recovered'",
+            "Dynamic Routes powered by React Router",
+            "Responsive Design using Tailwind CSS and DaisyUI",
+            "Interactive animations with Framer Motion",
+            "Date selection using react-datepicker",
+            "Social Media Sharing",
+            "User Profile Management",
+            "Success toasts using Sweetalert2"
+        ],
+        "technologies": [
+            "React",
+            "React Router",
+            "Firebase",
+            "Tailwind CSS",
+            "DaisyUI",
+            "Framer Motion",
+            "React Datepicker",
+            "Sweetalert2"
+        ],
+        "backend": {
+            "description": "Handles API routes for user authentication, posting lost and found items, and more.",
+            "technologies": [
+                "Express.js",
+                "MongoDB",
+                "JWT",
+                "Cookie-Parser",
+                "CORS",
+                "dotenv"
+            ]
+        },
+        "githubFrontend": "https://github.com/sajjadislam523/traceback-client",
+        "githubBackend": "https://github.com/sajjadislam523/traceback-server"
+    },
+    {
+        "id": 2,
+        "image": "https://i.ibb.co/DkVLMP8/image.png",
+        "projectName": "CrowdCube",
+        "description": "A web application designed to connect individuals who want to raise money for personal needs, creative ideas, or startups with potential contributors. It enables users to create and manage fundraising campaigns, make donations, and track project progress.",
+        "liveURL": "https://crowdcube.example.com",
+        "features": [
+            "Secure sign-up, login, and profile management",
+            "Create, view, update, and delete fundraising campaigns",
+            "Contribute to campaigns and view donation history",
+            "Responsive design optimized for mobile and desktop",
+            "Ensures data privacy and safety"
+        ],
+        "technologies": [
+            "React.js",
+            "Tailwind CSS",
+            "DaisyUI",
+            "Node.js",
+            "Express.js",
+            "MongoDB",
+            "Firebase"
+        ],
+        "backend": {
+            "description": "Handles user registration, campaign management, and donations.",
+            "technologies": [
+                "Node.js",
+                "Express.js",
+                "MongoDB",
+                "dotenv",
+                "CORS"
+            ]
+        },
+        "githubFrontend": "https://github.com/sajjadislam523/crowdcube-client",
+        "githubBackend": "https://github.com/sajjadislam523/crowdcube-server"
+    },
+    {
+        "id": 3,
+        "image": "https://i.ibb.co/6sGDxF6/image.png",
+        "projectName": "Winter Clothing Donation Website",
+        "description": "This website connects donors with volunteers to provide winter clothing for people in need across Bangladesh. It allows users to donate clothing, volunteer for distribution, and stay updated on donation campaigns.",
+        "liveURL": "https://winter-donation-8b808.web.app",
+        "features": [
+            "Firebase Authentication for secure login and registration",
+            "JSON-based donation campaigns with campaign details",
+            "Private Routes for secured access to donation details and dashboard",
+            "Real-time donation form validation with toast confirmation",
+            "Dynamic Navbar with options based on user authentication",
+            "User profile management with update options",
+            "Smooth animations using AOS",
+            "Responsive winter-themed layout",
+            "404 error page with navigation to home",
+            "Social media sharing links"
+        ],
+        "technologies": [
+            "React",
+            "React Router DOM",
+            "Firebase",
+            "Tailwind CSS",
+            "AOS",
+            "React Toastify"
+        ],
+        "githubFrontend": "https://github.com/sajjadislam523/winter-clothing-donation",
+        "githubBackend": ""
+    },
+    {
+        "id": 4,
+        "image": "https://i.ibb.co/9hmrPkG/image.png",
+        "projectName": "Gadget Heaven",
+        "description": "A modern e-commerce platform for showcasing and purchasing the latest gadgets. This project offers features for exploring products, adding items to the cart or favorites, and staying updated on tech trends and glossary information.",
+        "liveURL": "https://app-gadget-heaven.netlify.app",
+        "features": [
+            "Product listing and filtering",
+            "Detailed product view with specifications and user ratings",
+            "Add to Cart and Favorites with local storage support",
+            "Responsive design optimized for all devices",
+            "Tech Glossary & Trends pages for user engagement"
+        ],
+        "technologies": [
+            "React",
+            "React Router",
+            "Context API",
+            "Local Storage",
+            "Tailwind CSS",
+            "react-rating-stars-component"
+        ],
+        "githubFrontend": "https://github.com/sajjadislam523/gadget-heaven",
+        "githubBackend": ""
+    }
+]
