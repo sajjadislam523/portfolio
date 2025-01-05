@@ -60,8 +60,8 @@ const Projects = () => {
                                     onClick={() =>
                                         navigate(`/project/${project.id}`)
                                     }
-                                    className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
-                                    variant="default"
+                                    className="w-full px-4 py-2 rounded-full"
+                                    variant="outline"
                                 >
                                     View Details
                                 </Button>

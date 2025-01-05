@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion"; // Import Framer Motion
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const ProjectDetails = () => {
     const { id } = useParams();
@@ -24,7 +24,7 @@ const ProjectDetails = () => {
     }, [id]);
 
     return (
-        <div className="container py-12 mx-auto">
+        <div className="container px-4 py-12 mx-auto">
             {/* Project Image with animation */}
             <motion.div
                 className="flex justify-center p-4 mb-6"
@@ -53,20 +53,23 @@ const ProjectDetails = () => {
                 <p className="text-gray-600">{project?.description}</p>
 
                 {/* Links with animation */}
-                <div className="flex items-center mt-4 space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4">
+                <div className="flex items-center gap-2 mt-4 sm:flex-row">
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 1 }}
                     >
                         <Button
-                            as="a"
-                            href={project?.liveURL}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            asChild
                             className="px-4 py-2 transition-transform transform rounded-full sm:px-6 hover:scale-105"
                         >
-                            Live Project
+                            <Link
+                                to={project?.liveURL}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Live Project
+                            </Link>
                         </Button>
                     </motion.div>
 
@@ -76,14 +79,17 @@ const ProjectDetails = () => {
                         transition={{ duration: 1, delay: 0.2 }}
                     >
                         <Button
-                            as="a"
-                            href={project?.githubFrontend}
-                            target="_blank"
+                            asChild
                             variant="outline"
-                            rel="noopener noreferrer"
                             className="px-4 py-2 transition-transform transform rounded-full sm:px-6 hover:scale-105"
                         >
-                            GitHub Frontend
+                            <Link
+                                to={project?.githubFrontend}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                GitHub Frontend
+                            </Link>
                         </Button>
                     </motion.div>
 
@@ -93,14 +99,26 @@ const ProjectDetails = () => {
                         transition={{ duration: 1, delay: 0.4 }}
                     >
                         <Button
-                            as="a"
-                            href={project?.githubBackend}
-                            target="_blank"
+                            asChild
                             variant="outline"
-                            rel="noopener noreferrer"
-                            className="px-4 py-2 transition-transform transform rounded-full sm:px-6 hover:scale-105"
+                            disabled={!project?.githubBackend}
+                            className={`px-4 py-2 transition-transform transform rounded-full sm:px-6 hover:scale-105 ${
+                                !project?.githubBackend
+                                    ? "cursor-not-allowed opacity-50"
+                                    : ""
+                            }`}
                         >
-                            GitHub Backend
+                            <Link
+                                to={project?.githubBackend || "#"}
+                                target={
+                                    project?.githubBackend
+                                        ? "_blank"
+                                        : undefined
+                                }
+                                rel="noopener noreferrer"
+                            >
+                                GitHub Backend
+                            </Link>
                         </Button>
                     </motion.div>
                 </div>
@@ -124,6 +142,24 @@ const ProjectDetails = () => {
                             ))}
                         </motion.div>
                     )}
+
+                {project?.features && Array.isArray(project?.features) && (
+                    <motion.div
+                        className="mt-8"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 1, delay: 0.8 }}
+                    >
+                        <h3 className="mb-4 text-xl font-semibold">
+                            Key Features:
+                        </h3>
+                        <ul className="pl-4 space-y-2 text-gray-700 list-disc">
+                            {project.features.map((feature, idx) => (
+                                <li key={idx}>{feature}</li>
+                            ))}
+                        </ul>
+                    </motion.div>
+                )}
             </div>
         </div>
     );

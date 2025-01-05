@@ -104,13 +104,16 @@ export default function Hero() {
                         className="flex mt-4 lg:hidden"
                     >
                         <Button
-                            as={Link}
-                            to="/resume.pdf"
-                            download
+                            asChild
                             variant="outline"
-                            className="px-6 py-2 text-sm font-medium uppercase transition-all bg-gray-100 rounded-full hover:bg-black hover:text-white"
+                            className="uppercase transition-all duration-500 ease-[cubic-bezier(0.33, 1, 0.68, 1)] rounded-full hover:bg-black hover:text-white"
                         >
-                            Resume
+                            <a
+                                href="https://docs.google.com/document/d/1ij98kj5DNQP1By-JiZz0Ko1rZ9_pi6MiEw9aLgaINdQ/edit?usp=sharing"
+                                target="_blank"
+                            >
+                                Resume
+                            </a>
                         </Button>
                     </motion.div>
                 </div>

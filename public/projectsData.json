@@ -4,7 +4,7 @@
         "image": "https://i.ibb.co/r5bwLT0/image.png",
         "projectName": "TraceBack - Lost and Found Website",
         "description": "A web application designed to connect people who have lost items with those who have found them. It enables users to post details about lost and found items, fostering a community-driven approach to recovering lost possessions.",
-        "liveURL": "https://traceback-lost-and-found.example.com",
+        "liveURL": "https://traceback-d327e.web.app/",
         "features": [
             "Secure login and registration with Firebase Authentication",
             "Post Lost & Found Items with detailed information",
@@ -25,19 +25,14 @@
             "DaisyUI",
             "Framer Motion",
             "React Datepicker",
-            "Sweetalert2"
+            "Sweetalert2",
+            "Express.js",
+            "MongoDB",
+            "JWT",
+            "Cookie-Parser",
+            "CORS",
+            "dotenv"
         ],
-        "backend": {
-            "description": "Handles API routes for user authentication, posting lost and found items, and more.",
-            "technologies": [
-                "Express.js",
-                "MongoDB",
-                "JWT",
-                "Cookie-Parser",
-                "CORS",
-                "dotenv"
-            ]
-        },
         "githubFrontend": "https://github.com/sajjadislam523/traceback-client",
         "githubBackend": "https://github.com/sajjadislam523/traceback-server"
     },
@@ -46,7 +41,7 @@
         "image": "https://i.ibb.co/DkVLMP8/image.png",
         "projectName": "CrowdCube",
         "description": "A web application designed to connect individuals who want to raise money for personal needs, creative ideas, or startups with potential contributors. It enables users to create and manage fundraising campaigns, make donations, and track project progress.",
-        "liveURL": "https://crowdcube.example.com",
+        "liveURL": "https://crowdcube-1f1e0.web.app/",
         "features": [
             "Secure sign-up, login, and profile management",
             "Create, view, update, and delete fundraising campaigns",
@@ -61,18 +56,13 @@
             "Node.js",
             "Express.js",
             "MongoDB",
-            "Firebase"
+            "Firebase",
+            "Node.js",
+            "Express.js",
+            "MongoDB",
+            "dotenv",
+            "CORS"
         ],
-        "backend": {
-            "description": "Handles user registration, campaign management, and donations.",
-            "technologies": [
-                "Node.js",
-                "Express.js",
-                "MongoDB",
-                "dotenv",
-                "CORS"
-            ]
-        },
         "githubFrontend": "https://github.com/sajjadislam523/crowdcube-client",
         "githubBackend": "https://github.com/sajjadislam523/crowdcube-server"
     },

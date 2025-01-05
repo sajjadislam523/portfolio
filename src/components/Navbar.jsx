@@ -100,13 +100,16 @@ const Navbar = () => {
                         <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-gray-600 transition-all duration-300 group-hover:w-full"></span>
                     </Link>
                     <Button
-                        as={Link}
-                        to="/resume.pdf"
-                        download
+                        asChild
                         variant="outline"
                         className="uppercase transition-all duration-500 ease-[cubic-bezier(0.33, 1, 0.68, 1)] rounded-full hover:bg-black hover:text-white"
                     >
-                        Resume
+                        <a
+                            href="https://docs.google.com/document/d/1ij98kj5DNQP1By-JiZz0Ko1rZ9_pi6MiEw9aLgaINdQ/edit?usp=sharing"
+                            target="_blank"
+                        >
+                            Resume
+                        </a>
                     </Button>
                 </div>
 
