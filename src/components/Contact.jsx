@@ -48,7 +48,7 @@ const Contact = () => {
     return (
         <section
             id="contact"
-            className="container px-6 mx-auto md:px-12 lg:px-20 font-inter"
+            className="container px-6 py-8 mx-auto md:px-12 lg:px-20 font-inter"
         >
             <motion.h2
                 className="mb-6 text-3xl font-semibold text-gray-800"
