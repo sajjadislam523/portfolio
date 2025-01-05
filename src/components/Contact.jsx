@@ -58,9 +58,9 @@ const Contact = () => {
             >
                 Contact Me
             </motion.h2>
-            <div className="flex flex-col items-start justify-between mx-auto md:flex-row max-w-7xl">
+            <div className="flex flex-col items-start justify-between gap-4 mx-auto lg:flex-row max-w-7xl">
                 {/* Left Side: Contact Info Cards */}
-                <div className="flex flex-col items-center w-full space-y-6 md:w-1/3">
+                <div className="flex flex-col items-center w-full space-y-6 lg:w-1/3">
                     <motion.div
                         className="flex items-center w-full p-6 space-x-4 transition-shadow duration-300 ease-in-out border border-gray-300 rounded-lg shadow-lg hover:shadow-xl"
                         initial={{ opacity: 0, x: -100 }}
@@ -130,7 +130,7 @@ const Contact = () => {
 
                 {/* Right Side: Contact Form */}
                 <motion.div
-                    className="w-full pl-0 md:w-2/3 md:pl-8"
+                    className="w-full pl-0 lg:w-2/3 md:pl-8"
                     initial={{ opacity: 0, x: 100 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.8 }}
