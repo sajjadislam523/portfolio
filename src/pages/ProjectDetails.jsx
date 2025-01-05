@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion"; // Import Framer Motion
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const ProjectDetails = () => {
     const { id } = useParams();
     const [project, setProject] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch("/projectsData.json")
@@ -52,8 +53,21 @@ const ProjectDetails = () => {
             <div className="mt-6">
                 <p className="text-gray-600">{project?.description}</p>
 
+                {/* Back to Home Button */}
+                <div className="flex items-center gap-4 mt-6">
+                    <Button
+                        onClick={() => {
+                            navigate("/");
+                        }}
+                        variant="outline"
+                        className="uppercase transition-all duration-500 ease-[cubic-bezier(0.33, 1, 0.68, 1)] rounded-full hover:bg-black hover:text-white"
+                    >
+                        Back to Home
+                    </Button>
+                </div>
+
                 {/* Links with animation */}
-                <div className="flex items-center gap-2 mt-4 sm:flex-row">
+                <div className="flex flex-col gap-2 mt-4 md:flex-row ">
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -72,55 +86,56 @@ const ProjectDetails = () => {
                             </Link>
                         </Button>
                     </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 1, delay: 0.2 }}
-                    >
-                        <Button
-                            asChild
-                            variant="outline"
-                            className="px-4 py-2 transition-transform transform rounded-full sm:px-6 hover:scale-105"
+                    <div className="flex items-center gap-2">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 1, delay: 0.2 }}
                         >
-                            <Link
-                                to={project?.githubFrontend}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                            <Button
+                                asChild
+                                variant="outline"
+                                className="px-4 py-2 transition-transform transform rounded-full sm:px-6 hover:scale-105"
                             >
-                                GitHub Frontend
-                            </Link>
-                        </Button>
-                    </motion.div>
+                                <Link
+                                    to={project?.githubFrontend}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    GitHub Frontend
+                                </Link>
+                            </Button>
+                        </motion.div>
 
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 1, delay: 0.4 }}
-                    >
-                        <Button
-                            asChild
-                            variant="outline"
-                            disabled={!project?.githubBackend}
-                            className={`px-4 py-2 transition-transform transform rounded-full sm:px-6 hover:scale-105 ${
-                                !project?.githubBackend
-                                    ? "cursor-not-allowed opacity-50"
-                                    : ""
-                            }`}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 1, delay: 0.4 }}
                         >
-                            <Link
-                                to={project?.githubBackend || "#"}
-                                target={
-                                    project?.githubBackend
-                                        ? "_blank"
-                                        : undefined
-                                }
-                                rel="noopener noreferrer"
+                            <Button
+                                asChild
+                                variant="outline"
+                                disabled={!project?.githubBackend}
+                                className={`px-4 py-2 transition-transform transform rounded-full sm:px-6 hover:scale-105 ${
+                                    !project?.githubBackend
+                                        ? "cursor-not-allowed opacity-50"
+                                        : ""
+                                }`}
                             >
-                                GitHub Backend
-                            </Link>
-                        </Button>
-                    </motion.div>
+                                <Link
+                                    to={project?.githubBackend || "#"}
+                                    target={
+                                        project?.githubBackend
+                                            ? "_blank"
+                                            : undefined
+                                    }
+                                    rel="noopener noreferrer"
+                                >
+                                    GitHub Backend
+                                </Link>
+                            </Button>
+                        </motion.div>
+                    </div>
                 </div>
 
                 {/* Technologies with animation */}

@@ -15,6 +15,7 @@
     "@shadcn/ui": "^0.0.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "emailjs-com": "^3.2.0",
     "lucide-react": "^0.469.0",
     "motion": "^11.15.0",
     "react": "^18.3.1",
@@ -22,6 +23,7 @@
     "react-icons": "^5.4.0",
     "react-router-dom": "^6.28.1",
     "react-scroll": "^1.9.0",
+    "sweetalert2": "^11.15.10",
     "tailwind-merge": "^2.6.0",
     "tailwind-variants": "^0.3.0",
     "tailwindcss-animate": "^1.0.7"
