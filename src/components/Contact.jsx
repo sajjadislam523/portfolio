@@ -1,48 +1,40 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea.jsx";
-import { motion } from "framer-motion";
-import { useState } from "react";
-import { HiChat, HiMail, HiPhone } from "react-icons/hi"; // Import icons from react-icons
+import { Button } from "@/components/ui/button.jsx";
+import emailjs from "@emailjs/browser";
+import { useRef, useState } from "react";
+import { FaEnvelope, FaFacebookMessenger } from "react-icons/fa";
+import { HiPaperAirplane } from "react-icons/hi";
+import { IoLogoWhatsapp } from "react-icons/io5";
 import Swal from "sweetalert2";
 
 const Contact = () => {
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        message: "",
-    });
+    const form = useRef();
     const [loading, setLoading] = useState(false);
 
-    // Handle form input changes
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
-
-    // Handle form submission and show toast
-    const sendMessage = (e) => {
+    const sendEmail = (e) => {
         e.preventDefault();
+
         setLoading(true);
 
-        // Simulate form submission
-        setTimeout(() => {
-            setLoading(false);
-            Swal.fire({
-                icon: "success",
-                title: "Message Sent!",
-                text: "Thank you for reaching out! I'll get back to you as soon as possible.",
-                showConfirmButton: true,
-                timer: 5000,
-            });
-
-            // Reset form
-            setFormData({
-                name: "",
-                email: "",
-                message: "",
-            });
-        }, 1000); // Simulate a delay for form submission
+        emailjs
+            .sendForm("service_x8q25ae", "template_b769g6v", form.current, {
+                publicKey: "yRb1PpRZy_Suy_m7J",
+            })
+            .then(
+                () => {
+                    setLoading(false); // Stop loading
+                    Swal.fire({
+                        icon: "success",
+                        title: "Message Sent!",
+                        text: "Thank you for reaching out! I'll get back to you as soon as possible.",
+                        showConfirmButton: true,
+                        timer: 5000,
+                    });
+                },
+                (error) => {
+                    console.log("FAILED...", error.text);
+                    setLoading(false); // Stop loading even on failure
+                }
+            );
     };
 
     return (
@@ -50,142 +42,118 @@ const Contact = () => {
             id="contact"
             className="container px-6 py-8 mx-auto md:px-12 lg:px-20 font-inter"
         >
-            <motion.h2
-                className="mb-6 text-3xl font-semibold text-gray-800"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-            >
+            <h2 className="mb-6 text-3xl font-semibold text-center text-gray-800">
                 Contact Me
-            </motion.h2>
-            <div className="flex flex-col items-start justify-between gap-4 mx-auto lg:flex-row max-w-7xl">
+            </h2>
+
+            <div className="flex flex-col items-start justify-between gap-12 mx-auto lg:flex-row max-w-7xl">
                 {/* Left Side: Contact Info Cards */}
-                <div className="flex flex-col items-center w-full space-y-6 lg:w-1/3">
-                    <motion.div
-                        className="flex items-center w-full p-6 space-x-4 transition-shadow duration-300 ease-in-out border border-gray-300 rounded-lg shadow-lg hover:shadow-xl"
-                        initial={{ opacity: 0, x: -100 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        <HiMail className="text-3xl text-gray-600" />
-                        <div>
-                            <h3 className="mb-4 text-2xl font-semibold text-gray-800">
-                                Email
-                            </h3>
-                            <p className="text-lg text-gray-600">
-                                <a
-                                    href="mailto:sajjad.islam523@gmail.com"
-                                    className="text-blue-600 hover:underline"
-                                >
-                                    sajjad.islam523@gmail.com
-                                </a>
-                            </p>
-                        </div>
-                    </motion.div>
+                <div className="flex flex-col w-full gap-6 lg:w-1/2">
+                    <p>Talk to me</p>
+                    {/* Email Card */}
+                    <div className="flex flex-col items-center p-6 transition-transform duration-700 border rounded-lg shadow-md hover:shadow-lg hover:scale-105 ">
+                        <FaEnvelope className="mb-3 text-3xl text-primary" />
+                        <h3 className="mb-2 text-lg font-semibold text-gray-800">
+                            Email
+                        </h3>
+                        <p className="text-gray-600">
+                            sajjad.islam523@gmail.com
+                        </p>
+                    </div>
 
-                    <motion.div
-                        className="flex items-center w-full p-6 space-x-4 transition-shadow duration-300 ease-in-out border border-gray-300 rounded-lg shadow-lg hover:shadow-xl"
-                        initial={{ opacity: 0, x: -100 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.7 }}
-                    >
-                        <HiPhone className="text-3xl text-gray-600" />
-                        <div>
-                            <h3 className="mb-4 text-2xl font-semibold text-gray-800">
-                                Phone
-                            </h3>
-                            <p className="text-lg text-gray-600">
-                                <a
-                                    href="tel:+8801634181621"
-                                    className="text-blue-600 hover:underline"
-                                >
-                                    01634181621
-                                </a>
-                            </p>
-                        </div>
-                    </motion.div>
+                    {/* WhatsApp Card */}
+                    <div className="flex flex-col items-center p-6 transition-transform duration-700 border rounded-lg shadow-md hover:shadow-lg hover:scale-105 ">
+                        <IoLogoWhatsapp className="mb-3 text-3xl " />
+                        <h3 className="mb-2 text-lg font-semibold text-gray-800">
+                            WhatsApp
+                        </h3>
+                        <p className="text-gray-600">+8801634181621</p>
+                    </div>
 
-                    <motion.div
-                        className="flex items-center w-full p-6 space-x-4 transition-shadow duration-300 ease-in-out border border-gray-300 rounded-lg shadow-lg hover:shadow-xl"
-                        initial={{ opacity: 0, x: -100 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8 }}
-                    >
-                        <HiChat className="text-3xl text-gray-600" />
-                        <div>
-                            <h3 className="mb-4 text-2xl font-semibold text-gray-800">
-                                WhatsApp
-                            </h3>
-                            <p className="text-lg text-gray-600">
-                                <a
-                                    href="https://wa.me/8801634181621"
-                                    className="text-blue-600 hover:underline"
-                                >
-                                    Chat with me on WhatsApp
-                                </a>
-                            </p>
-                        </div>
-                    </motion.div>
+                    {/* Messenger Card */}
+                    <div className="flex flex-col items-center p-6 transition-transform duration-700 border rounded-lg shadow-md hover:shadow-lg hover:scale-105 ">
+                        <FaFacebookMessenger className="mb-3 text-2xl " />
+                        <h3 className="mb-2 font-semibold text-gray-800 text-md">
+                            Facebook Messenger
+                        </h3>
+                        <p className="text-gray-600">Sajjadul Islam</p>
+                    </div>
                 </div>
 
                 {/* Right Side: Contact Form */}
-                <motion.div
-                    className="w-full pl-0 lg:w-2/3 md:pl-8"
-                    initial={{ opacity: 0, x: 100 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.8 }}
-                >
-                    <p className="mb-4 text-lg text-gray-600">
-                        If you have any questions or would like to get in touch,
-                        feel free to send me a message below.
-                    </p>
+                <div className="w-full lg:w-1/2">
+                    <h3 className="text-xl font-semibold text-gray-800 ">
+                        Write me your query
+                    </h3>
 
-                    {/* Contact Form */}
-                    <motion.form
-                        onSubmit={sendMessage}
-                        className="space-y-6"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.9 }}
+                    <form
+                        ref={form}
+                        onSubmit={sendEmail}
+                        className="p-6 space-y-6 border rounded-lg shadow-md"
                     >
                         <div className="space-y-4">
-                            <Input
-                                type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                placeholder="Your Name"
-                                required
-                                className="w-full p-4 border rounded-lg shadow-sm"
-                            />
-                            <Input
-                                type="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                placeholder="Your Email"
-                                required
-                                className="w-full p-4 border rounded-lg shadow-sm"
-                            />
-                            <Textarea
-                                name="message"
-                                value={formData.message}
-                                onChange={handleChange}
-                                placeholder="Your Message"
-                                required
-                                className="w-full p-4 border rounded-lg shadow-sm"
-                                rows={4}
-                            />
+                            <div>
+                                <label
+                                    htmlFor="name"
+                                    className="block mb-2 text-sm font-medium text-gray-700"
+                                >
+                                    Name
+                                </label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="user_name"
+                                    placeholder="Insert your name"
+                                    required
+                                    className="w-full px-4 py-3 border rounded-lg shadow-sm focus:ring focus:ring-primary"
+                                />
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="email"
+                                    className="block mb-2 text-sm font-medium text-gray-700"
+                                >
+                                    Mail
+                                </label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="user_email"
+                                    placeholder="Insert your email"
+                                    required
+                                    className="w-full px-4 py-3 border rounded-lg shadow-sm focus:ring focus:ring-primary"
+                                />
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="project"
+                                    className="block mb-2 text-sm font-medium text-gray-700"
+                                >
+                                    Project
+                                </label>
+                                <textarea
+                                    id="project"
+                                    name="message"
+                                    placeholder="Write your project"
+                                    required
+                                    rows={5}
+                                    className="w-full px-4 py-3 border rounded-lg shadow-sm focus:ring focus:ring-primary"
+                                ></textarea>
+                            </div>
                         </div>
+
                         <Button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-3 mt-4 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                            className="flex items-center justify-center w-full px-6 py-3 text-sm font-medium rounded-lg shadow-md"
                         >
-                            {loading ? "Sending..." : "Send Message"}
+                            {loading ? "Sending..." : "Send Message"}{" "}
+                            <HiPaperAirplane className="ml-2 text-lg rotate-45" />
                         </Button>
-                    </motion.form>
-                </motion.div>
+                    </form>
+                </div>
             </div>
         </section>
     );

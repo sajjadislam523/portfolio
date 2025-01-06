@@ -5,6 +5,7 @@ import {
     CardFooter,
     CardHeader,
 } from "@/components/ui/card";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -31,42 +32,53 @@ const Projects = () => {
                 </p>
                 <div className="grid grid-cols-1 gap-6 mt-8 sm:grid-cols-2 lg:grid-cols-3">
                     {projects.map((project) => (
-                        <Card
+                        <motion.div
                             key={project.id}
-                            className="bg-white rounded-lg shadow-lg "
+                            className="bg-white rounded-lg shadow-lg"
+                            whileHover={{
+                                y: -6, // Moves the card 10px upwards
+                                boxShadow: "0 10px 20px rgba(0, 0, 0, 0.15)", // Adds hover shadow effect
+                                transition: { duration: 0.5 },
+                            }}
+                            animate={{
+                                y: 0,
+                                transition: { duration: 0.5, ease: "easeOut" },
+                            }}
                         >
-                            {/* Card Header with Project Image */}
-                            <CardHeader className="p-0">
-                                <img
-                                    src={project.image}
-                                    alt={project.projectName}
-                                    className="object-cover w-full h-48 rounded-t-lg"
-                                />
-                            </CardHeader>
+                            <Card>
+                                {/* Card Header with Project Image */}
+                                <CardHeader className="p-0">
+                                    <img
+                                        src={project.image}
+                                        alt={project.projectName}
+                                        className="object-cover w-full h-48 rounded-t-lg"
+                                    />
+                                </CardHeader>
 
-                            {/* Card Content with Project Name and Description */}
-                            <CardContent className="flex flex-col justify-between h-[150px] p-4">
-                                <h3 className="text-lg font-semibold text-gray-800 font-poppins">
-                                    {project.projectName}
-                                </h3>
-                                <p className="mt-2 text-sm text-gray-600 font-inter line-clamp-3">
-                                    {project.description}
-                                </p>
-                            </CardContent>
+                                {/* Card Content with Project Name and Description */}
+                                <CardContent className="flex flex-col justify-between h-[150px] p-4">
+                                    <h3 className="text-lg font-semibold text-gray-800 font-poppins">
+                                        {project.projectName}
+                                    </h3>
+                                    <p className="mt-2 text-sm text-gray-600 font-inter line-clamp-3">
+                                        {project.description}
+                                    </p>
+                                </CardContent>
 
-                            {/* Card Footer with View Details Button */}
-                            <CardFooter className="p-4">
-                                <Button
-                                    onClick={() =>
-                                        navigate(`/project/${project.id}`)
-                                    }
-                                    className="w-full px-4 py-2 rounded-full"
-                                    variant="outline"
-                                >
-                                    View Details
-                                </Button>
-                            </CardFooter>
-                        </Card>
+                                {/* Card Footer with View Details Button */}
+                                <CardFooter className="p-4">
+                                    <Button
+                                        onClick={() =>
+                                            navigate(`/project/${project.id}`)
+                                        }
+                                        className="w-full px-4 py-2 rounded-full font-inter"
+                                        variant="outline"
+                                    >
+                                        View Details
+                                    </Button>
+                                </CardFooter>
+                            </Card>
+                        </motion.div>
                     ))}
                 </div>
             </div>

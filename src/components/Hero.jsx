@@ -8,7 +8,7 @@ export default function Hero() {
     return (
         <motion.section
             id="hero"
-            className="flex flex-col items-center min-h-screen md:justify-between md:flex-row"
+            className="container flex flex-col items-center min-h-screen px-6 mx-auto md:px-12 lg:px-20 md:justify-between md:flex-row"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
