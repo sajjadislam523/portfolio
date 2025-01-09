@@ -21,11 +21,22 @@ const Projects = () => {
     }, []);
 
     return (
-        <section id="projects" className="py-16">
+        <motion.section
+            id="projects"
+            className="py-16"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+        >
             <div className="container px-6 mx-auto md:px-12 lg:px-20">
-                <h2 className="text-3xl font-bold text-start font-poppins">
+                <motion.h2
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                    className="text-3xl font-bold text-start font-poppins"
+                >
                     Projects
-                </h2>
+                </motion.h2>
                 <p className="mt-2 text-gray-600 font-inter">
                     Explore my featured projects showcasing my technical
                     expertise.
@@ -36,14 +47,16 @@ const Projects = () => {
                             key={project.id}
                             className="bg-white rounded-lg shadow-lg"
                             whileHover={{
-                                y: -6, // Moves the card 10px upwards
-                                boxShadow: "0 10px 20px rgba(0, 0, 0, 0.15)", // Adds hover shadow effect
-                                transition: { duration: 0.5 },
+                                scale: 1.05, // Slightly scale up the card
+                                boxShadow: "0 15px 30px rgba(0, 0, 0, 0.1)", // Softer shadow
+                                transition: { duration: 0.3 },
                             }}
                             animate={{
+                                opacity: 1,
                                 y: 0,
                                 transition: { duration: 0.5, ease: "easeOut" },
                             }}
+                            initial={{ opacity: 0, y: 50 }}
                         >
                             <Card>
                                 {/* Card Header with Project Image */}
@@ -82,7 +95,7 @@ const Projects = () => {
                     ))}
                 </div>
             </div>
-        </section>
+        </motion.section>
     );
 };
 

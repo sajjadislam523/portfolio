@@ -1,23 +1,23 @@
-import AOS from "aos";
-import "aos/dist/aos.css";
-import { useEffect } from "react";
+import { motion } from "framer-motion";
 
 const Education = () => {
-    useEffect(() => {
-        AOS.init({
-            duration: 1000, // Animation duration in ms
-            offset: 100, // Trigger point offset
-            once: true, // Animation runs only once
-        });
-    }, []);
-
     return (
-        <section className="container flex flex-col items-center min-h-screen px-6 mx-auto md:px-12 lg:px-20">
+        <motion.section
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="container flex flex-col items-center min-h-screen px-6 mx-auto mt-8 md:px-12 lg:px-20"
+        >
             <div className="w-full">
                 {/* Title */}
-                <h2 className="text-4xl font-bold text-black font-poppins">
+                <motion.h2
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                    className="text-4xl font-bold text-black font-poppins"
+                >
                     Education
-                </h2>
+                </motion.h2>
                 <p className="mt-4 text-lg text-gray-700 font-inter">
                     A detailed overview of my educational journey, highlighting
                     key milestones and ongoing pursuits.
@@ -96,7 +96,7 @@ const Education = () => {
                     </div>
                 </div>
             </div>
-        </section>
+        </motion.section>
     );
 };
 

@@ -3,7 +3,7 @@ import { FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa"; // Import ico
 const Footer = () => {
     return (
         <footer className="py-6">
-            <div className="mx-auto text-center max-w-7xl">
+            <div className="px-4 text-center">
                 <div className="flex items-center justify-between py-4">
                     <div>
                         <h2 className="text-2xl font-medium cursor-pointer font-poppins">

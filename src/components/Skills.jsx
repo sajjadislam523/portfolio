@@ -87,9 +87,14 @@ const Skills = () => {
     return (
         <section id="skills" className="py-16">
             <div className="container px-6 mx-auto md:px-12 lg:px-20">
-                <h2 className="text-3xl font-bold text-start font-poppins">
+                <motion.h2
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                    className="text-3xl font-bold text-start font-poppins"
+                >
                     My Skills
-                </h2>
+                </motion.h2>
                 <p className="mt-2 text-gray-600 text-start font-inter">
                     Here’s a quick overview of the skills I’ve acquired and{" "}
                     <br />
