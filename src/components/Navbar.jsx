@@ -73,6 +73,15 @@ const Navbar = () => {
                         <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-gray-600 transition-all duration-300 group-hover:w-full"></span>
                     </Link>
                     <Link
+                        to="education"
+                        smooth={true}
+                        offset={-80}
+                        className="relative duration-500 ease-in-out cursor-pointer group"
+                    >
+                        Education
+                        <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-gray-600 transition-all duration-300 group-hover:w-full"></span>
+                    </Link>
+                    <Link
                         to="skills"
                         smooth={true}
                         offset={-80}

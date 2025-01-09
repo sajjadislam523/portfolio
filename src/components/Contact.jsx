@@ -3,7 +3,6 @@ import emailjs from "@emailjs/browser";
 import { motion } from "framer-motion";
 import { useRef, useState } from "react";
 import { FaEnvelope, FaFacebookMessenger } from "react-icons/fa";
-import { HiPaperAirplane } from "react-icons/hi";
 import { IoLogoWhatsapp } from "react-icons/io5";
 import Swal from "sweetalert2";
 
@@ -41,7 +40,7 @@ const Contact = () => {
     return (
         <motion.section
             id="contact"
-            className="container px-6 py-8 mx-auto md:px-12 lg:px-20 font-inter"
+            className="container px-6 pt-8 pb-12 mx-auto mb-12 md:px-12 lg:px-20 font-inter"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -159,7 +158,6 @@ const Contact = () => {
                             className="flex items-center justify-center w-full px-6 py-3 text-sm font-medium rounded-lg shadow-md"
                         >
                             {loading ? "Sending..." : "Send Message"}
-                            <HiPaperAirplane className="ml-2 text-lg rotate-45" />
                         </Button>
                     </form>
                 </div>

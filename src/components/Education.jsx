@@ -3,10 +3,11 @@ import { motion } from "framer-motion";
 const Education = () => {
     return (
         <motion.section
+            id="education"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="container flex flex-col items-center min-h-screen px-6 mx-auto mt-8 md:px-12 lg:px-20"
+            className="container flex flex-col items-center min-h-screen px-6 py-16 mx-auto mt-8 md:px-12 lg:px-20"
         >
             <div className="w-full">
                 {/* Title */}
