@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button.jsx";
 import emailjs from "@emailjs/browser";
+import { motion } from "framer-motion";
 import { useRef, useState } from "react";
 import { FaEnvelope, FaFacebookMessenger } from "react-icons/fa";
 import { HiPaperAirplane } from "react-icons/hi";
@@ -21,7 +22,7 @@ const Contact = () => {
             })
             .then(
                 () => {
-                    setLoading(false); // Stop loading
+                    setLoading(false);
                     Swal.fire({
                         icon: "success",
                         title: "Message Sent!",
@@ -32,70 +33,78 @@ const Contact = () => {
                 },
                 (error) => {
                     console.log("FAILED...", error.text);
-                    setLoading(false); // Stop loading even on failure
+                    setLoading(false);
                 }
             );
     };
 
     return (
-        <section
+        <motion.section
             id="contact"
             className="container px-6 py-8 mx-auto md:px-12 lg:px-20 font-inter"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
         >
-            <h2 className="mb-6 text-3xl font-semibold text-center text-gray-800">
+            <h2 className="mb-6 text-3xl font-semibold text-left text-gray-800">
                 Contact Me
             </h2>
 
-            <div className="flex flex-col items-start justify-between gap-12 mx-auto lg:flex-row max-w-7xl">
-                {/* Left Side: Contact Info Cards */}
+            <div className="flex flex-col items-center gap-12 lg:flex-row">
                 <div className="flex flex-col w-full gap-6 lg:w-1/2">
-                    <p>Talk to me</p>
+                    <h3 className="mb-4 text-xl font-semibold text-left text-gray-800">
+                        Talk to me
+                    </h3>
                     {/* Email Card */}
-                    <div className="flex flex-col items-center p-6 transition-transform duration-700 border rounded-lg shadow-md hover:shadow-lg hover:scale-105 ">
+                    <div className="flex flex-col items-center p-4 transition-transform duration-700 border rounded-lg shadow-md hover:shadow-lg hover:scale-105">
                         <FaEnvelope className="mb-3 text-3xl text-primary" />
-                        <h3 className="mb-2 text-lg font-semibold text-gray-800">
+                        <h3 className="mb-2 text-lg font-semibold text-gray-800 font-poppins">
                             Email
                         </h3>
-                        <p className="text-gray-600">
+                        <p className="text-gray-600 font-inter">
                             sajjad.islam523@gmail.com
                         </p>
                     </div>
 
                     {/* WhatsApp Card */}
-                    <div className="flex flex-col items-center p-6 transition-transform duration-700 border rounded-lg shadow-md hover:shadow-lg hover:scale-105 ">
+                    <div className="flex flex-col items-center p-5 transition-transform duration-700 border rounded-lg shadow-md hover:shadow-lg hover:scale-105">
                         <IoLogoWhatsapp className="mb-3 text-3xl " />
-                        <h3 className="mb-2 text-lg font-semibold text-gray-800">
+                        <h3 className="mb-2 text-lg font-semibold text-gray-800 font-poppins">
                             WhatsApp
                         </h3>
-                        <p className="text-gray-600">+8801634181621</p>
+                        <p className="text-gray-600 font-inter">
+                            +8801634181621
+                        </p>
                     </div>
 
                     {/* Messenger Card */}
-                    <div className="flex flex-col items-center p-6 transition-transform duration-700 border rounded-lg shadow-md hover:shadow-lg hover:scale-105 ">
+                    <div className="flex flex-col items-center p-5 transition-transform duration-700 border rounded-lg shadow-md hover:shadow-lg hover:scale-105">
                         <FaFacebookMessenger className="mb-3 text-2xl " />
-                        <h3 className="mb-2 font-semibold text-gray-800 text-md">
+                        <h3 className="mb-2 font-semibold text-gray-800 font-poppins text-md">
                             Facebook Messenger
                         </h3>
-                        <p className="text-gray-600">Sajjadul Islam</p>
+                        <p className="text-gray-600 font-inter">
+                            Sajjadul Islam
+                        </p>
                     </div>
                 </div>
 
                 {/* Right Side: Contact Form */}
-                <div className="w-full lg:w-1/2">
-                    <h3 className="text-xl font-semibold text-gray-800 ">
+                <div className="flex flex-col w-full gap-6 lg:w-1/2">
+                    <h3 className="mb-4 text-xl font-semibold text-left text-gray-800 font-poppins">
                         Write me your query
                     </h3>
 
                     <form
                         ref={form}
                         onSubmit={sendEmail}
-                        className="p-6 space-y-6 border rounded-lg shadow-md"
+                        className="p-6 space-y-6 border rounded-lg shadow-md "
                     >
                         <div className="space-y-4">
                             <div>
                                 <label
                                     htmlFor="name"
-                                    className="block mb-2 text-sm font-medium text-gray-700"
+                                    className="block mb-2 text-sm font-medium text-gray-700 font-inter"
                                 >
                                     Name
                                 </label>
@@ -105,7 +114,7 @@ const Contact = () => {
                                     name="user_name"
                                     placeholder="Insert your name"
                                     required
-                                    className="w-full px-4 py-3 border rounded-lg shadow-sm focus:ring focus:ring-primary"
+                                    className="w-full px-4 py-3 border rounded-lg shadow-sm font-inter focus:outline-none"
                                 />
                             </div>
 
@@ -122,7 +131,7 @@ const Contact = () => {
                                     name="user_email"
                                     placeholder="Insert your email"
                                     required
-                                    className="w-full px-4 py-3 border rounded-lg shadow-sm focus:ring focus:ring-primary"
+                                    className="w-full px-4 py-3 border rounded-lg shadow-sm focus:outline-none"
                                 />
                             </div>
 
@@ -139,7 +148,7 @@ const Contact = () => {
                                     placeholder="Write your project"
                                     required
                                     rows={5}
-                                    className="w-full px-4 py-3 border rounded-lg shadow-sm focus:ring focus:ring-primary"
+                                    className="w-full px-4 py-3 border rounded-lg shadow-sm focus:outline-none"
                                 ></textarea>
                             </div>
                         </div>
@@ -149,13 +158,13 @@ const Contact = () => {
                             disabled={loading}
                             className="flex items-center justify-center w-full px-6 py-3 text-sm font-medium rounded-lg shadow-md"
                         >
-                            {loading ? "Sending..." : "Send Message"}{" "}
+                            {loading ? "Sending..." : "Send Message"}
                             <HiPaperAirplane className="ml-2 text-lg rotate-45" />
                         </Button>
                     </form>
                 </div>
             </div>
-        </section>
+        </motion.section>
     );
 };
 

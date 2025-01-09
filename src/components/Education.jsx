@@ -13,19 +13,12 @@ const Education = () => {
 
     return (
         <section className="container flex flex-col items-center min-h-screen px-6 mx-auto md:px-12 lg:px-20">
-            <div className="w-full max-w-5xl">
+            <div className="w-full">
                 {/* Title */}
-                <h2
-                    className="text-4xl font-bold text-black font-poppins"
-                    data-aos="fade-up"
-                >
+                <h2 className="text-4xl font-bold text-black font-poppins">
                     Education
                 </h2>
-                <p
-                    className="mt-4 text-lg text-gray-700 font-inter"
-                    data-aos="fade-up"
-                    data-aos-delay="200"
-                >
+                <p className="mt-4 text-lg text-gray-700 font-inter">
                     A detailed overview of my educational journey, highlighting
                     key milestones and ongoing pursuits.
                 </p>
@@ -33,19 +26,12 @@ const Education = () => {
                 {/* Timeline */}
                 <div className="relative mt-12">
                     {/* Vertical line for timeline */}
-                    <div
-                        className="absolute inset-0 w-1 h-full bg-gray-300 left-8 md:left-12"
-                        data-aos="fade-in"
-                        data-aos-delay="400"
-                    ></div>
+                    <div className="absolute inset-0 w-1 h-full bg-gray-300 left-8 md:left-12"></div>
 
                     {/* Timeline Items */}
                     <div className="space-y-16">
                         {/* Timeline Item 1 */}
-                        <div
-                            className="flex flex-col items-start md:flex-row md:items-center"
-                            data-aos="fade-right"
-                        >
+                        <div className="flex flex-col items-start md:flex-row md:items-center">
                             {/* Circle */}
                             <div className="relative z-10 flex items-center justify-center w-12 h-12 text-white bg-black rounded-full shadow-md">
                                 <span className="text-base font-bold">1</span>
@@ -74,10 +60,7 @@ const Education = () => {
                             </div>
                         </div>
 
-                        <div
-                            className="flex flex-col items-start md:flex-row md:items-center"
-                            data-aos="fade-left"
-                        >
+                        <div className="flex flex-col items-start md:flex-row md:items-center">
                             {/* Circle */}
                             <div className="relative z-10 flex items-center justify-center w-12 h-12 text-white bg-gray-600 rounded-full shadow-md">
                                 <span className="text-base font-bold">2</span>
