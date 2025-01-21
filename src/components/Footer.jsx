@@ -16,7 +16,7 @@ const Footer = () => {
                 {/* Social Icons */}
                 <div className="flex gap-6">
                     <Link
-                        to="www.linkedin.com/in/sajjadislam523"
+                        to="https://www.linkedin.com/in/sajjadislam523"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-gray-600 transition hover:text-black"
