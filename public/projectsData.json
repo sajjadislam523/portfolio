@@ -1,6 +1,43 @@
 [
     {
         "id": 1,
+        "image": "https://i.ibb.co/MyV4D46C/news-Sphere.png",
+        "projectName": "NewsSphere - News Aggregation Platform",
+        "description": "NewsSphere is a dynamic platform that aggregates trending news and in-depth articles across various categories. The platform offers both free and premium experiences, complete with real-time data updates, secure subscription management, and a responsive design for an optimal user experience on any device.",
+        "liveURL": "https://news-sphere-1eb5e.web.app/",
+        "features": [
+            "Tailored user experience with Normal and Premium user roles",
+            "Diverse news categories including Technology, Business, Health, Science, Sports, and Politics",
+            "Robust article management for admins to create, update, and delete content",
+            "Smart search and filtering capabilities for easy news discovery",
+            "Responsive design optimized for desktops, tablets, and mobile devices",
+            "Seamless image uploads using the ImgBB API",
+            "Real-time data synchronization with TanStack Query",
+            "Secure subscription system powered by Stripe for premium content access",
+            "Effortless tag and publisher management for organized content",
+            "Interactive notifications using SweetAlert2 for an enhanced user experience"
+        ],
+        "technologies": [
+            "React.js",
+            "React Router",
+            "TailwindCSS",
+            "TanStack Query",
+            "Stripe",
+            "Firebase",
+            "JWT",
+            "Node.js",
+            "Express.js",
+            "MongoDB Atlas",
+            "ImgBB API",
+            "SweetAlert2",
+            "GSAP"
+        ],
+        "githubFrontend": "https://github.com/sajjadislam523/news-sphere_client",
+        "githubBackend": "https://github.com/sajjadislam523/news-sphere_server"
+    },
+
+    {
+        "id": 2,
         "image": "https://i.ibb.co/r5bwLT0/image.png",
         "projectName": "TraceBack - Lost and Found Website",
         "description": "A web application designed to connect people who have lost items with those who have found them. It enables users to post details about lost and found items, fostering a community-driven approach to recovering lost possessions.",
@@ -37,7 +74,7 @@
         "githubBackend": "https://github.com/sajjadislam523/traceback-server"
     },
     {
-        "id": 2,
+        "id": 3,
         "image": "https://i.ibb.co/DkVLMP8/image.png",
         "projectName": "CrowdCube",
         "description": "A web application designed to connect individuals who want to raise money for personal needs, creative ideas, or startups with potential contributors. It enables users to create and manage fundraising campaigns, make donations, and track project progress.",
@@ -67,7 +104,7 @@
         "githubBackend": "https://github.com/sajjadislam523/crowdcube-server"
     },
     {
-        "id": 3,
+        "id": 4,
         "image": "https://i.ibb.co/6sGDxF6/image.png",
         "projectName": "Winter Clothing Donation Website",
         "description": "This website connects donors with volunteers to provide winter clothing for people in need across Bangladesh. It allows users to donate clothing, volunteer for distribution, and stay updated on donation campaigns.",
@@ -96,7 +133,7 @@
         "githubBackend": ""
     },
     {
-        "id": 4,
+        "id": 5,
         "image": "https://i.ibb.co/9hmrPkG/image.png",
         "projectName": "Gadget Heaven",
         "description": "A modern e-commerce platform for showcasing and purchasing the latest gadgets. This project offers features for exploring products, adding items to the cart or favorites, and staying updated on tech trends and glossary information.",

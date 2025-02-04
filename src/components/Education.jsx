@@ -37,7 +37,6 @@ const Education = () => {
                             <div className="relative z-10 flex items-center justify-center w-12 h-12 text-white bg-black rounded-full shadow-md">
                                 <span className="text-base font-bold">1</span>
                             </div>
-                            {/* Content */}
                             <div className="mt-4 ml-16 md:mt-0">
                                 <h3 className="text-xl font-semibold text-black md:text-2xl font-poppins">
                                     Bachelor of Science in Computer Science &
@@ -47,7 +46,7 @@ const Education = () => {
                                     The Peoples University of Bangladesh
                                 </p>
                                 <p className="mt-1 text-sm text-gray-500">
-                                    Graduation Year: 2023
+                                    Graduation Year: 2024
                                 </p>
                                 <p className="mt-3 text-gray-600 font-inter">
                                     During my bachelor&apos;s, I focused on

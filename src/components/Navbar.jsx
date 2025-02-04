@@ -114,7 +114,7 @@ const Navbar = () => {
                         className="uppercase transition-all duration-500 ease-[cubic-bezier(0.33, 1, 0.68, 1)] rounded-full hover:bg-black hover:text-white"
                     >
                         <a
-                            href="https://docs.google.com/document/d/1ij98kj5DNQP1By-JiZz0Ko1rZ9_pi6MiEw9aLgaINdQ/edit?usp=sharing"
+                            href="https://drive.google.com/file/d/1lSV4PJSzAU8TqUEdpF2ppi-8D2i9d9l4/view?usp=sharing"
                             target="_blank"
                         >
                             Resume
