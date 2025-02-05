@@ -15,7 +15,7 @@ const Education = () => {
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeInOut" }}
-                    className="text-4xl font-bold text-black font-poppins"
+                    className="text-3xl font-bold text-black font-poppins"
                 >
                     Education
                 </motion.h2>

@@ -7,7 +7,7 @@ const About = () => {
             <div className="container px-6 mx-auto text-center md:px-12 lg:px-20 md:text-left">
                 {/* Heading */}
                 <motion.h2
-                    className="mb-8 text-4xl font-bold text-gray-800 text-start font-poppins"
+                    className="mb-8 text-3xl font-bold text-gray-800 text-start font-poppins"
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeInOut" }}
