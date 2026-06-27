@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+    app:
+        build:
+            context: ..
+            dockerfile: docker/Dockerfile
+            args:
+                # Set this to your machine's local IP so the app works on the network
+                - NEXT_PUBLIC_URL=${NEXT_PUBLIC_URL:-http://localhost:3000}
+        container_name: portfolio_app
+        restart: unless-stopped
+        ports:
+            - "3000:3000"
+        environment:
+            - MONGODB_URI=${MONGODB_URI}
+            - JWT_SECRET=${JWT_SECRET}
+            - NEXT_PUBLIC_URL=${NEXT_PUBLIC_URL:-http://localhost:3000}
+            - NEXT_PUBLIC_ANALYTICS_ENABLED=${NEXT_PUBLIC_ANALYTICS_ENABLED:-false}
+            - BLOB_READ_WRITE_TOKEN=${BLOB_READ_WRITE_TOKEN:-}
+        networks:
+            - portfolio_net
+
+networks:
+    portfolio_net:
+        driver: bridge
