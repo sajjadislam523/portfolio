@@ -15,7 +15,7 @@ import {
     Zap,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface Command {
     id: string;
@@ -31,7 +31,6 @@ export function CommandPalette({ resumeUrl }: { resumeUrl?: string }) {
     const [query, setQuery] = useState("");
     const [selectedIdx, setSelectedIdx] = useState(0);
     const router = useRouter();
-    const [isPending, startTransition] = useTransition();
 
     const navigate = useCallback(
         (path: string) => {
@@ -99,9 +98,7 @@ export function CommandPalette({ resumeUrl }: { resumeUrl?: string }) {
             action: () => {
                 setOpen(false);
                 applyThemeToDOM(theme as ThemeName);
-                startTransition(() => {
-                    void updateActiveTheme(theme);
-                });
+                void updateActiveTheme(theme);
             },
         })),
     ];
@@ -114,10 +111,7 @@ export function CommandPalette({ resumeUrl }: { resumeUrl?: string }) {
           )
         : commands;
 
-    // Reset selection when results change
-    useEffect(() => {
-        setSelectedIdx(0);
-    }, [query]);
+    const clampedIdx = Math.min(selectedIdx, Math.max(0, filtered.length - 1));
 
     // Keyboard shortcut
     useEffect(() => {
@@ -140,13 +134,13 @@ export function CommandPalette({ resumeUrl }: { resumeUrl?: string }) {
                 e.preventDefault();
                 setSelectedIdx((i) => Math.max(i - 1, 0));
             }
-            if (e.key === "Enter" && filtered[selectedIdx]) {
-                filtered[selectedIdx].action();
+            if (e.key === "Enter" && filtered[clampedIdx]) {
+                filtered[clampedIdx].action();
             }
         }
         window.addEventListener("keydown", onKey);
         return () => window.removeEventListener("keydown", onKey);
-    }, [open, filtered, selectedIdx]);
+    }, [open, filtered, selectedIdx, clampedIdx]);
 
     // Group commands for display
     const groups = filtered.reduce<Record<string, Command[]>>((acc, cmd) => {
@@ -166,7 +160,7 @@ export function CommandPalette({ resumeUrl }: { resumeUrl?: string }) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.15 }}
-                        className="fixed inset-0 z-[100]"
+                        className="fixed inset-0 z-100"
                         style={{
                             background: "rgba(0,0,0,0.6)",
                             backdropFilter: "blur(4px)",
@@ -185,7 +179,7 @@ export function CommandPalette({ resumeUrl }: { resumeUrl?: string }) {
                             stiffness: 400,
                             damping: 30,
                         }}
-                        className="fixed top-[20vh] left-1/2 -translate-x-1/2 z-[101] w-full max-w-md rounded-xl overflow-hidden shadow-2xl"
+                        className="fixed top-[20vh] left-1/2 -translate-x-1/2 z-101 w-full max-w-md rounded-xl overflow-hidden shadow-2xl"
                         style={{
                             background: "var(--bg-elevated)",
                             border: "1px solid var(--border-strong)",
@@ -244,7 +238,7 @@ export function CommandPalette({ resumeUrl }: { resumeUrl?: string }) {
                                             const globalIdx =
                                                 filtered.indexOf(cmd);
                                             const isActive =
-                                                globalIdx === selectedIdx;
+                                                globalIdx === clampedIdx;
                                             return (
                                                 <button
                                                     key={cmd.id}

@@ -11,7 +11,7 @@
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)](https://docker.com)
 [![Vercel](https://img.shields.io/badge/Vercel-black?style=flat-square&logo=vercel)](https://vercel.com)
 
-[Live Site](https://sajjadulislam.vercel.app) · [Admin Panel](https://sajjadulislam.vercel.app/admin) · [Report a Bug](https://github.com/sajjadulislam523/portfolio-v2/issues)
+[Live Site](https://sajjadulislam.vercel.app) · [Admin Panel](https://sajjadulislam.vercel.app/admin) · [Report a Bug](https://github.com/sajjadulislam523/portfolio/issues)
 
 </div>
 
@@ -97,8 +97,8 @@ Inspired by the design language of Linear, Vercel, Stripe, and Raycast.
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/sajjadulislam523/portfolio-v2.git
-cd portfolio-v2
+git clone https://github.com/sajjadulislam523/portfolio.git
+cd portfolio
 npm install
 ```
 
@@ -304,6 +304,6 @@ MIT — feel free to use this as inspiration, but please don't deploy it as-is w
 
 Designed & built with ❤️ by **Sajjadul Islam**
 
-[sajjadulislam.vercel.app](https://sajjadulislam.vercel.app) · [GitHub](https://github.com/sajjadulislam523) · [LinkedIn](https://linkedin.com/in/sajjadulislam)
+[sajjadulislam.vercel.app](https://sajjadulislam.vercel.app) · [GitHub](https://github.com/sajjadislam523) · [LinkedIn](https://linkedin.com/in/sajjadislam523)
 
 </div>
