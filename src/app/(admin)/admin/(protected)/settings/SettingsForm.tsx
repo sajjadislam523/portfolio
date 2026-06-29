@@ -21,6 +21,9 @@ export function SettingsForm({ settings }: SettingsFormProps) {
     const [socialLinks, setSocialLinks] = useState<ISocialLink[]>(
         settings?.socialLinks ?? [],
     );
+    const [availableForWork, setAvailableForWork] = useState(
+        settings?.availableForWork ?? true,
+    );
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -31,6 +34,8 @@ export function SettingsForm({ settings }: SettingsFormProps) {
         for (const [k, v] of base.entries()) {
             fd.append(k, v);
         }
+        // Inject controlled checkbox value — avoids the hidden+checkbox double-value bug
+        fd.set("availableForWork", availableForWork ? "true" : "false");
         socialLinks.forEach((link, i) => {
             fd.append(`socialLinks[${i}].platform`, link.platform);
             fd.append(`socialLinks[${i}].url`, link.url);
@@ -151,27 +156,52 @@ export function SettingsForm({ settings }: SettingsFormProps) {
                     />
                 </FormField>
                 <div className="flex items-center gap-3">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                            name="availableForWork"
-                            type="hidden"
-                            value="false"
-                        />
-                        <input
-                            name="availableForWork"
-                            type="checkbox"
-                            value="true"
-                            defaultChecked={s?.availableForWork ?? true}
-                            className="w-4 h-4 rounded"
-                            style={{ accentColor: "var(--accent)" }}
-                        />
+                    <button
+                        type="button"
+                        role="switch"
+                        aria-checked={availableForWork}
+                        onClick={() => setAvailableForWork((v) => !v)}
+                        className="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 shrink-0"
+                        style={{
+                            background: availableForWork
+                                ? "var(--accent)"
+                                : "var(--bg-subtle)",
+                            border: "1px solid var(--border)",
+                        }}
+                    >
                         <span
-                            className="text-sm"
-                            style={{ color: "var(--text-secondary)" }}
-                        >
-                            Available for work
-                        </span>
-                    </label>
+                            className="inline-block h-3.5 w-3.5 rounded-full transition-transform duration-200"
+                            style={{
+                                background: "#fff",
+                                transform: availableForWork
+                                    ? "translateX(18px)"
+                                    : "translateX(2px)",
+                                boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
+                            }}
+                        />
+                    </button>
+                    <span
+                        className="text-sm"
+                        style={{ color: "var(--text-secondary)" }}
+                    >
+                        Available for work
+                    </span>
+                    <span
+                        className="text-xs px-2 py-0.5 rounded-full"
+                        style={{
+                            background: availableForWork
+                                ? "rgba(34,197,94,0.1)"
+                                : "var(--bg-subtle)",
+                            color: availableForWork
+                                ? "#22C55E"
+                                : "var(--text-tertiary)",
+                            border: `1px solid ${availableForWork ? "rgba(34,197,94,0.25)" : "var(--border)"}`,
+                        }}
+                    >
+                        {availableForWork
+                            ? "Open to opportunities"
+                            : "Not available"}
+                    </span>
                 </div>
             </Section>
 
@@ -237,7 +267,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
                             <button
                                 type="button"
                                 onClick={() => removeSocialLink(idx)}
-                                className="mb-0 p-2 rounded-lg cursor-pointer"
+                                className="mb-0 p-2 rounded-lg"
                                 style={{ color: "#EF4444" }}
                             >
                                 <Trash2 className="w-4 h-4" />
@@ -247,7 +277,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
                     <button
                         type="button"
                         onClick={addSocialLink}
-                        className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors w-fit cursor-pointer"
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors w-fit"
                         style={{
                             color: "var(--accent)",
                             background: "var(--accent-glow)",

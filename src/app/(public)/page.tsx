@@ -4,11 +4,14 @@ import { TechMarquee } from "@/components/sections/hero/TechMarquee";
 import { JsonLdPerson } from "@/components/shared/JsonLd";
 import { connectDB, Experience, Project, SiteSettings } from "@/lib/db";
 import type { IExperience, IProject, ISiteSettings } from "@/types";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, FileText } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
-export const revalidate = 60;
+// Cache the homepage at the edge for 5 minutes.
+// This means Vercel serves it from CDN on cold starts instead of
+// hitting the serverless function + MongoDB every time.
+export const revalidate = 300;
 
 async function getData() {
     try {
@@ -158,7 +161,7 @@ export default async function HomePage() {
                             )}
 
                             {/* CTAs */}
-                            <div className="flex flex-wrap items-center gap-3 mb-10">
+                            <div className="flex flex-wrap items-center gap-3 mb-6">
                                 <Link
                                     href="/projects"
                                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-opacity hover:opacity-90"
@@ -222,12 +225,13 @@ export default async function HomePage() {
                                         href={resumeUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="text-xs transition-colors hover:opacity-80"
+                                        className="flex items-center gap-1.5 text-xs transition-colors hover:opacity-80"
                                         style={{
                                             color: "var(--text-tertiary)",
                                         }}
                                     >
-                                        Resume ↗
+                                        <FileText className="w-3.5 h-3.5" />
+                                        Resume
                                     </a>
                                 )}
                             </div>
