@@ -13,7 +13,6 @@ export default async function AdminLayout({
     children: React.ReactNode;
 }) {
     const session = await getSession();
-    console.log("AdminLayout session:", session);
 
     // Double-check server-side — proxy handles it too, but defence in depth
     if (!session) {
@@ -22,12 +21,12 @@ export default async function AdminLayout({
 
     return (
         <div
-            className="flex min-h-screen"
+            className="flex h-screen overflow-hidden"
             style={{ background: "var(--bg-primary)" }}
         >
             <AdminSidebar />
 
-            <div className="flex flex-col flex-1 min-w-0">
+            <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
                 {/* Top bar */}
                 <header
                     className="flex items-center justify-between px-6 h-14 border-b shrink-0"
@@ -51,8 +50,8 @@ export default async function AdminLayout({
                     </div>
                 </header>
 
-                {/* Page content */}
-                <main className="flex-1 p-6 overflow-auto">{children}</main>
+                {/* Page content — only this area scrolls */}
+                <main className="flex-1 p-6 overflow-y-auto">{children}</main>
             </div>
         </div>
     );
