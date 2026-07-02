@@ -7,17 +7,24 @@ import {
     inputClass,
     textareaClass,
 } from "@/components/admin/FormField";
+import { ResumeManager } from "@/components/admin/ResumeManager";
 import { updateSiteSettings } from "@/features/settings/actions";
-import type { ISiteSettings, ISocialLink } from "@/types";
+import type { IResumeVersion, ISiteSettings, ISocialLink } from "@/types";
 import { Plus, Trash2 } from "lucide-react";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
 interface SettingsFormProps {
     settings: ISiteSettings | null;
+    resumeVersions: IResumeVersion[];
+    activeResumeUrl: string;
 }
 
-export function SettingsForm({ settings }: SettingsFormProps) {
+export function SettingsForm({
+    settings,
+    resumeVersions,
+    activeResumeUrl,
+}: SettingsFormProps) {
     const [isPending, startTransition] = useTransition();
 
     // Social links — managed in state so rows can be added/removed
@@ -156,12 +163,16 @@ export function SettingsForm({ settings }: SettingsFormProps) {
                 </div>
 
                 {/* Resume upload */}
-                <FileUpload
+                {/* <FileUpload
                     purpose="resume"
                     currentUrl={resumeUrl}
                     onUploadComplete={setResumeUrl}
                     label="Resume (PDF)"
                     hint="Uploaded file is publicly accessible via CDN. Max 5MB."
+                /> */}
+                <ResumeManager
+                    versions={resumeVersions}
+                    activeUrl={activeResumeUrl}
                 />
 
                 {/* Availability toggle */}
