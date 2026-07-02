@@ -1,6 +1,7 @@
 "use client";
 
 import { AdminButton } from "@/components/admin/AdminButton";
+import { FileUpload } from "@/components/admin/FileUpload";
 import {
     FormField,
     inputClass,
@@ -18,24 +19,35 @@ interface SettingsFormProps {
 
 export function SettingsForm({ settings }: SettingsFormProps) {
     const [isPending, startTransition] = useTransition();
+
+    // Social links — managed in state so rows can be added/removed
     const [socialLinks, setSocialLinks] = useState<ISocialLink[]>(
         settings?.socialLinks ?? [],
     );
+
+    // Availability toggle — controlled to fix the hidden+checkbox bug
     const [availableForWork, setAvailableForWork] = useState(
         settings?.availableForWork ?? true,
     );
 
+    // File URLs — managed in state so FileUpload can update them
+    const [resumeUrl, setResumeUrl] = useState(settings?.resumeUrl ?? "");
+    const [ogImageUrl, setOgImageUrl] = useState(settings?.seo?.ogImage ?? "");
+
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const base = new FormData(e.currentTarget);
-
-        // Inject social links manually since they're managed in state
         const fd = new FormData();
+
         for (const [k, v] of base.entries()) {
             fd.append(k, v);
         }
-        // Inject controlled checkbox value — avoids the hidden+checkbox double-value bug
+
+        // Inject controlled values — not safe to rely on hidden inputs
         fd.set("availableForWork", availableForWork ? "true" : "false");
+        fd.set("resumeUrl", resumeUrl);
+        fd.set("seo.ogImage", ogImageUrl);
+
         socialLinks.forEach((link, i) => {
             fd.append(`socialLinks[${i}].platform`, link.platform);
             fd.append(`socialLinks[${i}].url`, link.url);
@@ -142,19 +154,17 @@ export function SettingsForm({ settings }: SettingsFormProps) {
                         />
                     </FormField>
                 </div>
-                <FormField
-                    label="Resume URL"
-                    name="resumeUrl"
-                    hint="Direct link to your PDF resume"
-                >
-                    <input
-                        name="resumeUrl"
-                        type="url"
-                        defaultValue={s?.resumeUrl}
-                        placeholder="https://..."
-                        className={inputClass}
-                    />
-                </FormField>
+
+                {/* Resume upload */}
+                <FileUpload
+                    purpose="resume"
+                    currentUrl={resumeUrl}
+                    onUploadComplete={setResumeUrl}
+                    label="Resume (PDF)"
+                    hint="Uploaded file is publicly accessible via CDN. Max 5MB."
+                />
+
+                {/* Availability toggle */}
                 <div className="flex items-center gap-3">
                     <button
                         type="button"
@@ -316,19 +326,16 @@ export function SettingsForm({ settings }: SettingsFormProps) {
                         maxLength={160}
                     />
                 </FormField>
-                <FormField
-                    label="OG image URL"
-                    name="seo.ogImage"
-                    hint="1200×630 image for social sharing"
-                >
-                    <input
-                        name="seo.ogImage"
-                        type="url"
-                        defaultValue={s?.seo.ogImage}
-                        placeholder="https://..."
-                        className={inputClass}
-                    />
-                </FormField>
+
+                {/* OG image upload */}
+                <FileUpload
+                    purpose="og"
+                    currentUrl={ogImageUrl}
+                    onUploadComplete={setOgImageUrl}
+                    label="OG image"
+                    hint="Used for social sharing previews. Recommended size: 1200×630px."
+                />
+
                 <FormField
                     label="Keywords"
                     name="seo.keywords"
@@ -343,7 +350,6 @@ export function SettingsForm({ settings }: SettingsFormProps) {
                 </FormField>
             </Section>
 
-            {/* ── Active theme (hidden — managed from /admin/themes) ── */}
             <input
                 type="hidden"
                 name="activeTheme"
