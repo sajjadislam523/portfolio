@@ -66,6 +66,7 @@ export default async function ContactPage() {
                             href={`mailto:${settings.email}`}
                             className="inline-flex items-center gap-1.5 text-sm mb-12 transition-opacity hover:opacity-70"
                             style={{ color: "var(--accent)" }}
+                            aria-label={`Email ${settings.email}`}
                         >
                             {settings.email} ↗
                         </a>
