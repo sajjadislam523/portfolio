@@ -8,7 +8,7 @@ import {
     textareaClass,
 } from "@/components/admin/FormField";
 import { ResumeManager } from "@/components/admin/ResumeManager";
-import { updateSiteSettings } from "@/features/settings/actions";
+import { updateOgImage, updateSiteSettings } from "@/features/settings/actions";
 import type { IResumeVersion, ISiteSettings, ISocialLink } from "@/types";
 import { Plus, Trash2 } from "lucide-react";
 import { useState, useTransition } from "react";
@@ -67,6 +67,18 @@ export function SettingsForm({
                 toast.error(result.error);
             } else {
                 toast.success("Settings saved");
+            }
+        });
+    }
+
+    function handleOgImageUpload(url: string) {
+        setOgImageUrl(url);
+        startTransition(async () => {
+            const result = await updateOgImage(url);
+            if (result.error) {
+                toast.error(result.error);
+            } else {
+                toast.success("OG image saved");
             }
         });
     }
@@ -163,13 +175,6 @@ export function SettingsForm({
                 </div>
 
                 {/* Resume upload */}
-                {/* <FileUpload
-                    purpose="resume"
-                    currentUrl={resumeUrl}
-                    onUploadComplete={setResumeUrl}
-                    label="Resume (PDF)"
-                    hint="Uploaded file is publicly accessible via CDN. Max 5MB."
-                /> */}
                 <ResumeManager
                     versions={resumeVersions}
                     activeUrl={activeResumeUrl}
@@ -342,7 +347,7 @@ export function SettingsForm({
                 <FileUpload
                     purpose="og"
                     currentUrl={ogImageUrl}
-                    onUploadComplete={setOgImageUrl}
+                    onUploadComplete={handleOgImageUpload}
                     label="OG image"
                     hint="Used for social sharing previews. Recommended size: 1200×630px."
                 />
