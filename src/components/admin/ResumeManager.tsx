@@ -2,8 +2,10 @@
 
 import {
     deleteResumeVersion,
-    setActiveResume,
+    recordResumeUpload,
+    setActiveResumeUrl,
 } from "@/features/settings/resumeActions";
+import type { IResumeVersion } from "@/types";
 import {
     CheckCircle,
     Clock,
@@ -17,17 +19,8 @@ import {
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
-interface ResumeVersion {
-    url: string;
-    filename: string;
-    size: number;
-    uploadedAt: string;
-    label: string;
-    isActive: boolean;
-}
-
 interface ResumeManagerProps {
-    versions: ResumeVersion[];
+    versions: IResumeVersion[];
     activeUrl: string;
 }
 
@@ -46,18 +39,18 @@ function formatDate(iso: string): string {
 }
 
 export function ResumeManager({
-    versions: initialVersions,
-    activeUrl: initialActiveUrl,
+    versions: initial,
+    activeUrl: initialActive,
 }: ResumeManagerProps) {
-    const [versions, setVersions] = useState<ResumeVersion[]>(initialVersions);
-    const [activeUrl, setActiveUrl] = useState(initialActiveUrl);
+    const [versions, setVersions] = useState<IResumeVersion[]>(initial);
+    const [activeUrl, setActiveUrl] = useState(initialActive);
     const [uploading, setUploading] = useState(false);
     const [labelInput, setLabelInput] = useState("");
     const [dragOver, setDragOver] = useState(false);
-    const [isPending, startTransition] = useTransition();
+    const [, startTransition] = useTransition();
 
     async function handleUpload(file: File) {
-        if (!file || file.type !== "application/pdf") {
+        if (file.type !== "application/pdf") {
             toast.error("Only PDF files are allowed");
             return;
         }
@@ -70,7 +63,6 @@ export function ResumeManager({
         const fd = new FormData();
         fd.append("file", file);
         fd.append("purpose", "resume");
-        fd.append("label", labelInput.trim() || file.name.replace(".pdf", ""));
 
         try {
             const res = await fetch("/api/upload", {
@@ -78,22 +70,22 @@ export function ResumeManager({
                 body: fd,
             });
             const data = await res.json();
-
             if (!res.ok) {
                 toast.error(data.error ?? "Upload failed");
                 return;
             }
 
-            // Add to list and set as active
-            const newVersion: ResumeVersion = {
+            const label = labelInput.trim() || file.name.replace(/\.pdf$/i, "");
+            const newVersion: IResumeVersion = {
                 url: data.url,
+                label,
                 filename: file.name,
                 size: file.size,
                 uploadedAt: new Date().toISOString(),
-                label: labelInput.trim() || file.name.replace(".pdf", ""),
                 isActive: true,
             };
 
+            // Optimistically update UI
             setVersions((prev) => [
                 newVersion,
                 ...prev.map((v) => ({ ...v, isActive: false })),
@@ -101,9 +93,9 @@ export function ResumeManager({
             setActiveUrl(data.url);
             setLabelInput("");
 
-            // Persist active URL to DB
+            // Persist to DB
             startTransition(async () => {
-                await setActiveResume(data.url, newVersion.label);
+                await recordResumeUpload(data.url, label, file.name, file.size);
             });
 
             toast.success("Resume uploaded and set as active");
@@ -114,55 +106,51 @@ export function ResumeManager({
         }
     }
 
-    async function handleSetActive(version: ResumeVersion) {
+    function handleSetActive(version: IResumeVersion) {
         setActiveUrl(version.url);
         setVersions((prev) =>
             prev.map((v) => ({ ...v, isActive: v.url === version.url })),
         );
         startTransition(async () => {
-            await setActiveResume(version.url, version.label);
+            await setActiveResumeUrl(version.url);
         });
-        toast.success(`"${version.label}" set as active resume`);
+        toast.success(`"${version.label}" set as active`);
     }
 
-    async function handleDelete(version: ResumeVersion) {
+    function handleDelete(version: IResumeVersion) {
         if (version.isActive) {
             toast.error(
-                "Cannot delete the active resume. Set another as active first.",
+                "Cannot delete the active resume. Set another active first.",
             );
             return;
         }
-
         setVersions((prev) => prev.filter((v) => v.url !== version.url));
-
         startTransition(async () => {
-            await deleteResumeVersion(version.url);
+            const r = await deleteResumeVersion(version.url);
+            if (r.error) toast.error(r.error);
+            else toast.success("Resume deleted");
         });
-        toast.success("Resume deleted");
     }
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-                <div>
-                    <p
-                        className="text-sm font-medium"
-                        style={{ color: "var(--text-primary)" }}
-                    >
-                        Resume versions
-                    </p>
-                    <p
-                        className="text-xs mt-0.5"
-                        style={{ color: "var(--text-tertiary)" }}
-                    >
-                        {versions.length} version
-                        {versions.length !== 1 ? "s" : ""} · Active resume is
-                        shown to visitors
-                    </p>
-                </div>
+                <p
+                    className="text-sm font-medium"
+                    style={{ color: "var(--text-secondary)" }}
+                >
+                    Resume versions
+                </p>
+                <p
+                    className="text-xs"
+                    style={{ color: "var(--text-tertiary)" }}
+                >
+                    {versions.length} version{versions.length !== 1 ? "s" : ""}{" "}
+                    · Active shown to visitors
+                </p>
             </div>
 
-            {/* Upload area */}
+            {/* Upload drop zone */}
             <div
                 className="rounded-xl transition-all duration-200 cursor-pointer"
                 style={{
@@ -191,11 +179,11 @@ export function ResumeManager({
                 onDrop={(e) => {
                     e.preventDefault();
                     setDragOver(false);
-                    const file = e.dataTransfer.files?.[0];
-                    if (file) handleUpload(file);
+                    const f = e.dataTransfer.files?.[0];
+                    if (f) handleUpload(f);
                 }}
             >
-                {/* Label input row — stops propagation so clicking it doesn't open file picker */}
+                {/* Label input — stop propagation so it doesn't trigger file picker */}
                 <div
                     className="flex gap-2 mb-3"
                     onClick={(e) => e.stopPropagation()}
@@ -213,7 +201,7 @@ export function ResumeManager({
                         />
                         <input
                             type="text"
-                            placeholder='Label (e.g. "MERN focused - June 2026")'
+                            placeholder='Label e.g. "MERN focused - June 2026"'
                             value={labelInput}
                             onChange={(e) => setLabelInput(e.target.value)}
                             className="flex-1 bg-transparent text-xs outline-none"
@@ -289,7 +277,6 @@ export function ResumeManager({
                                 border: `1px solid ${version.isActive ? "var(--accent)" : "var(--border)"}`,
                             }}
                         >
-                            {/* Icon */}
                             <div
                                 className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
                                 style={{
@@ -308,7 +295,6 @@ export function ResumeManager({
                                 />
                             </div>
 
-                            {/* Info */}
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
                                     <p
@@ -331,7 +317,7 @@ export function ResumeManager({
                                         </span>
                                     )}
                                 </div>
-                                <div className="flex items-center gap-2 mt-0.5">
+                                <div className="flex items-center gap-1.5 mt-0.5">
                                     <Clock
                                         className="w-3 h-3"
                                         style={{
@@ -350,7 +336,6 @@ export function ResumeManager({
                                 </div>
                             </div>
 
-                            {/* Actions */}
                             <div className="flex items-center gap-1 shrink-0">
                                 <a
                                     href={version.url}
