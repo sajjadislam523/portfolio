@@ -187,7 +187,7 @@ export function SettingsForm({
                         role="switch"
                         aria-checked={availableForWork}
                         onClick={() => setAvailableForWork((v) => !v)}
-                        className="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 shrink-0"
+                        className="relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 shrink-0 cursor-pointer"
                         style={{
                             background: availableForWork
                                 ? "var(--accent)"
@@ -293,7 +293,7 @@ export function SettingsForm({
                             <button
                                 type="button"
                                 onClick={() => removeSocialLink(idx)}
-                                className="mb-0 p-2 rounded-lg"
+                                className="mb-0 p-2 rounded-lg cursor-pointer"
                                 style={{ color: "#EF4444" }}
                             >
                                 <Trash2 className="w-4 h-4" />
@@ -303,7 +303,7 @@ export function SettingsForm({
                     <button
                         type="button"
                         onClick={addSocialLink}
-                        className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors w-fit"
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors w-fit cursor-pointer"
                         style={{
                             color: "var(--accent)",
                             background: "var(--accent-glow)",
@@ -376,7 +376,11 @@ export function SettingsForm({
                 className="flex gap-3 pt-2 border-t"
                 style={{ borderColor: "var(--border)" }}
             >
-                <AdminButton type="submit" loading={isPending}>
+                <AdminButton
+                    type="submit"
+                    loading={isPending}
+                    className="cursor-pointer"
+                >
                     Save settings
                 </AdminButton>
             </div>

@@ -7,6 +7,8 @@ import { NextRequest } from "next/server";
 const ALLOWED_TYPES = {
     resume: ["application/pdf"],
     og: ["image/jpeg", "image/png", "image/webp"],
+    "project-cover": ["image/jpeg", "image/png", "image/webp"],
+    "project-gallery": ["image/jpeg", "image/png", "image/webp"],
 } as const;
 
 type UploadPurpose = keyof typeof ALLOWED_TYPES;
@@ -37,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     if (!purpose || !(purpose in ALLOWED_TYPES)) {
         return apiError(
-            'Invalid upload purpose. Must be "resume" or "og"',
+            'Invalid upload purpose. Must be "resume", "og", "project-cover", or "project-gallery"',
             400,
         );
     }
@@ -46,7 +48,9 @@ export async function POST(request: NextRequest) {
     const allowedTypes = ALLOWED_TYPES[purpose] as readonly string[];
     if (!allowedTypes.includes(file.type)) {
         return apiError(
-            `Invalid file type. ${purpose === "resume" ? "Only PDF files are allowed." : "Only JPEG, PNG, or WebP images are allowed."}`,
+            purpose === "resume"
+                ? "Only PDF files are allowed."
+                : "Only JPEG, PNG, or WebP images are allowed.",
             400,
         );
     }
@@ -57,15 +61,14 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Sanitise filename ──────────────────────────────────────────────────────
-    // Remove special characters, prepend purpose + timestamp for uniqueness
     const extension = file.name.split(".").pop()?.toLowerCase() ?? "";
     const safeName = `${purpose}-${Date.now()}.${extension}`;
 
     // ── Upload to Vercel Blob ──────────────────────────────────────────────────
     try {
         const blob = await put(safeName, file, {
-            access: "public", // publicly readable URL
-            addRandomSuffix: false, // we handle uniqueness via timestamp
+            access: "public",
+            addRandomSuffix: false,
         });
 
         return Response.json({

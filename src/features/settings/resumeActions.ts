@@ -2,39 +2,37 @@
 
 import { requireSession } from "@/features/auth/session";
 import { connectDB, SiteSettings } from "@/lib/db";
-import { IResumeVersion } from "@/types";
+import type { IResumeVersion } from "@/types";
 import { del } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
 
-// Sets a resume URL as the active one visible to visitors
-export async function setActiveResume(url: string, label: string) {
+// ── recordResumeUpload ────────────────────────────────────────────────────────
+// Called after a NEW file is uploaded to Vercel Blob.
+// Stores full metadata, sets this version as active, deactivates all others.
+export async function recordResumeUpload(
+    url: string,
+    label: string,
+    filename: string,
+    size: number,
+) {
     await requireSession();
     await connectDB();
 
-    // Save the active URL to SiteSettings — this is what the public site reads
+    const newVersion = {
+        url,
+        label,
+        filename,
+        size,
+        uploadedAt: new Date(),
+    };
+
     await SiteSettings.findOneAndUpdate(
         {},
         {
             resumeUrl: url,
-            // Store version history as an array inside SiteSettings
-            $pull: { resumeVersions: { url } }, // remove if exists to avoid duplicates
+            $push: { resumeVersions: newVersion },
         },
         { upsert: true },
-    );
-
-    // Push the version with updated isActive flags
-    await SiteSettings.findOneAndUpdate(
-        {},
-        {
-            $push: {
-                resumeVersions: {
-                    url,
-                    label,
-                    isActive: true,
-                    uploadedAt: new Date(),
-                },
-            },
-        },
     );
 
     revalidatePath("/admin/settings");
@@ -42,20 +40,49 @@ export async function setActiveResume(url: string, label: string) {
     return { success: true };
 }
 
-// Deletes a resume from Vercel Blob and removes it from version history
+// ── setActiveResumeUrl ────────────────────────────────────────────────────────
+// Called when the admin clicks "Set as active" on an EXISTING version.
+// Only updates the active pointer — never mutates version history timestamps.
+export async function setActiveResumeUrl(url: string) {
+    await requireSession();
+    await connectDB();
+
+    await SiteSettings.findOneAndUpdate(
+        {},
+        { resumeUrl: url },
+        { upsert: true },
+    );
+
+    revalidatePath("/admin/settings");
+    revalidatePath("/");
+    return { success: true };
+}
+
+// ── deleteResumeVersion ───────────────────────────────────────────────────────
+// Deletes a resume from Vercel Blob and removes it from version history.
+// Guarded in the UI so the active version cannot be deleted — but we
+// double-check here for safety.
 export async function deleteResumeVersion(url: string) {
     await requireSession();
+    await connectDB();
+
+    const settings = (await SiteSettings.findOne({})
+        .select("resumeUrl")
+        .lean()) as any;
+    if (settings?.resumeUrl === url) {
+        return {
+            error: "Cannot delete the active resume. Set another version as active first.",
+        };
+    }
 
     // Delete from Vercel Blob
     try {
         await del(url);
     } catch (err) {
         console.error("[deleteResumeVersion] blob delete failed:", err);
-        // Continue — remove from DB even if blob delete fails
+        // Continue — remove from DB even if blob delete fails (blob may already be gone)
     }
 
-    // Remove from version history in DB
-    await connectDB();
     await SiteSettings.findOneAndUpdate(
         {},
         { $pull: { resumeVersions: { url } } },
@@ -65,15 +92,8 @@ export async function deleteResumeVersion(url: string) {
     return { success: true };
 }
 
-function formatDate(iso: string): string {
-    return new Intl.DateTimeFormat("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-    }).format(new Date(iso));
-}
-
-// Fetches all resume versions from DB
+// ── getResumeVersions ─────────────────────────────────────────────────────────
+// Returns all resume versions sorted newest-first with isActive computed.
 export async function getResumeVersions(): Promise<{
     versions: IResumeVersion[];
     activeUrl: string;
@@ -81,18 +101,23 @@ export async function getResumeVersions(): Promise<{
     await requireSession();
     await connectDB();
 
-    const settings = await SiteSettings.findOne({})
+    const settings = (await SiteSettings.findOne({})
         .select("resumeUrl resumeVersions")
-        .lean();
+        .lean()) as any;
 
-    const versions = (settings?.resumeVersions ?? [])
-        .map((v: IResumeVersion) => ({
+    const activeUrl = settings?.resumeUrl ?? "";
+
+    const versions: IResumeVersion[] = (settings?.resumeVersions ?? [])
+        .map((v: any) => ({
             url: v.url,
-            label: v.label,
+            label: v.label ?? "",
+            filename: v.filename ?? v.label ?? "",
             size: v.size ?? 0,
-            uploadedAt: formatDate(v.uploadedAt),
-            isActive: settings?.resumeUrl === v.url,
-            filename: v.filename ?? v.label,
+            uploadedAt:
+                v.uploadedAt instanceof Date
+                    ? v.uploadedAt.toISOString()
+                    : (v.uploadedAt ?? new Date().toISOString()),
+            isActive: activeUrl === v.url,
         }))
         .sort(
             (a: IResumeVersion, b: IResumeVersion) =>
@@ -100,8 +125,5 @@ export async function getResumeVersions(): Promise<{
                 new Date(a.uploadedAt).getTime(),
         );
 
-    return {
-        versions,
-        activeUrl: settings?.resumeUrl ?? "",
-    };
+    return { versions, activeUrl };
 }

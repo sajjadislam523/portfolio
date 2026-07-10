@@ -1,12 +1,14 @@
 import { FadeIn } from "@/components/motion/ScrollReveal";
-import { connectDB, Project } from "@/lib/db";
+import { ProjectGallery } from "@/components/sections/projects/ProjectGallery";
+import { connectDB, Project, SiteSettings } from "@/lib/db";
 import type { IProject } from "@/types";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export const revalidate = 60;
+export const revalidate = 300;
 
 async function getProject(slug: string): Promise<IProject | null> {
     try {
@@ -38,9 +40,40 @@ export async function generateMetadata({
     const { slug } = await params;
     const project = await getProject(slug);
     if (!project) return { title: "Project not found" };
+
+    // Fall back to site-wide OG image if project has no cover
+    let fallbackOg = "";
+    try {
+        await connectDB();
+        const s = (await SiteSettings.findOne({}).select("seo").lean()) as any;
+        fallbackOg = s?.seo?.ogImage ?? "";
+    } catch {}
+
+    const ogImage = project.coverImage || fallbackOg;
+
     return {
         title: project.title,
         description: project.tagline,
+        openGraph: {
+            title: project.title,
+            description: project.tagline,
+            images: ogImage
+                ? [
+                      {
+                          url: ogImage,
+                          width: 1200,
+                          height: 630,
+                          alt: project.title,
+                      },
+                  ]
+                : [],
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: project.title,
+            description: project.tagline,
+            images: ogImage ? [ogImage] : [],
+        },
     };
 }
 
@@ -52,6 +85,8 @@ export default async function ProjectDetailPage({
     const { slug } = await params;
     const project = await getProject(slug);
     if (!project) notFound();
+
+    const hasGallery = (project.images?.length ?? 0) > 0;
 
     return (
         <div className="pt-28 pb-24">
@@ -66,8 +101,28 @@ export default async function ProjectDetailPage({
                 </Link>
 
                 <FadeIn>
+                    {/* Cover image — full-width hero at top of detail page */}
+                    {project.coverImage && !hasGallery && (
+                        <div
+                            className="relative rounded-xl overflow-hidden mb-8"
+                            style={{
+                                aspectRatio: "16/9",
+                                border: "1px solid var(--border)",
+                            }}
+                        >
+                            <Image
+                                src={project.coverImage}
+                                alt={project.title}
+                                fill
+                                className="object-cover"
+                                priority
+                                sizes="(max-width: 768px) 100vw, 672px"
+                            />
+                        </div>
+                    )}
+
                     {/* Header */}
-                    <div className="mb-10">
+                    <div className="mb-8">
                         <div className="flex items-start justify-between gap-4 mb-3">
                             <h1
                                 className="text-h1 leading-tight"
@@ -83,7 +138,7 @@ export default async function ProjectDetailPage({
                             </span>
                         </div>
                         <p
-                            className="text-base mb-6"
+                            className="text-base mb-5"
                             style={{ color: "var(--text-secondary)" }}
                         >
                             {project.tagline}
@@ -130,10 +185,21 @@ export default async function ProjectDetailPage({
                             )}
                         </div>
                     </div>
+
                     <hr style={{ borderColor: "var(--border)" }} />
                 </FadeIn>
 
-                {/* Content — no animation, always visible */}
+                {/* Gallery slider — shown when project has gallery images */}
+                {hasGallery && (
+                    <div className="mt-8">
+                        <ProjectGallery
+                            images={project.images!}
+                            title={project.title}
+                        />
+                    </div>
+                )}
+
+                {/* Content sections — no animation, always visible */}
                 {project.overview && (
                     <div className="my-10">
                         <Section title="Overview" content={project.overview} />

@@ -23,6 +23,8 @@ export interface IProject {
     solutions: string;
     architectureDiagram?: string;
     technologies: string[];
+    coverImage?: string;
+    images?: string[];
     links: {
         live?: string;
         github?: string;
