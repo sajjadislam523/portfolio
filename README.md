@@ -294,6 +294,30 @@ src/
 
 ---
 
+## 🛠️ Local Development & Automation
+
+This project uses a custom, repository-isolated workflow to keep branches synchronized cleanly without cluttering the commit history.
+
+### 🔄 The `git syncdev` Command
+
+To pull down the latest stable updates from `main` and cleanly update your local workspace in one go, simply run:
+
+```bash
+git syncdev
+```
+
+_(This automatically switches to `main`, pulls changes, switches back to `development`, and rebases your work.)_
+
+### ⚙️ One-Time Setup (Restoration)
+
+If you ever clone this repository onto a new machine or reinstall your OS, restore this shortcut locally by running this command in your project terminal:
+
+```bash
+git config alias.syncdev "!git checkout main && git pull && git checkout development && git rebase main"
+```
+
+---
+
 ## License
 
 MIT — feel free to use this as inspiration, but please don't deploy it as-is with someone else's content.
