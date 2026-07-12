@@ -1,20 +1,63 @@
 "use client";
 
+import Image from "next/image";
+
 interface TechMarqueeProps {
     techs: string[];
 }
 
-// Icon-like colored dots per category — purely decorative accent
-const ACCENT_COLORS = [
-    "var(--accent)",
-    "#38BDF8",
-    "#22C55E",
-    "#F59E0B",
-    "#EC4899",
-    "#A78BFA",
-    "#FB7185",
-    "#34D399",
-];
+const ICON_SLUGS: Record<string, string> = {
+    "React.js": "react",
+    "Next.js": "nextdotjs",
+    TypeScript: "typescript",
+    TailwindCSS: "tailwindcss",
+    "Node.js": "nodedotjs",
+    "Express.js": "express",
+    MongoDB: "mongodb",
+    JWT: "jsonwebtokens",
+    Stripe: "stripe",
+    "TanStack Query": "reactquery",
+    Docker: "docker",
+    Vercel: "vercel",
+    "shadcn/ui": "shadcnui",
+    "Framer Motion": "framer",
+    Git: "git",
+    "Git & GitHub": "git",
+    GitHub: "github",
+    Figma: "figma",
+    Postman: "postman",
+    Vite: "vite",
+    Firebase: "firebase",
+    Netlify: "netlify",
+    Axios: "axios",
+    "Material-UI": "mui",
+    Mongoose: "mongoose",
+    Hostinger: "hostinger",
+};
+
+// Icon color matches --text-tertiary in Midnight theme — muted and consistent
+const ICON_COLOR = "6b6b76";
+
+function TechIcon({ tech }: { tech: string }) {
+    const slug = ICON_SLUGS[tech];
+    if (!slug) return null;
+
+    return (
+        <Image
+            src={`https://cdn.simpleicons.org/${slug}/${ICON_COLOR}`}
+            alt={`${tech} icon`}
+            width={14}
+            height={14}
+            className="shrink-0"
+            style={{ opacity: 0.85 }}
+            unoptimized
+            // unoptimized because:
+            // 1. These are tiny 14×14 SVGs — no benefit from Next.js image optimization
+            // 2. The CDN already serves them optimally as SVGs
+            // 3. Avoids Vercel image optimization usage/cost for decorative icons
+        />
+    );
+}
 
 export function TechMarquee({ techs }: TechMarqueeProps) {
     const doubled = [...techs, ...techs];
@@ -44,48 +87,38 @@ export function TechMarquee({ techs }: TechMarqueeProps) {
             <div
                 className="flex items-center w-max"
                 style={{
-                    animation: "marquee 35s linear infinite",
+                    animation: "marquee 40s linear infinite",
                     willChange: "transform",
-                    gap: "0",
                 }}
             >
-                {doubled.map((tech, i) => {
-                    const color = ACCENT_COLORS[i % ACCENT_COLORS.length];
-                    return (
-                        <div
-                            key={`${tech}-${i}`}
-                            className="inline-flex items-center"
-                            style={{ paddingInline: "20px" }}
+                {doubled.map((tech, i) => (
+                    <div
+                        key={`${tech}-${i}`}
+                        className="inline-flex items-center"
+                        style={{ paddingInline: "10px" }}
+                    >
+                        <span
+                            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium"
+                            style={{
+                                background: "var(--bg-elevated)",
+                                border: "1px solid var(--border)",
+                                color: "var(--text-secondary)",
+                                whiteSpace: "nowrap",
+                            }}
                         >
-                            {/* Pill */}
-                            <span
-                                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium"
-                                style={{
-                                    background: "var(--bg-elevated)",
-                                    border: "1px solid var(--border)",
-                                    color: "var(--text-secondary)",
-                                    whiteSpace: "nowrap",
-                                }}
-                            >
-                                {/* Colored dot accent */}
-                                <span
-                                    className="w-1.5 h-1.5 rounded-full shrink-0"
-                                    style={{ background: color, opacity: 0.85 }}
-                                />
-                                {tech}
-                            </span>
+                            <TechIcon tech={tech} />
+                            {tech}
+                        </span>
 
-                            {/* Separator dot between pills */}
-                            <span
-                                className="ml-5 w-1 h-1 rounded-full shrink-0"
-                                style={{
-                                    background: "var(--border-strong)",
-                                    opacity: 0.5,
-                                }}
-                            />
-                        </div>
-                    );
-                })}
+                        <span
+                            className="ml-5 w-1 h-1 rounded-full shrink-0"
+                            style={{
+                                background: "var(--border-strong)",
+                                opacity: 0.4,
+                            }}
+                        />
+                    </div>
+                ))}
             </div>
 
             <style>{`
@@ -94,7 +127,7 @@ export function TechMarquee({ techs }: TechMarqueeProps) {
           to   { transform: translateX(-50%); }
         }
         @media (prefers-reduced-motion: reduce) {
-          .marquee { animation: none; }
+          [style*="animation: marquee"] { animation: none; }
         }
       `}</style>
         </div>
