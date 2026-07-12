@@ -289,7 +289,7 @@ src/
 | `ADMIN_EMAIL`                   | ✅ (seed) | Admin login email                      |
 | `ADMIN_PASSWORD`                | ✅ (seed) | Admin password — hashed by seed script |
 | `NEXT_PUBLIC_URL`               | ✅        | Full deployment URL, no trailing slash |
-| `BLOB_READ_WRITE_TOKEN`         | ⚪        | Vercel Blob for resume/image uploads   |
+| `BLOB_READ_WRITE_TOKEN`         | ✅        | Vercel Blob for resume/image uploads   |
 | `NEXT_PUBLIC_ANALYTICS_ENABLED` | ⚪        | Enable page view tracking              |
 
 ---

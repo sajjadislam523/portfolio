@@ -26,6 +26,8 @@ const nextConfig: NextConfig = {
             { protocol: "https", hostname: "github.com" },
             { protocol: "https", hostname: "raw.githubusercontent.com" },
             { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
+            // Simple Icons CDN — used for tech stack icons in TechMarquee
+            { protocol: "https", hostname: "cdn.simpleicons.org" },
         ],
     },
 
