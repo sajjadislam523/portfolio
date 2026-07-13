@@ -138,6 +138,7 @@ export interface ThemeTokens {
     accent: string;
     accentGlow: string;
     accentForeground: string;
+    iconBrightness: string;
 }
 
 // ─── API Response Types ───────────────────────────────────────────────────────

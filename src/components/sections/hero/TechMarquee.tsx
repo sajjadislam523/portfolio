@@ -36,7 +36,7 @@ const ICON_SLUGS: Record<string, string> = {
 };
 
 // Icon color matches --text-tertiary in Midnight theme — muted and consistent
-const ICON_COLOR = "6b6b76";
+// const ICON_COLOR = "6b6b76";
 
 function TechIcon({ tech }: { tech: string }) {
     const slug = ICON_SLUGS[tech];
@@ -44,17 +44,13 @@ function TechIcon({ tech }: { tech: string }) {
 
     return (
         <Image
-            src={`https://cdn.simpleicons.org/${slug}/${ICON_COLOR}`}
+            src={`https://cdn.simpleicons.org/${slug}`}
             alt={`${tech} icon`}
             width={14}
             height={14}
-            className="shrink-0"
+            className="shrink-0 tech-marquee-icon"
             style={{ opacity: 0.85 }}
             unoptimized
-            // unoptimized because:
-            // 1. These are tiny 14×14 SVGs — no benefit from Next.js image optimization
-            // 2. The CDN already serves them optimally as SVGs
-            // 3. Avoids Vercel image optimization usage/cost for decorative icons
         />
     );
 }
@@ -126,6 +122,10 @@ export function TechMarquee({ techs }: TechMarqueeProps) {
           from { transform: translateX(0); }
           to   { transform: translateX(-50%); }
         }
+          .tech-marquee-icon {
+              filter: invert(1) brightness(var(--icon-brightness, 0.45));
+              opacity: 0.9;
+          }
         @media (prefers-reduced-motion: reduce) {
           [style*="animation: marquee"] { animation: none; }
         }
