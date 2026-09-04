@@ -35,9 +35,6 @@ const ICON_SLUGS: Record<string, string> = {
     Hostinger: "hostinger",
 };
 
-// Icon color matches --text-tertiary in Midnight theme — muted and consistent
-// const ICON_COLOR = "6b6b76";
-
 function TechIcon({ tech }: { tech: string }) {
     const slug = ICON_SLUGS[tech];
     if (!slug) return null;
@@ -123,7 +120,7 @@ export function TechMarquee({ techs }: TechMarqueeProps) {
           to   { transform: translateX(-50%); }
         }
           .tech-marquee-icon {
-              filter: invert(1) brightness(var(--icon-brightness, 0.45));
+              filter: var(--icon-filter);
               opacity: 0.9;
           }
         @media (prefers-reduced-motion: reduce) {

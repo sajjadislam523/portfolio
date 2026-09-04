@@ -51,7 +51,6 @@ const QUICK_LINKS = [
   { href: '/admin/projects/new',  label: 'Add project',       icon: FolderKanban },
   { href: '/admin/experience',    label: 'Edit experience',   icon: Briefcase    },
   { href: '/admin/skills',        label: 'Manage skills',     icon: Zap          },
-  { href: '/admin/themes',        label: 'Change theme',      icon: null         },
 ]
 
 export default async function AdminDashboardPage() {
@@ -157,7 +156,6 @@ export default async function AdminDashboardPage() {
               { href: '/admin/projects/new',   label: 'Add a new project'      },
               { href: '/admin/experience',      label: 'Update experience'      },
               { href: '/admin/skills',          label: 'Edit skills'            },
-              { href: '/admin/themes',          label: 'Switch active theme'    },
               { href: '/admin/settings',        label: 'Update site settings'   },
               { href: '/admin/messages',        label: `View messages${data.unreadMessages > 0 ? ` (${data.unreadMessages} unread)` : ''}` },
             ].map(({ href, label }) => (

@@ -98,7 +98,6 @@ export const siteSettingsSchema = z.object({
     phone: z.string().max(20).optional(),
     location: z.string().max(80),
     resumeUrl: z.string().url().optional().or(z.literal("")),
-    activeTheme: z.enum(["midnight", "ocean", "sunset", "matrix", "aurora"]),
     availableForWork: z.boolean(),
     socialLinks: z.array(
         z.object({

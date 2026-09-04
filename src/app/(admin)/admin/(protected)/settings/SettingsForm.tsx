@@ -366,12 +366,6 @@ export function SettingsForm({
                 </FormField>
             </Section>
 
-            <input
-                type="hidden"
-                name="activeTheme"
-                value={s?.activeTheme ?? "midnight"}
-            />
-
             <div
                 className="flex gap-3 pt-2 border-t"
                 style={{ borderColor: "var(--border)" }}

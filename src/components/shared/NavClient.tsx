@@ -1,8 +1,24 @@
 "use client";
 
+import { StaggerContainer, StaggerItem } from "@/components/motion/ScrollReveal";
+import { AnimatePresence, motion } from "framer-motion";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+
+// Resolves to false during SSR and the first client render (matching the
+// server), then true after hydration — avoids the theme-icon mismatching
+// between the server's theme guess and next-themes' actual resolved value.
+const subscribeNoop = () => () => {};
+function useHasMounted() {
+    return useSyncExternalStore(
+        subscribeNoop,
+        () => true,
+        () => false,
+    );
+}
 
 const NAV_LINKS = [
     { href: "/projects", label: "Projects", number: "01" },
@@ -20,6 +36,8 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
     const pathname = usePathname();
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
+    const { resolvedTheme, setTheme } = useTheme();
+    const isLight = useHasMounted() && resolvedTheme === "light";
 
     useEffect(() => {
         const handler = () => setScrolled(window.scrollY > 20);
@@ -54,8 +72,8 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                     style={{
                         background:
                             scrolled || menuOpen
-                                ? "rgba(10,10,11,0.88)"
-                                : "rgba(10,10,11,0.6)",
+                                ? "color-mix(in srgb, var(--bg-primary) 88%, transparent)"
+                                : "color-mix(in srgb, var(--bg-primary) 60%, transparent)",
                         backdropFilter: "blur(20px)",
                         border: "1px solid var(--border)",
                         boxShadow: scrolled
@@ -113,6 +131,31 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
 
                     {/* Desktop right side */}
                     <div className="hidden md:flex items-center gap-3">
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setTheme(
+                                    resolvedTheme === "dark" ? "light" : "dark",
+                                )
+                            }
+                            className="flex items-center justify-center w-8 h-8 rounded-lg transition-colors"
+                            style={{
+                                background: "var(--bg-elevated)",
+                                border: "1px solid var(--border)",
+                                color: "var(--text-secondary)",
+                            }}
+                            aria-label={
+                                isLight
+                                    ? "Switch to dark theme"
+                                    : "Switch to light theme"
+                            }
+                        >
+                            {isLight ? (
+                                <Moon className="w-3.5 h-3.5" />
+                            ) : (
+                                <Sun className="w-3.5 h-3.5" />
+                            )}
+                        </button>
                         {availableForWork && (
                             <div
                                 className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs"
@@ -199,148 +242,176 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                 </nav>
             </header>
 
-            {/* ── Mobile menu — always in DOM, toggled via CSS transform ── */}
-            {/* Backdrop */}
-            <div
-                className="fixed inset-0 z-40 md:hidden transition-all duration-300"
-                style={{
-                    background: "rgba(0,0,0,0.5)",
-                    backdropFilter: "blur(4px)",
-                    opacity: menuOpen ? 1 : 0,
-                    pointerEvents: menuOpen ? "auto" : "none",
-                }}
-                onClick={() => setMenuOpen(false)}
-            />
-
-            {/* Slide-in panel */}
-            <div
-                className="fixed top-0 right-0 bottom-0 z-50 md:hidden flex flex-col w-70"
-                style={{
-                    background: "var(--bg-secondary)",
-                    borderLeft: "1px solid var(--border)",
-                    transform: menuOpen ? "translateX(0)" : "translateX(100%)",
-                    transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                    willChange: "transform",
-                }}
-            >
-                {/* Panel header */}
-                <div
-                    className="flex items-center justify-between px-6 h-14 shrink-0 border-b"
-                    style={{ borderColor: "var(--border)" }}
-                >
-                    <span
-                        className="text-sm font-medium"
-                        style={{ color: "var(--text-tertiary)" }}
-                    >
-                        Menu
-                    </span>
-                    <button
-                        onClick={() => setMenuOpen(false)}
-                        className="w-7 h-7 flex items-center justify-center rounded-lg transition-colors"
-                        style={{
-                            background: "var(--bg-subtle)",
-                            color: "var(--text-tertiary)",
-                        }}
-                        aria-label="Close menu"
-                    >
-                        ✕
-                    </button>
-                </div>
-
-                {/* Nav links */}
-                <nav className="flex flex-col px-4 pt-6 flex-1 gap-1">
-                    {NAV_LINKS.map(({ href, label, number }, idx) => {
-                        const active =
-                            pathname === href ||
-                            pathname.startsWith(href + "/");
-                        return (
-                            <div
-                                key={href}
-                                style={{
-                                    opacity: menuOpen ? 1 : 0,
-                                    transform: menuOpen
-                                        ? "translateX(0)"
-                                        : "translateX(20px)",
-                                    transition: `opacity 0.25s ease ${0.05 + idx * 0.05}s, transform 0.25s ease ${0.05 + idx * 0.05}s`,
-                                }}
-                            >
-                                <Link
-                                    href={href}
-                                    className="flex items-center justify-between px-4 py-3.5 rounded-xl transition-colors group"
-                                    style={{
-                                        background: active
-                                            ? "var(--accent-glow)"
-                                            : "transparent",
-                                        border: `1px solid ${active ? "var(--border-strong)" : "transparent"}`,
-                                    }}
-                                >
-                                    <span
-                                        className="text-base font-medium"
-                                        style={{
-                                            color: active
-                                                ? "var(--accent)"
-                                                : "var(--text-primary)",
-                                        }}
-                                    >
-                                        {label}
-                                    </span>
-                                    <span
-                                        className="text-xs font-mono"
-                                        style={{
-                                            color: active
-                                                ? "var(--accent)"
-                                                : "var(--text-tertiary)",
-                                        }}
-                                    >
-                                        {number}
-                                    </span>
-                                </Link>
-                            </div>
-                        );
-                    })}
-                </nav>
-
-                {/* Panel footer */}
-                <div
-                    className="px-6 pb-8 pt-4 flex flex-col gap-3 border-t"
-                    style={{
-                        borderColor: "var(--border)",
-                        opacity: menuOpen ? 1 : 0,
-                        transition: "opacity 0.25s ease 0.25s",
-                    }}
-                >
-                    {availableForWork && (
-                        <div
-                            className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs w-fit"
+            {/* ── Mobile menu — mounted only while open, animated via framer-motion ── */}
+            <AnimatePresence>
+                {menuOpen && (
+                    <>
+                        {/* Backdrop */}
+                        <motion.div
+                            className="fixed inset-0 z-40 md:hidden"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
                             style={{
                                 background:
-                                    "color-mix(in srgb, var(--accent) 8%, transparent)",
-                                border: "1px solid color-mix(in srgb, var(--accent) 20%, transparent)",
-                                color: "var(--accent)",
+                                    "color-mix(in srgb, var(--bg-primary) 50%, transparent)",
+                                backdropFilter: "blur(4px)",
                             }}
-                        >
-                            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
-                            Open to opportunities
-                        </div>
-                    )}
-                    {resumeUrl && (
-                        <a
-                            href={resumeUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-colors"
+                            onClick={() => setMenuOpen(false)}
+                        />
+
+                        {/* Slide-in panel */}
+                        <motion.div
+                            className="fixed top-0 right-0 bottom-0 z-50 md:hidden flex flex-col w-70"
+                            initial={{ x: "100%" }}
+                            animate={{ x: 0 }}
+                            exit={{ x: "100%" }}
+                            transition={{ type: "spring", stiffness: 320, damping: 32 }}
                             style={{
-                                background: "var(--bg-elevated)",
-                                border: "1px solid var(--border)",
-                                color: "var(--text-secondary)",
+                                background: "var(--bg-secondary)",
+                                borderLeft: "1px solid var(--border)",
                             }}
                         >
-                            Download Resume
-                            <span style={{ color: "var(--accent)" }}>↗</span>
-                        </a>
-                    )}
-                </div>
-            </div>
+                            {/* Panel header */}
+                            <div
+                                className="flex items-center justify-between px-6 h-14 shrink-0 border-b"
+                                style={{ borderColor: "var(--border)" }}
+                            >
+                                <span
+                                    className="text-sm font-medium"
+                                    style={{ color: "var(--text-tertiary)" }}
+                                >
+                                    Menu
+                                </span>
+                                <button
+                                    onClick={() => setMenuOpen(false)}
+                                    className="w-7 h-7 flex items-center justify-center rounded-lg transition-colors"
+                                    style={{
+                                        background: "var(--bg-subtle)",
+                                        color: "var(--text-tertiary)",
+                                    }}
+                                    aria-label="Close menu"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+
+                            {/* Nav links */}
+                            <StaggerContainer
+                                className="flex flex-col px-4 pt-6 flex-1 gap-1"
+                                staggerDelay={0.05}
+                            >
+                                {NAV_LINKS.map(({ href, label, number }) => {
+                                    const active =
+                                        pathname === href ||
+                                        pathname.startsWith(href + "/");
+                                    return (
+                                        <StaggerItem key={href}>
+                                            <Link
+                                                href={href}
+                                                className="flex items-center justify-between px-4 py-3.5 rounded-xl transition-colors group"
+                                                style={{
+                                                    background: active
+                                                        ? "var(--accent-glow)"
+                                                        : "transparent",
+                                                    border: `1px solid ${active ? "var(--border-strong)" : "transparent"}`,
+                                                }}
+                                            >
+                                                <span
+                                                    className="text-base font-medium"
+                                                    style={{
+                                                        color: active
+                                                            ? "var(--accent)"
+                                                            : "var(--text-primary)",
+                                                    }}
+                                                >
+                                                    {label}
+                                                </span>
+                                                <span
+                                                    className="text-xs font-mono"
+                                                    style={{
+                                                        color: active
+                                                            ? "var(--accent)"
+                                                            : "var(--text-tertiary)",
+                                                    }}
+                                                >
+                                                    {number}
+                                                </span>
+                                            </Link>
+                                        </StaggerItem>
+                                    );
+                                })}
+                            </StaggerContainer>
+
+                            {/* Panel footer */}
+                            <motion.div
+                                className="px-6 pb-8 pt-4 flex flex-col gap-3 border-t"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.2, duration: 0.2 }}
+                                style={{ borderColor: "var(--border)" }}
+                            >
+                                {availableForWork && (
+                                    <div
+                                        className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs w-fit"
+                                        style={{
+                                            background:
+                                                "color-mix(in srgb, var(--accent) 8%, transparent)",
+                                            border: "1px solid color-mix(in srgb, var(--accent) 20%, transparent)",
+                                            color: "var(--accent)",
+                                        }}
+                                    >
+                                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
+                                        Open to opportunities
+                                    </div>
+                                )}
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setTheme(
+                                            resolvedTheme === "dark"
+                                                ? "light"
+                                                : "dark",
+                                        )
+                                    }
+                                    className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm transition-colors w-fit"
+                                    style={{
+                                        background: "var(--bg-elevated)",
+                                        border: "1px solid var(--border)",
+                                        color: "var(--text-secondary)",
+                                    }}
+                                >
+                                    {isLight ? (
+                                        <Moon className="w-3.5 h-3.5" />
+                                    ) : (
+                                        <Sun className="w-3.5 h-3.5" />
+                                    )}
+                                    {isLight ? "Dark theme" : "Light theme"}
+                                </button>
+                                {resumeUrl && (
+                                    <a
+                                        href={resumeUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-colors"
+                                        style={{
+                                            background: "var(--bg-elevated)",
+                                            border: "1px solid var(--border)",
+                                            color: "var(--text-secondary)",
+                                        }}
+                                    >
+                                        Download Resume
+                                        <span style={{ color: "var(--accent)" }}>
+                                            ↗
+                                        </span>
+                                    </a>
+                                )}
+                            </motion.div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </>
     );
 }

@@ -1,15 +1,18 @@
 import { connectDB, SiteSettings } from "@/lib/db";
-import {
-    buildThemeCSS,
-    defaultTheme,
-    getThemeTokens,
-} from "@/lib/themes/utils";
-import { ISiteSettings, ThemeName } from "@/types";
+import { ISiteSettings } from "@/types";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
+import { Space_Grotesk } from "next/font/google";
+import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
 import "./globals.css";
+
+const spaceGrotesk = Space_Grotesk({
+    subsets: ["latin"],
+    variable: "--font-display",
+    weight: ["500", "600", "700"],
+});
 
 // Fetch settings fresh on every request — needed for OG metadata
 async function getSettings() {
@@ -75,33 +78,30 @@ export default async function RootLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const s = await getSettings();
-    const activeTheme = (s?.activeTheme as ThemeName) ?? defaultTheme;
-    const tokens = getThemeTokens(activeTheme);
-    const themeCSS = buildThemeCSS(tokens);
-
     return (
         <html
             lang="en"
-            data-theme={activeTheme}
-            className={`${GeistSans.variable} ${GeistMono.variable}`}
+            className={`${GeistSans.variable} ${GeistMono.variable} ${spaceGrotesk.variable}`}
             suppressHydrationWarning
         >
-            <head>
-                <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
-            </head>
             <body>
-                {children}
-                <Toaster
-                    position="bottom-right"
-                    toastOptions={{
-                        style: {
-                            background: "var(--bg-elevated)",
-                            color: "var(--text-primary)",
-                            border: "1px solid var(--border-strong)",
-                        },
-                    }}
-                />
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme="dark"
+                    enableSystem={false}
+                >
+                    {children}
+                    <Toaster
+                        position="bottom-right"
+                        toastOptions={{
+                            style: {
+                                background: "var(--bg-elevated)",
+                                color: "var(--text-primary)",
+                                border: "1px solid var(--border-strong)",
+                            },
+                        }}
+                    />
+                </ThemeProvider>
             </body>
         </html>
     );

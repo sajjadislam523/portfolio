@@ -1,5 +1,6 @@
 "use client";
 
+import { StaggerContainer, StaggerItem } from "@/components/motion/ScrollReveal";
 import { formatDateRange } from "@/lib/utils";
 import type { IExperience } from "@/types";
 import { ChevronDown } from "lucide-react";
@@ -24,7 +25,7 @@ export function ExperienceTimeline({
     }
 
     return (
-        <div className="relative flex flex-col">
+        <StaggerContainer className="relative flex flex-col">
             {/* Vertical timeline line */}
             <div
                 className="absolute left-[7px] top-3 bottom-3 w-px"
@@ -37,7 +38,7 @@ export function ExperienceTimeline({
                 const isCurrent = !exp.endDate;
 
                 return (
-                    <div key={exp._id} className="relative pl-8 pb-8">
+                    <StaggerItem key={exp._id} className="relative pl-8 pb-8">
                         {/* Timeline dot */}
                         <div
                             className="absolute left-0 top-[18px] w-3.5 h-3.5 rounded-full border-2 transition-all duration-200"
@@ -103,12 +104,12 @@ export function ExperienceTimeline({
                                                 className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs"
                                                 style={{
                                                     background:
-                                                        "rgba(34,197,94,0.1)",
-                                                    border: "1px solid rgba(34,197,94,0.25)",
-                                                    color: "#22C55E",
+                                                        "var(--success-glow)",
+                                                    border: "1px solid color-mix(in srgb, var(--success) 25%, transparent)",
+                                                    color: "var(--success)",
                                                 }}
                                             >
-                                                <span className="w-1 h-1 rounded-full bg-[#22C55E]" />
+                                                <span className="w-1 h-1 rounded-full bg-[var(--success)]" />
                                                 Current
                                             </span>
                                         )}
@@ -225,9 +226,9 @@ export function ExperienceTimeline({
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </StaggerItem>
                 );
             })}
-        </div>
+        </StaggerContainer>
     );
 }

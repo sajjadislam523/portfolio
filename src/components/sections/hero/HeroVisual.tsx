@@ -1,6 +1,5 @@
-// Terminal-style code card — replaces the generic SVG architecture diagram.
-// Shows real tech choices in a format engineers immediately recognise.
-// Pure CSS, no JS, works before hydration.
+// Terminal-style code card showing real tech choices in a format engineers
+// immediately recognise. Pure CSS, no JS, works before hydration.
 
 import React from "react";
 

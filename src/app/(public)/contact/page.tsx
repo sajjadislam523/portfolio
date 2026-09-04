@@ -37,7 +37,7 @@ export default async function ContactPage() {
                         Contact
                     </p>
                     <h1
-                        className="text-display mb-4"
+                        className="text-display font-display mb-4"
                         style={{ color: "var(--text-primary)" }}
                     >
                         Get in touch

@@ -125,7 +125,7 @@ export default async function ProjectDetailPage({
                     <div className="mb-8">
                         <div className="flex items-start justify-between gap-4 mb-3">
                             <h1
-                                className="text-h1 leading-tight"
+                                className="text-display font-display leading-tight"
                                 style={{ color: "var(--text-primary)" }}
                             >
                                 {project.title}

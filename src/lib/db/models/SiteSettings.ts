@@ -1,4 +1,4 @@
-import type { ISiteSettings, ThemeName } from "@/types";
+import type { ISiteSettings } from "@/types";
 import mongoose, { Schema, type Document } from "mongoose";
 
 export interface SiteSettingsDocument
@@ -44,17 +44,6 @@ const SiteSettingsSchema = new Schema<SiteSettingsDocument>(
         location: { type: String, default: "Dhaka, Bangladesh" },
         resumeUrl: { type: String, default: "" },
         resumeVersions: { type: [ResumeVersionSchema], default: [] },
-        activeTheme: {
-            type: String,
-            enum: [
-                "midnight",
-                "ocean",
-                "sunset",
-                "matrix",
-                "aurora",
-            ] satisfies ThemeName[],
-            default: "midnight",
-        },
         availableForWork: { type: Boolean, default: true },
         socialLinks: { type: [SocialLinkSchema], default: [] },
         seo: { type: SEOSchema, default: () => ({}) },

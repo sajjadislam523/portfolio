@@ -11,7 +11,6 @@ export type SkillCategory =
     | "tooling";
 export type SkillProficiency = "expert" | "proficient" | "familiar";
 export type MessageStatus = "unread" | "read" | "archived";
-export type ThemeName = "midnight" | "ocean" | "sunset" | "matrix" | "aurora";
 
 export interface IProject {
     _id: string;
@@ -99,7 +98,6 @@ export interface ISiteSettings {
     location: string;
     resumeUrl: string;
     resumeVersions: IResumeVersion[];
-    activeTheme: ThemeName;
     availableForWork: boolean;
     socialLinks: ISocialLink[];
     seo: ISEOSettings;
@@ -121,24 +119,6 @@ export interface IUser {
     role: "admin";
     createdAt: string;
     lastLogin: string;
-}
-
-// ─── Theme Types ──────────────────────────────────────────────────────────────
-
-export interface ThemeTokens {
-    bgPrimary: string;
-    bgSecondary: string;
-    bgElevated: string;
-    bgSubtle: string;
-    border: string;
-    borderStrong: string;
-    textPrimary: string;
-    textSecondary: string;
-    textTertiary: string;
-    accent: string;
-    accentGlow: string;
-    accentForeground: string;
-    iconBrightness: string;
 }
 
 // ─── API Response Types ───────────────────────────────────────────────────────

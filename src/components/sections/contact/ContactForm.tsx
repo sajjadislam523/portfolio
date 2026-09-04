@@ -28,9 +28,9 @@ export function ContactForm() {
       <div className="flex flex-col items-center py-8 gap-3 text-center">
         <div
           className="w-10 h-10 rounded-full flex items-center justify-center"
-          style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)' }}
+          style={{ background: 'var(--success-glow)', border: '1px solid color-mix(in srgb, var(--success) 30%, transparent)' }}
         >
-          <CheckCircle className="w-5 h-5" style={{ color: '#22C55E' }} />
+          <CheckCircle className="w-5 h-5" style={{ color: 'var(--success)' }} />
         </div>
         <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
           Message sent

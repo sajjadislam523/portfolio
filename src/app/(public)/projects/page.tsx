@@ -1,4 +1,4 @@
-import { FadeIn } from "@/components/motion/ScrollReveal";
+import { FadeIn, StaggerContainer, StaggerItem } from "@/components/motion/ScrollReveal";
 import { connectDB, Project } from "@/lib/db";
 import type { IProject } from "@/types";
 import { ArrowUpRight } from "lucide-react";
@@ -47,7 +47,7 @@ export default async function ProjectsPage() {
                             Work
                         </p>
                         <h1
-                            className="text-display mb-4"
+                            className="text-display font-display mb-4"
                             style={{ color: "var(--text-primary)" }}
                         >
                             Projects
@@ -62,11 +62,13 @@ export default async function ProjectsPage() {
                     </FadeIn>
 
                     {/* ── Featured ─────────────────────────────────────────────────── */}
-                    <div className="flex flex-col gap-8">
+                    <StaggerContainer className="flex flex-col gap-8">
                         {featured.map((project) => (
-                            <ProjectCard key={project._id} project={project} />
+                            <StaggerItem key={project._id}>
+                                <ProjectCard project={project} />
+                            </StaggerItem>
                         ))}
-                    </div>
+                    </StaggerContainer>
 
                     {featured.length === 0 && !hasArchived && (
                         <p

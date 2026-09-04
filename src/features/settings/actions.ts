@@ -37,7 +37,6 @@ export async function updateSiteSettings(formData: FormData) {
         phone: formData.get("phone") ?? "",
         location: formData.get("location") ?? "",
         resumeUrl: formData.get("resumeUrl") ?? "",
-        activeTheme: formData.get("activeTheme") ?? "midnight",
         availableForWork: formData.get("availableForWork") === "true",
         socialLinks,
         seo: {
@@ -63,25 +62,6 @@ export async function updateSiteSettings(formData: FormData) {
     // Revalidate root layout so the new theme / metadata takes effect immediately
     revalidatePath("/", "layout");
     revalidatePath("/admin/settings");
-
-    return { success: true };
-}
-
-export async function updateActiveTheme(theme: string) {
-    await requireSession();
-
-    const validThemes = ["midnight", "ocean", "sunset", "matrix", "aurora"];
-    if (!validThemes.includes(theme)) return { error: "Invalid theme" };
-
-    await connectDB();
-    await SiteSettings.findOneAndUpdate(
-        {},
-        { activeTheme: theme },
-        { upsert: true },
-    );
-
-    revalidatePath("/", "layout");
-    revalidatePath("/admin/themes");
 
     return { success: true };
 }

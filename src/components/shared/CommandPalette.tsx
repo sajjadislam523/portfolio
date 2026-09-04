@@ -1,8 +1,5 @@
 "use client";
 
-import { updateActiveTheme } from "@/features/settings/actions";
-import { applyThemeToDOM, THEME_LABELS, THEME_NAMES } from "@/lib/themes/utils";
-import type { ThemeName } from "@/types";
 import { AnimatePresence, motion } from "framer-motion";
 import {
     Briefcase,
@@ -10,10 +7,12 @@ import {
     FolderKanban,
     Home,
     Mail,
+    Moon,
     Search,
     Sun,
     Zap,
 } from "lucide-react";
+import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
@@ -31,6 +30,7 @@ export function CommandPalette({ resumeUrl }: { resumeUrl?: string }) {
     const [query, setQuery] = useState("");
     const [selectedIdx, setSelectedIdx] = useState(0);
     const router = useRouter();
+    const { resolvedTheme, setTheme } = useTheme();
 
     const navigate = useCallback(
         (path: string) => {
@@ -90,17 +90,24 @@ export function CommandPalette({ resumeUrl }: { resumeUrl?: string }) {
                   },
               ]
             : []),
-        ...THEME_NAMES.map((theme) => ({
-            id: `theme-${theme}`,
-            label: `${THEME_LABELS[theme]} theme`,
+        {
+            id: "toggle-theme",
+            label:
+                resolvedTheme === "dark"
+                    ? "Switch to light theme"
+                    : "Switch to dark theme",
             group: "Theme",
-            icon: <Sun className="w-4 h-4" />,
+            icon:
+                resolvedTheme === "dark" ? (
+                    <Sun className="w-4 h-4" />
+                ) : (
+                    <Moon className="w-4 h-4" />
+                ),
             action: () => {
                 setOpen(false);
-                applyThemeToDOM(theme as ThemeName);
-                void updateActiveTheme(theme);
+                setTheme(resolvedTheme === "dark" ? "light" : "dark");
             },
-        })),
+        },
     ];
 
     const filtered = query.trim()

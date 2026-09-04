@@ -1,5 +1,5 @@
 import { FadeIn } from "@/components/motion/ScrollReveal";
-import { HeroVisual } from "@/components/sections/hero/ArchitectureDiagram";
+import { HeroVisual } from "@/components/sections/hero/HeroVisual";
 import { TechMarquee } from "@/components/sections/hero/TechMarquee";
 import { JsonLdPerson } from "@/components/shared/JsonLd";
 import { connectDB, Experience, Project, SiteSettings, Skill } from "@/lib/db";
@@ -135,7 +135,7 @@ export default async function HomePage() {
             {/* ── Hero ───────────────────────────────────────────────────────────── */}
             <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
                 {/* Grid background */}
-                <div className="absolute inset-0 bg-grid opacity-[0.35] pointer-events-none" />
+                <div className="absolute inset-0 bg-grid pointer-events-none" />
 
                 {/* Radial glow */}
                 <div
@@ -153,85 +153,95 @@ export default async function HomePage() {
                         <div>
                             {/* Status badge */}
                             {availableForWork && (
-                                <div
-                                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs mb-8"
-                                    style={{
-                                        background:
-                                            "color-mix(in srgb, var(--accent) 8%, transparent)",
-                                        border: "1px solid color-mix(in srgb, var(--accent) 20%, transparent)",
-                                        color: "var(--accent)",
-                                    }}
-                                >
-                                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
-                                    Open to opportunities
-                                </div>
+                                <FadeIn>
+                                    <div
+                                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs mb-8"
+                                        style={{
+                                            background:
+                                                "color-mix(in srgb, var(--accent) 8%, transparent)",
+                                            border: "1px solid color-mix(in srgb, var(--accent) 20%, transparent)",
+                                            color: "var(--accent)",
+                                        }}
+                                    >
+                                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
+                                        Open to opportunities
+                                    </div>
+                                </FadeIn>
                             )}
 
                             {/* Headline */}
-                            <h1
-                                className="text-display leading-[1.08] tracking-tight mb-6"
-                                style={{ color: "var(--text-primary)" }}
-                            >
-                                {tagline}
-                            </h1>
+                            <FadeIn delay={0.05}>
+                                <h1
+                                    className="text-display font-display leading-[1.05] tracking-tight mb-6"
+                                    style={{ color: "var(--text-primary)" }}
+                                >
+                                    {tagline}
+                                </h1>
+                            </FadeIn>
 
                             {/* Context line */}
-                            <div
-                                className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4 text-sm"
-                                style={{ color: "var(--text-tertiary)" }}
-                            >
-                                <span>{name}</span>
-                                <span>·</span>
-                                {latestRole && (
-                                    <>
-                                        <span>{latestRole.role}</span>
-                                        <span>·</span>
-                                        <span>{latestRole.company}</span>
-                                        <span>·</span>
-                                    </>
-                                )}
-                                <span>
-                                    {settings?.location ?? "Dhaka, Bangladesh"}
-                                </span>
-                            </div>
+                            <FadeIn delay={0.1}>
+                                <div
+                                    className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4 text-sm"
+                                    style={{ color: "var(--text-tertiary)" }}
+                                >
+                                    <span>{name}</span>
+                                    <span>·</span>
+                                    {latestRole && (
+                                        <>
+                                            <span>{latestRole.role}</span>
+                                            <span>·</span>
+                                            <span>{latestRole.company}</span>
+                                            <span>·</span>
+                                        </>
+                                    )}
+                                    <span>
+                                        {settings?.location ?? "Dhaka, Bangladesh"}
+                                    </span>
+                                </div>
+                            </FadeIn>
 
                             {bio && (
-                                <p
-                                    className="text-sm leading-relaxed mb-8 max-w-md"
-                                    style={{ color: "var(--text-secondary)" }}
-                                >
-                                    {bio}
-                                </p>
+                                <FadeIn delay={0.15}>
+                                    <p
+                                        className="text-sm leading-relaxed mb-8 max-w-md"
+                                        style={{ color: "var(--text-secondary)" }}
+                                    >
+                                        {bio}
+                                    </p>
+                                </FadeIn>
                             )}
 
                             {/* CTAs */}
-                            <div className="flex flex-wrap items-center gap-3 mb-6">
-                                <Link
-                                    href="/projects"
-                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-opacity hover:opacity-90"
-                                    style={{
-                                        background: "var(--accent)",
-                                        color: "var(--accent-foreground)",
-                                    }}
-                                >
-                                    View projects{" "}
-                                    <ArrowRight className="w-4 h-4" />
-                                </Link>
-                                <Link
-                                    href="/contact"
-                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm transition-colors"
-                                    style={{
-                                        background: "var(--bg-elevated)",
-                                        border: "1px solid var(--border-strong)",
-                                        color: "var(--text-secondary)",
-                                    }}
-                                >
-                                    Get in touch
-                                </Link>
-                            </div>
+                            <FadeIn delay={0.2}>
+                                <div className="flex flex-wrap items-center gap-3 mb-6">
+                                    <Link
+                                        href="/projects"
+                                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-opacity hover:opacity-90"
+                                        style={{
+                                            background: "var(--accent)",
+                                            color: "var(--accent-foreground)",
+                                        }}
+                                    >
+                                        View projects{" "}
+                                        <ArrowRight className="w-4 h-4" />
+                                    </Link>
+                                    <Link
+                                        href="/contact"
+                                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm transition-colors"
+                                        style={{
+                                            background: "var(--bg-elevated)",
+                                            border: "1px solid var(--border-strong)",
+                                            color: "var(--text-secondary)",
+                                        }}
+                                    >
+                                        Get in touch
+                                    </Link>
+                                </div>
+                            </FadeIn>
 
                             {/* Social links */}
-                            <div className="flex items-center gap-3">
+                            <FadeIn delay={0.25} className="flex items-center gap-3">
                                 {socialLinks.map((link) => (
                                     <a
                                         key={link.platform}
@@ -278,17 +288,20 @@ export default async function HomePage() {
                                         Resume
                                     </a>
                                 )}
-                            </div>
+                            </FadeIn>
                         </div>
 
                         {/* Right — terminal code card */}
-                        <div className="hidden lg:flex items-center justify-center">
+                        <FadeIn
+                            delay={0.15}
+                            className="hidden lg:flex items-center justify-center"
+                        >
                             <HeroVisual
                                 experienceLabel={experienceLabel}
                                 projectsLabel={projectsLabel}
                                 stackLabel={stackLabel}
                             />
-                        </div>
+                        </FadeIn>
                     </div>
                 </div>
             </section>
@@ -310,7 +323,7 @@ export default async function HomePage() {
                                         Selected work
                                     </p>
                                     <h2
-                                        className="text-h2"
+                                        className="text-h2 font-display"
                                         style={{ color: "var(--text-primary)" }}
                                     >
                                         Featured projects

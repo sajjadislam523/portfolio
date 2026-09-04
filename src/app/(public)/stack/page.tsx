@@ -1,4 +1,4 @@
-import { FadeIn } from "@/components/motion/ScrollReveal";
+import { FadeIn, StaggerContainer, StaggerItem } from "@/components/motion/ScrollReveal";
 import { connectDB, Skill } from "@/lib/db";
 import type { ISkill, SkillCategory } from "@/types";
 import type { Metadata } from "next";
@@ -91,7 +91,7 @@ export default async function StackPage() {
                         Technology
                     </p>
                     <h1
-                        className="text-display mb-4"
+                        className="text-display font-display mb-4"
                         style={{ color: "var(--text-primary)" }}
                     >
                         Stack
@@ -130,13 +130,13 @@ export default async function StackPage() {
                     </div>
                 </FadeIn>
 
-                <div className="flex flex-col gap-12">
+                <StaggerContainer className="flex flex-col gap-12">
                     {CATEGORY_ORDER.map((cat, catIdx) => {
                         const catSkills = grouped[cat];
                         if (catSkills.length === 0) return null;
 
                         return (
-                            <div key={cat}>
+                            <StaggerItem key={cat}>
                                 <div className="grid grid-cols-[140px_1fr] gap-8 items-start">
                                     <div className="pt-1">
                                         <h2
@@ -187,10 +187,10 @@ export default async function StackPage() {
                                         style={{ borderColor: "var(--border)" }}
                                     />
                                 )}
-                            </div>
+                            </StaggerItem>
                         );
                     })}
-                </div>
+                </StaggerContainer>
 
                 {skills.length === 0 && (
                     <p

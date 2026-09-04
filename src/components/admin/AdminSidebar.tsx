@@ -9,7 +9,6 @@ import {
     LayoutDashboard,
     LogOut,
     MessageSquare,
-    Palette,
     Settings,
     Zap,
 } from "lucide-react";
@@ -23,7 +22,6 @@ const NAV_ITEMS = [
     { href: "/admin/experience", label: "Experience", icon: Briefcase },
     { href: "/admin/skills", label: "Skills", icon: Zap },
     { href: "/admin/certifications", label: "Certifications", icon: Award },
-    { href: "/admin/themes", label: "Themes", icon: Palette },
     { href: "/admin/messages", label: "Messages", icon: MessageSquare },
     { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
