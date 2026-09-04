@@ -6,6 +6,16 @@ import type { IResumeVersion } from "@/types";
 import { del } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
 
+// Shape of a resumeVersions subdocument as returned by .lean() — dates are
+// still Date instances here, not yet serialised to ISO strings like IResumeVersion.
+interface RawResumeVersion {
+    url: string;
+    label?: string;
+    filename?: string;
+    size?: number;
+    uploadedAt: Date | string;
+}
+
 // ── recordResumeUpload ────────────────────────────────────────────────────────
 // Called after a NEW file is uploaded to Vercel Blob.
 // Stores full metadata, sets this version as active, deactivates all others.
@@ -68,7 +78,7 @@ export async function deleteResumeVersion(url: string) {
 
     const settings = (await SiteSettings.findOne({})
         .select("resumeUrl")
-        .lean()) as any;
+        .lean()) as { resumeUrl?: string } | null;
     if (settings?.resumeUrl === url) {
         return {
             error: "Cannot delete the active resume. Set another version as active first.",
@@ -103,12 +113,15 @@ export async function getResumeVersions(): Promise<{
 
     const settings = (await SiteSettings.findOne({})
         .select("resumeUrl resumeVersions")
-        .lean()) as any;
+        .lean()) as {
+        resumeUrl?: string;
+        resumeVersions?: RawResumeVersion[];
+    } | null;
 
     const activeUrl = settings?.resumeUrl ?? "";
 
     const versions: IResumeVersion[] = (settings?.resumeVersions ?? [])
-        .map((v: any) => ({
+        .map((v: RawResumeVersion) => ({
             url: v.url,
             label: v.label ?? "",
             filename: v.filename ?? v.label ?? "",

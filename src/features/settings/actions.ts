@@ -36,7 +36,6 @@ export async function updateSiteSettings(formData: FormData) {
         email: formData.get("email"),
         phone: formData.get("phone") ?? "",
         location: formData.get("location") ?? "",
-        resumeUrl: formData.get("resumeUrl") ?? "",
         availableForWork: formData.get("availableForWork") === "true",
         socialLinks,
         seo: {

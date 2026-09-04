@@ -109,7 +109,8 @@ function SkillPill({ skill, onEdit }: { skill: ISkill; onEdit: () => void }) {
         onConfirm={() =>
           startTransition(async () => {
             const r = await deleteSkill(skill._id)
-            r.error ? toast.error(r.error) : toast.success('Skill removed')
+            if (r.error) toast.error(r.error)
+            else toast.success('Skill removed')
           })
         }
       >

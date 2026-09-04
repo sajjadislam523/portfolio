@@ -38,12 +38,8 @@ function formatDate(iso: string): string {
     }).format(new Date(iso));
 }
 
-export function ResumeManager({
-    versions: initial,
-    activeUrl: initialActive,
-}: ResumeManagerProps) {
+export function ResumeManager({ versions: initial }: ResumeManagerProps) {
     const [versions, setVersions] = useState<IResumeVersion[]>(initial);
-    const [activeUrl, setActiveUrl] = useState(initialActive);
     const [uploading, setUploading] = useState(false);
     const [labelInput, setLabelInput] = useState("");
     const [dragOver, setDragOver] = useState(false);
@@ -90,7 +86,6 @@ export function ResumeManager({
                 newVersion,
                 ...prev.map((v) => ({ ...v, isActive: false })),
             ]);
-            setActiveUrl(data.url);
             setLabelInput("");
 
             // Persist to DB
@@ -107,7 +102,6 @@ export function ResumeManager({
     }
 
     function handleSetActive(version: IResumeVersion) {
-        setActiveUrl(version.url);
         setVersions((prev) =>
             prev.map((v) => ({ ...v, isActive: v.url === version.url })),
         );

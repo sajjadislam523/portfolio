@@ -37,9 +37,14 @@ function MessageRow({ message: msg }: { message: IContactMessage }) {
 
   const isUnread = msg.status === 'unread'
 
-  function act(fn: () => Promise<unknown>) {
+  function act(fn: () => Promise<{ error?: string } | unknown>, successMessage?: string) {
     startTransition(async () => {
-      await fn()
+      const result = await fn()
+      if (result && typeof result === 'object' && 'error' in result && result.error) {
+        toast.error(String(result.error))
+        return
+      }
+      if (successMessage) toast.success(successMessage)
     })
   }
 
@@ -108,7 +113,7 @@ function MessageRow({ message: msg }: { message: IContactMessage }) {
           <ConfirmDialog
             title="Delete message"
             description={`Delete message from ${msg.name}? This cannot be undone.`}
-            onConfirm={() => act(() => deleteMessage(msg._id))}
+            onConfirm={() => act(() => deleteMessage(msg._id), 'Message deleted')}
           >
             {(open) => (
               <button

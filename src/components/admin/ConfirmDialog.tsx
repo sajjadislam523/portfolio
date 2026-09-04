@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AlertTriangle } from 'lucide-react'
 
 interface ConfirmDialogProps {
@@ -17,13 +17,24 @@ export function ConfirmDialog({
   children,
 }: ConfirmDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const [isOpen, setIsOpen] = useState(false)
+
+  // Ref access stays inside the effect, never during render — the `open`
+  // callback below only flips state, so it's safe to hand to a render prop.
+  useEffect(() => {
+    if (isOpen) {
+      dialogRef.current?.showModal()
+    } else {
+      dialogRef.current?.close()
+    }
+  }, [isOpen])
 
   function open() {
-    dialogRef.current?.showModal()
+    setIsOpen(true)
   }
 
   function close() {
-    dialogRef.current?.close()
+    setIsOpen(false)
   }
 
   function handleConfirm() {
@@ -43,6 +54,7 @@ export function ConfirmDialog({
           border: '1px solid var(--border-strong)',
           color: 'var(--text-primary)',
         }}
+        onClose={() => setIsOpen(false)}
         onClick={(e) => {
           if (e.target === dialogRef.current) close()
         }}

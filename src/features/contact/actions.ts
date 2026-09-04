@@ -7,6 +7,7 @@ import { serialiseDoc } from '@/lib/utils'
 import type { IContactMessage, MessageStatus } from '@/types'
 
 export async function getMessages(status?: MessageStatus): Promise<IContactMessage[]> {
+  await requireSession()
   await connectDB()
   const query = status ? { status } : {}
   const docs = await ContactMessage.find(query).sort({ createdAt: -1 }).lean()

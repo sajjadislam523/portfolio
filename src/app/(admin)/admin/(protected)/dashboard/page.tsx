@@ -4,7 +4,6 @@ import {
   Briefcase,
   Zap,
   MessageSquare,
-  Award,
   ArrowRight,
   CheckCircle,
   Clock,
@@ -46,12 +45,6 @@ async function getDashboardData() {
     recentMessages,
   }
 }
-
-const QUICK_LINKS = [
-  { href: '/admin/projects/new',  label: 'Add project',       icon: FolderKanban },
-  { href: '/admin/experience',    label: 'Edit experience',   icon: Briefcase    },
-  { href: '/admin/skills',        label: 'Manage skills',     icon: Zap          },
-]
 
 export default async function AdminDashboardPage() {
   await requireSession()

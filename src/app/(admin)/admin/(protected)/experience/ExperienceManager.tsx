@@ -109,7 +109,8 @@ function ExperienceRow({
             onConfirm={() =>
               startTransition(async () => {
                 const r = await deleteExperience(exp._id)
-                r.error ? toast.error(r.error) : toast.success('Deleted')
+                if (r.error) toast.error(r.error)
+                else toast.success('Deleted')
               })
             }
           >

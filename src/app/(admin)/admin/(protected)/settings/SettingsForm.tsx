@@ -37,8 +37,10 @@ export function SettingsForm({
         settings?.availableForWork ?? true,
     );
 
-    // File URLs — managed in state so FileUpload can update them
-    const [resumeUrl, setResumeUrl] = useState(settings?.resumeUrl ?? "");
+    // File URL — managed in state so FileUpload can update it.
+    // Resume URL is intentionally NOT tracked here: it's owned entirely by
+    // <ResumeManager>, which persists it directly. Submitting a stale copy
+    // from this form would silently revert whatever ResumeManager last set.
     const [ogImageUrl, setOgImageUrl] = useState(settings?.seo?.ogImage ?? "");
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -52,7 +54,6 @@ export function SettingsForm({
 
         // Inject controlled values — not safe to rely on hidden inputs
         fd.set("availableForWork", availableForWork ? "true" : "false");
-        fd.set("resumeUrl", resumeUrl);
         fd.set("seo.ogImage", ogImageUrl);
 
         socialLinks.forEach((link, i) => {

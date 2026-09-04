@@ -45,7 +45,9 @@ export async function generateMetadata({
     let fallbackOg = "";
     try {
         await connectDB();
-        const s = (await SiteSettings.findOne({}).select("seo").lean()) as any;
+        const s = (await SiteSettings.findOne({}).select("seo").lean()) as {
+            seo?: { ogImage?: string };
+        } | null;
         fallbackOg = s?.seo?.ogImage ?? "";
     } catch {}
 
