@@ -1,25 +1,30 @@
 @import "tailwindcss";
+@config "../../tailwind.config.ts";
 
 /* ── Theme palettes ──────────────────────────────────────────────────────── */
 /* Light is the default (no class on <html>); next-themes toggles a `.dark`  */
 /* class on <html> for dark mode, matching Tailwind's darkMode: ['class'].  */
 :root {
-  --bg-primary: #efeef0;
-  --bg-secondary: #e6e5e8;
-  --bg-elevated: #f7f7f8;
-  --bg-subtle: #e2e1e5;
-  --border: rgba(0, 0, 0, 0.1);
-  --border-strong: rgba(0, 0, 0, 0.18);
-  --text-primary: #17171a;
-  --text-secondary: #4a4a52;
+  --bg-primary: #fafaf9;
+  --bg-secondary: #f0efe8;
+  --bg-elevated: #ffffff;
+  --bg-subtle: #f0efe8;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.15);
+  --text-primary: #1a1a1f;
+  --text-secondary: #44444e;
   --text-tertiary: #7c7c86;
   --accent: #6d28d9;
-  --accent-glow: rgba(109, 40, 217, 0.14);
+  --accent-glow: rgba(109, 40, 217, 0.1);
   --accent-foreground: #ffffff;
   --success: #15803d;
-  --success-glow: rgba(21, 128, 61, 0.12);
+  --success-glow: rgba(21, 128, 61, 0.1);
   --icon-filter: none;
-  --grid-opacity: 0.2;
+  --grid-opacity: 0.5;
+  --grid-line-width: 1px;
+  --card-shadow: 0 1px 4px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.06);
+  --card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.1);
+  --hero-glow-opacity: 0.25;
 }
 
 .dark {
@@ -39,6 +44,10 @@
   --success-glow: rgba(34, 197, 94, 0.1);
   --icon-filter: invert(1) brightness(0.45);
   --grid-opacity: 0.35;
+  --grid-line-width: 1px;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border);
+  --card-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-strong);
+  --hero-glow-opacity: 1;
 }
 
 /* ── Keyframes ── */
@@ -50,11 +59,6 @@
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
-}
-
-@keyframes underlineGrow {
-  from { transform: scaleX(0); }
-  to   { transform: scaleX(1); }
 }
 
 /* ── Geist font faces (loaded via next/font in layout.tsx) ── */
@@ -137,9 +141,9 @@
   /* Subtle grid background — used on hero */
   .bg-grid {
     background-image:
-      linear-gradient(var(--border) 1px, transparent 1px),
-      linear-gradient(90deg, var(--border) 1px, transparent 1px);
-    background-size: 48px 48px;
+      linear-gradient(var(--border-strong) var(--grid-line-width), transparent var(--grid-line-width)),
+      linear-gradient(90deg, var(--border-strong) var(--grid-line-width), transparent var(--grid-line-width));
+    background-size: 40px 40px;
     opacity: var(--grid-opacity);
   }
 
@@ -158,11 +162,36 @@
     background-color: var(--bg-elevated);
     border: 1px solid var(--border);
     border-radius: 14px;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: var(--card-shadow);
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
   }
   .card:hover {
     border-color: var(--border-strong);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    box-shadow: var(--card-shadow-hover);
+  }
+
+  /* Diagonal shimmer sweep on hover — layered on top of .card */
+  .card-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .card-shine::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      transparent 40%,
+      color-mix(in srgb, var(--accent) 6%, transparent) 60%,
+      transparent 80%
+    );
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .card-shine:hover::before {
+    opacity: 1;
   }
 
   /* Pill / tag */
@@ -182,30 +211,5 @@
   .pill:hover {
     border-color: var(--accent);
     color: var(--accent);
-  }
-
-  /* Mono accent phrase inside the hero headline — smaller, monospaced,
-     accent-colored, with an underline that grows in on load. */
-  .headline-accent {
-    position: relative;
-    display: inline-block;
-    font-family: var(--font-geist-mono), monospace;
-    font-size: 0.65em;
-    font-weight: 500;
-    color: var(--accent);
-    vertical-align: middle;
-    padding-bottom: 0.1em;
-  }
-  .headline-accent::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 2px;
-    background: var(--accent);
-    transform-origin: left center;
-    transform: scaleX(0);
-    animation: underlineGrow 0.6s ease-out 0.6s forwards;
   }
 }

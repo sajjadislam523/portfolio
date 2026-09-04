@@ -1,5 +1,6 @@
 import { CommandPalette } from "@/components/shared/CommandPalette";
 import { NavClient } from "@/components/shared/NavClient";
+import { ScrollProgress } from "@/components/shared/ScrollProgress";
 import { SiteFooter } from "@/components/shared/SiteFooter";
 import { connectDB, SiteSettings } from "@/lib/db";
 import type { ISiteSettings } from "@/types";
@@ -23,6 +24,7 @@ export default async function PublicLayout({
 
     return (
         <div className="min-h-screen flex flex-col">
+            <ScrollProgress />
             <NavClient
                 availableForWork={settings?.availableForWork ?? false}
                 resumeUrl={settings?.resumeUrl ?? ""}

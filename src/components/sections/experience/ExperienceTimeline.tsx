@@ -3,6 +3,7 @@
 import { StaggerContainer, StaggerItem } from "@/components/motion/ScrollReveal";
 import { formatDateRange } from "@/lib/utils";
 import type { IExperience } from "@/types";
+import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 
@@ -32,7 +33,7 @@ export function ExperienceTimeline({
                 style={{ background: "var(--border)" }}
             />
 
-            {experiences.map((exp) => {
+            {experiences.map((exp, index) => {
                 const isOpen = openId === exp._id;
                 const isHovered = hoverId === exp._id;
                 const isCurrent = !exp.endDate;
@@ -145,86 +146,97 @@ export function ExperienceTimeline({
                                     </p>
                                 </div>
 
-                                <ChevronDown
-                                    className="w-4 h-4 shrink-0 mt-1 transition-all duration-200"
-                                    style={{
-                                        color: isOpen
-                                            ? "var(--accent)"
-                                            : "var(--text-tertiary)",
-                                        transform: isOpen
-                                            ? "rotate(180deg)"
-                                            : "rotate(0deg)",
-                                    }}
-                                />
+                                <div className="flex items-start gap-3 shrink-0">
+                                    <span
+                                        className="text-xs font-mono shrink-0 self-start mt-1"
+                                        style={{ color: "var(--text-tertiary)" }}
+                                    >
+                                        {String(index + 1).padStart(2, "0")}
+                                    </span>
+                                    <ChevronDown
+                                        className="w-4 h-4 shrink-0 mt-1 transition-all duration-200"
+                                        style={{
+                                            color: isOpen
+                                                ? "var(--accent)"
+                                                : "var(--text-tertiary)",
+                                            transform: isOpen
+                                                ? "rotate(180deg)"
+                                                : "rotate(0deg)",
+                                        }}
+                                    />
+                                </div>
                             </button>
 
-                            {/* Expanded content — always in DOM, CSS grid row transition */}
-                            <div
-                                style={{
-                                    display: "grid",
-                                    gridTemplateRows: isOpen ? "1fr" : "0fr",
-                                    transition: "grid-template-rows 0.28s ease",
-                                }}
-                            >
-                                <div style={{ overflow: "hidden" }}>
-                                    <div
-                                        className="px-5 pb-5 border-t"
-                                        style={{ borderColor: "var(--border)" }}
+                            {/* Expanded content — mounted/unmounted with an animated height */}
+                            <AnimatePresence initial={false}>
+                                {isOpen && (
+                                    <motion.div
+                                        key="content"
+                                        initial={{ height: 0, opacity: 0 }}
+                                        animate={{ height: "auto", opacity: 1 }}
+                                        exit={{ height: 0, opacity: 0 }}
+                                        transition={{ duration: 0.28, ease: "easeInOut" }}
+                                        style={{ overflow: "hidden" }}
                                     >
-                                        {exp.description && (
-                                            <p
-                                                className="text-sm leading-relaxed mt-4 mb-4"
-                                                style={{
-                                                    color: "var(--text-secondary)",
-                                                }}
-                                            >
-                                                {exp.description}
-                                            </p>
-                                        )}
+                                        <div
+                                            className="px-5 pb-5 border-t"
+                                            style={{ borderColor: "var(--border)" }}
+                                        >
+                                            {exp.description && (
+                                                <p
+                                                    className="text-sm leading-relaxed mt-4 mb-4"
+                                                    style={{
+                                                        color: "var(--text-secondary)",
+                                                    }}
+                                                >
+                                                    {exp.description}
+                                                </p>
+                                            )}
 
-                                        {exp.accomplishments.length > 0 && (
-                                            <ul className="flex flex-col gap-2 mb-4">
-                                                {exp.accomplishments.map(
-                                                    (item, i) => (
-                                                        <li
-                                                            key={i}
-                                                            className="flex gap-2.5 text-sm"
-                                                            style={{
-                                                                color: "var(--text-secondary)",
-                                                            }}
-                                                        >
-                                                            <span
-                                                                className="shrink-0 mt-[3px]"
+                                            {exp.accomplishments.length > 0 && (
+                                                <ul className="flex flex-col gap-2 mb-4">
+                                                    {exp.accomplishments.map(
+                                                        (item, i) => (
+                                                            <li
+                                                                key={i}
+                                                                className="flex gap-2.5 text-sm"
                                                                 style={{
-                                                                    color: "var(--accent)",
+                                                                    color: "var(--text-secondary)",
                                                                 }}
                                                             >
-                                                                ·
-                                                            </span>
-                                                            {item}
-                                                        </li>
-                                                    ),
-                                                )}
-                                            </ul>
-                                        )}
+                                                                <span
+                                                                    className="shrink-0 mt-[3px]"
+                                                                    style={{
+                                                                        color: "var(--accent)",
+                                                                    }}
+                                                                >
+                                                                    ·
+                                                                </span>
+                                                                {item}
+                                                            </li>
+                                                        ),
+                                                    )}
+                                                </ul>
+                                            )}
 
-                                        {exp.technologies.length > 0 && (
-                                            <div className="flex flex-wrap gap-1.5">
-                                                {exp.technologies.map(
-                                                    (tech) => (
-                                                        <span
-                                                            key={tech}
-                                                            className="pill"
-                                                        >
-                                                            {tech}
-                                                        </span>
-                                                    ),
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
+                                            {exp.technologies.length > 0 && (
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {exp.technologies.map(
+                                                        (tech) => (
+                                                            <span
+                                                                key={tech}
+                                                                className="pill"
+                                                            >
+                                                                {tech}
+                                                            </span>
+                                                        ),
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
                     </StaggerItem>
                 );

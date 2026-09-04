@@ -22,7 +22,8 @@ export const HeroVisual: React.FC<HeroVisualProps> = ({
                 style={{
                     background: "var(--bg-elevated)",
                     border: "1px solid var(--border-strong)",
-                    boxShadow: "0 24px 64px rgba(0,0,0,0.4)",
+                    boxShadow:
+                        "0 24px 64px color-mix(in srgb, var(--text-primary) 20%, transparent)",
                 }}
             >
                 {/* Title bar */}

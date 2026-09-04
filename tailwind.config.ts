@@ -31,6 +31,7 @@ const config: Config = {
         sans: ['var(--font-geist-sans)', 'Inter', 'system-ui', 'sans-serif'],
         mono: ['var(--font-geist-mono)', 'Fira Code', 'monospace'],
         display: ['var(--font-display)', 'var(--font-geist-sans)', 'system-ui', 'sans-serif'],
+        script: ['var(--font-script)', 'cursive'],
       },
       fontSize: {
         'display': ['4rem', { lineHeight: '1.05', letterSpacing: '-0.04em', fontWeight: '700' }],

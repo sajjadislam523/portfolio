@@ -3,7 +3,7 @@ import { ISiteSettings } from "@/types";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google";
+import { Dancing_Script, Space_Grotesk } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
 import "./globals.css";
@@ -12,6 +12,12 @@ const spaceGrotesk = Space_Grotesk({
     subsets: ["latin"],
     variable: "--font-display",
     weight: ["500", "600", "700"],
+});
+
+const dancingScript = Dancing_Script({
+    subsets: ["latin"],
+    variable: "--font-script",
+    weight: ["600", "700"],
 });
 
 // Fetch settings fresh on every request — needed for OG metadata
@@ -81,7 +87,7 @@ export default async function RootLayout({
     return (
         <html
             lang="en"
-            className={`${GeistSans.variable} ${GeistMono.variable} ${spaceGrotesk.variable}`}
+            className={`${GeistSans.variable} ${GeistMono.variable} ${spaceGrotesk.variable} ${dancingScript.variable}`}
             suppressHydrationWarning
         >
             <body>

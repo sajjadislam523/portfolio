@@ -1,4 +1,7 @@
+"use client";
+
 import type { IProject } from "@/types";
+import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -20,7 +23,11 @@ export function ProjectCard({ project }: { project: IProject }) {
     const { live, github } = project.links ?? {};
 
     return (
-        <div className="card group flex flex-col overflow-hidden transition-transform duration-200 hover:-translate-y-0.5">
+        <motion.div
+            className="card card-shine group flex flex-col overflow-hidden"
+            whileHover={{ y: -4 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        >
             <Link href={`/projects/${project.slug}`} className="block">
                 {project.coverImage ? (
                     <div
@@ -121,6 +128,6 @@ export function ProjectCard({ project }: { project: IProject }) {
                     </div>
                 )}
             </div>
-        </div>
+        </motion.div>
     );
 }

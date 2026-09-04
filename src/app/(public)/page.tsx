@@ -2,8 +2,11 @@ import { FadeIn, StaggerContainer, StaggerItem } from "@/components/motion/Scrol
 import { ContactForm } from "@/components/sections/contact/ContactForm";
 import { ExperienceTimeline } from "@/components/sections/experience/ExperienceTimeline";
 import { HeroVisual } from "@/components/sections/hero/HeroVisual";
+import { RotatingWord } from "@/components/sections/hero/RotatingWord";
 import { TechMarquee } from "@/components/sections/hero/TechMarquee";
 import { ProjectCard } from "@/components/sections/projects/ProjectCard";
+import { CATEGORY_ORDER, PROFICIENCY_STYLE } from "@/components/sections/stack/constants";
+import { SkillTabs } from "@/components/sections/stack/SkillTabs";
 import { JsonLdPerson } from "@/components/shared/JsonLd";
 import { connectDB, Experience, Project, SiteSettings, Skill } from "@/lib/db";
 import type {
@@ -22,54 +25,6 @@ import Link from "next/link";
 // This means Vercel serves it from CDN on cold starts instead of
 // hitting the serverless function + MongoDB every time.
 export const revalidate = 300;
-
-const CATEGORY_ORDER: SkillCategory[] = [
-    "frontend",
-    "backend",
-    "database",
-    "devops",
-    "tooling",
-];
-
-const CATEGORY_LABELS: Record<SkillCategory, string> = {
-    frontend: "Frontend",
-    backend: "Backend",
-    database: "Database",
-    devops: "DevOps",
-    tooling: "Tooling",
-};
-
-const CATEGORY_DESCRIPTIONS: Record<SkillCategory, string> = {
-    frontend: "UI frameworks, styling, and client-side tooling",
-    backend: "Server runtimes, APIs, and authentication",
-    database: "Data storage, ODMs, and real-time services",
-    devops: "Deployment, containerisation, and hosting",
-    tooling: "Development workflow and collaboration tools",
-};
-
-const PROFICIENCY_STYLE: Record<
-    ISkill["proficiency"],
-    { label: string; color: string; bg: string; border: string }
-> = {
-    expert: {
-        label: "Expert",
-        color: "var(--accent)",
-        bg: "var(--accent-glow)",
-        border: "var(--border-strong)",
-    },
-    proficient: {
-        label: "Proficient",
-        color: "var(--text-primary)",
-        bg: "var(--bg-subtle)",
-        border: "var(--border)",
-    },
-    familiar: {
-        label: "Familiar",
-        color: "var(--text-tertiary)",
-        bg: "transparent",
-        border: "var(--border)",
-    },
-};
 
 async function getData() {
     try {
@@ -183,23 +138,10 @@ export default async function HomePage() {
     const stackLabel = skillCount > 0 ? `${skillCount}+` : "20+";
 
     const name = settings?.name ?? "Sajjadul Islam";
-    const tagline =
-        settings?.tagline ??
-        "Full stack engineer. Product-minded. Builder by default.";
     const bio = settings?.bio ?? "";
     const socialLinks = settings?.socialLinks ?? [];
     const resumeUrl = settings?.resumeUrl ?? "";
     const availableForWork = settings?.availableForWork ?? false;
-
-    // Split the tagline into sentences so the headline can give the first
-    // one visual weight, call out a second phrase in mono/accent, and drop
-    // any remaining sentences down to a smaller muted line.
-    const sentences = tagline
-        .split(/\.\s+/)
-        .map((s) => s.trim())
-        .filter(Boolean);
-    const [headline, accentPhrase, ...restSentences] = sentences;
-    const subline = restSentences.join(". ");
 
     const groupedSkills = CATEGORY_ORDER.reduce<Record<SkillCategory, ISkill[]>>(
         (acc, cat) => {
@@ -231,6 +173,28 @@ export default async function HomePage() {
                         background:
                             "radial-gradient(ellipse, var(--accent-glow) 0%, transparent 70%)",
                         filter: "blur(40px)",
+                        opacity: "var(--hero-glow-opacity)",
+                    }}
+                />
+
+                {/* Orb top-right */}
+                <div
+                    className="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none"
+                    style={{
+                        background: "var(--accent-glow)",
+                        filter: "blur(80px)",
+                        opacity: 0.6,
+                        transform: "translate(30%, -30%)",
+                    }}
+                />
+                {/* Orb bottom-left */}
+                <div
+                    className="absolute bottom-0 left-0 w-72 h-72 rounded-full pointer-events-none"
+                    style={{
+                        background: "var(--accent-glow)",
+                        filter: "blur(60px)",
+                        opacity: 0.4,
+                        transform: "translate(-30%, 30%)",
                     }}
                 />
 
@@ -258,28 +222,50 @@ export default async function HomePage() {
 
                             {/* Headline */}
                             <FadeIn delay={0.05}>
-                                <h1
-                                    className="text-display font-display leading-[1.05] tracking-tight mb-4"
-                                    style={{ color: "var(--text-primary)" }}
-                                >
-                                    {headline}
-                                    {accentPhrase && (
-                                        <>
-                                            {" "}
-                                            <span className="headline-accent">
-                                                {accentPhrase}
-                                            </span>
-                                        </>
-                                    )}
-                                </h1>
-                                {subline && (
-                                    <p
-                                        className="text-h3 font-display mb-2"
-                                        style={{ color: "var(--text-secondary)" }}
+                                <div className="flex flex-col mb-6" style={{ gap: "0.05em" }}>
+                                    {/* Line 1 — intro label */}
+                                    <span
+                                        className="text-sm font-mono tracking-wider mb-3"
+                                        style={{ color: "var(--text-tertiary)" }}
                                     >
-                                        {subline}
-                                    </p>
-                                )}
+                                        Hi, I&apos;m {name} —
+                                    </span>
+
+                                    {/* Lines 2–4 — the main headline block */}
+                                    <h1 style={{ lineHeight: 1, margin: 0 }}>
+                                        <span
+                                            className="block font-display font-extrabold tracking-tight"
+                                            style={{
+                                                fontSize: "clamp(3.5rem, 7vw, 6rem)",
+                                                color: "var(--text-primary)",
+                                                lineHeight: 1,
+                                            }}
+                                        >
+                                            Full Stack
+                                        </span>
+
+                                        <span
+                                            className="block"
+                                            style={{
+                                                fontSize: "clamp(3rem, 6vw, 5.2rem)",
+                                                lineHeight: 1.1,
+                                            }}
+                                        >
+                                            <RotatingWord />
+                                        </span>
+
+                                        <span
+                                            className="block font-display font-extrabold tracking-tight"
+                                            style={{
+                                                fontSize: "clamp(3.5rem, 7vw, 6rem)",
+                                                color: "var(--text-primary)",
+                                                lineHeight: 1,
+                                            }}
+                                        >
+                                            Engineer
+                                        </span>
+                                    </h1>
+                                </div>
                             </FadeIn>
 
                             {/* Context line */}
@@ -416,12 +402,18 @@ export default async function HomePage() {
             <section id="projects" className="section">
                 <div className="container">
                     <FadeIn>
-                        <p
-                            className="text-xs font-medium uppercase tracking-widest mb-2"
-                            style={{ color: "var(--accent)" }}
-                        >
-                            Selected work
-                        </p>
+                        <div className="flex items-center gap-3 mb-2">
+                            <div
+                                className="w-6 h-px"
+                                style={{ background: "var(--accent)" }}
+                            />
+                            <p
+                                className="text-xs font-medium uppercase tracking-widest"
+                                style={{ color: "var(--accent)" }}
+                            >
+                                Selected work
+                            </p>
+                        </div>
                         <h2
                             className="text-h2 font-display mb-10"
                             style={{ color: "var(--text-primary)" }}
@@ -542,12 +534,18 @@ export default async function HomePage() {
             >
                 <div className="container">
                     <FadeIn>
-                        <p
-                            className="text-xs font-medium uppercase tracking-widest mb-2"
-                            style={{ color: "var(--accent)" }}
-                        >
-                            Career
-                        </p>
+                        <div className="flex items-center gap-3 mb-2">
+                            <div
+                                className="w-6 h-px"
+                                style={{ background: "var(--accent)" }}
+                            />
+                            <p
+                                className="text-xs font-medium uppercase tracking-widest"
+                                style={{ color: "var(--accent)" }}
+                            >
+                                Career
+                            </p>
+                        </div>
                         <h2
                             className="text-h2 font-display mb-10"
                             style={{ color: "var(--text-primary)" }}
@@ -566,12 +564,18 @@ export default async function HomePage() {
             <section id="stack" className="section">
                 <div className="container">
                     <FadeIn>
-                        <p
-                            className="text-xs font-medium uppercase tracking-widest mb-2"
-                            style={{ color: "var(--accent)" }}
-                        >
-                            Technology
-                        </p>
+                        <div className="flex items-center gap-3 mb-2">
+                            <div
+                                className="w-6 h-px"
+                                style={{ background: "var(--accent)" }}
+                            />
+                            <p
+                                className="text-xs font-medium uppercase tracking-widest"
+                                style={{ color: "var(--accent)" }}
+                            >
+                                Technology
+                            </p>
+                        </div>
                         <h2
                             className="text-h2 font-display mb-6"
                             style={{ color: "var(--text-primary)" }}
@@ -605,69 +609,12 @@ export default async function HomePage() {
                         </div>
                     </FadeIn>
 
-                    <StaggerContainer className="flex flex-col gap-10">
-                        {CATEGORY_ORDER.map((cat, catIdx) => {
-                            const catSkills = groupedSkills[cat];
-                            if (catSkills.length === 0) return null;
-
-                            return (
-                                <StaggerItem key={cat}>
-                                    <div className="grid grid-cols-[140px_1fr] gap-8 items-start">
-                                        <div className="pt-1">
-                                            <h3
-                                                className="text-h4"
-                                                style={{
-                                                    color: "var(--text-primary)",
-                                                }}
-                                            >
-                                                {CATEGORY_LABELS[cat]}
-                                            </h3>
-                                            <p
-                                                className="text-xs mt-1 leading-relaxed"
-                                                style={{
-                                                    color: "var(--text-tertiary)",
-                                                }}
-                                            >
-                                                {CATEGORY_DESCRIPTIONS[cat]}
-                                            </p>
-                                        </div>
-
-                                        <div className="flex flex-wrap gap-2">
-                                            {catSkills.map((skill) => {
-                                                const style =
-                                                    PROFICIENCY_STYLE[
-                                                        skill.proficiency
-                                                    ];
-                                                return (
-                                                    <span
-                                                        key={skill._id}
-                                                        className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium"
-                                                        style={{
-                                                            background: style.bg,
-                                                            border: `1px solid ${style.border}`,
-                                                            color: style.color,
-                                                        }}
-                                                        title={`${skill.proficiency.charAt(0).toUpperCase() + skill.proficiency.slice(1)}${skill.projects.length > 0 ? ` · used in ${skill.projects.length} project${skill.projects.length > 1 ? "s" : ""}` : ""}`}
-                                                    >
-                                                        {skill.name}
-                                                    </span>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-
-                                    {catIdx < CATEGORY_ORDER.length - 1 && (
-                                        <hr
-                                            className="mt-10"
-                                            style={{ borderColor: "var(--border)" }}
-                                        />
-                                    )}
-                                </StaggerItem>
-                            );
-                        })}
-                    </StaggerContainer>
-
-                    {skills.length === 0 && (
+                    {skills.length > 0 ? (
+                        <SkillTabs
+                            groupedSkills={groupedSkills}
+                            proficiencyStyle={PROFICIENCY_STYLE}
+                        />
+                    ) : (
                         <p
                             className="text-sm py-16 text-center"
                             style={{ color: "var(--text-tertiary)" }}
@@ -687,12 +634,18 @@ export default async function HomePage() {
                 <div className="container">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
                         <FadeIn>
-                            <p
-                                className="text-xs font-medium uppercase tracking-widest mb-2"
-                                style={{ color: "var(--accent)" }}
-                            >
-                                Contact
-                            </p>
+                            <div className="flex items-center gap-3 mb-2">
+                                <div
+                                    className="w-6 h-px"
+                                    style={{ background: "var(--accent)" }}
+                                />
+                                <p
+                                    className="text-xs font-medium uppercase tracking-widest"
+                                    style={{ color: "var(--accent)" }}
+                                >
+                                    Contact
+                                </p>
+                            </div>
                             <h2
                                 className="text-h2 font-display mb-4"
                                 style={{ color: "var(--text-primary)" }}
