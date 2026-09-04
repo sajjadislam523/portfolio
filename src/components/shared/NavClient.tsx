@@ -91,7 +91,11 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                                 <Link
                                     key={href}
                                     href={href}
-                                    className="px-3 py-1.5 rounded-lg text-sm transition-colors"
+                                    className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                                        active
+                                            ? ""
+                                            : "hover:text-[var(--text-primary)] hover:bg-[var(--bg-subtle)]"
+                                    }`}
                                     style={{
                                         color: active
                                             ? "var(--text-primary)"
@@ -113,12 +117,13 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                             <div
                                 className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs"
                                 style={{
-                                    background: "rgba(34,197,94,0.1)",
-                                    border: "1px solid rgba(34,197,94,0.25)",
-                                    color: "#22C55E",
+                                    background:
+                                        "color-mix(in srgb, var(--accent) 10%, transparent)",
+                                    border: "1px solid color-mix(in srgb, var(--accent) 25%, transparent)",
+                                    color: "var(--accent)",
                                 }}
                             >
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E] animate-pulse" />
+                                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
                                 Available
                             </div>
                         )}
@@ -308,12 +313,13 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                         <div
                             className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs w-fit"
                             style={{
-                                background: "rgba(34,197,94,0.08)",
-                                border: "1px solid rgba(34,197,94,0.2)",
-                                color: "#22C55E",
+                                background:
+                                    "color-mix(in srgb, var(--accent) 8%, transparent)",
+                                border: "1px solid color-mix(in srgb, var(--accent) 20%, transparent)",
+                                color: "var(--accent)",
                             }}
                         >
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E] animate-pulse" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
                             Open to opportunities
                         </div>
                     )}

@@ -2,7 +2,7 @@ import { FadeIn } from "@/components/motion/ScrollReveal";
 import { HeroVisual } from "@/components/sections/hero/ArchitectureDiagram";
 import { TechMarquee } from "@/components/sections/hero/TechMarquee";
 import { JsonLdPerson } from "@/components/shared/JsonLd";
-import { connectDB, Experience, Project, SiteSettings } from "@/lib/db";
+import { connectDB, Experience, Project, SiteSettings, Skill } from "@/lib/db";
 import type { IExperience, IProject, ISiteSettings } from "@/types";
 import { ArrowRight, FileText } from "lucide-react";
 import type { Metadata } from "next";
@@ -16,14 +16,42 @@ export const revalidate = 300;
 async function getData() {
     try {
         await connectDB();
-        const [settingsDoc, projectDocs, experienceDocs] = await Promise.all([
+        const [
+            settingsDoc,
+            projectDocs,
+            experienceDocs,
+            allExperienceDocs,
+            projectCount,
+            skillCount,
+        ] = await Promise.all([
             SiteSettings.findOne({}).lean(),
             Project.find({ status: "featured" })
                 .sort({ order: 1 })
                 .limit(3)
                 .lean(),
             Experience.find().sort({ order: 1 }).limit(1).lean(),
+            Experience.find().select("startDate").lean(),
+            Project.countDocuments(),
+            Skill.countDocuments(),
         ]);
+
+        const earliestStart = allExperienceDocs.reduce<Date | null>(
+            (min, e) => {
+                const start = new Date(e.startDate);
+                return !min || start < min ? start : min;
+            },
+            null,
+        );
+        const experienceYears = earliestStart
+            ? Math.max(
+                  1,
+                  Math.floor(
+                      (Date.now() - earliestStart.getTime()) /
+                          (365.25 * 24 * 60 * 60 * 1000),
+                  ),
+              )
+            : null;
+
         return {
             settings: settingsDoc
                 ? (JSON.parse(JSON.stringify(settingsDoc)) as ISiteSettings)
@@ -32,9 +60,19 @@ async function getData() {
             latestRole: experienceDocs[0]
                 ? (JSON.parse(JSON.stringify(experienceDocs[0])) as IExperience)
                 : null,
+            experienceYears,
+            projectCount,
+            skillCount,
         };
     } catch {
-        return { settings: null, projects: [], latestRole: null };
+        return {
+            settings: null,
+            projects: [],
+            latestRole: null,
+            experienceYears: null,
+            projectCount: 0,
+            skillCount: 0,
+        };
     }
 }
 
@@ -68,7 +106,12 @@ const TECH_STACK = [
 ];
 
 export default async function HomePage() {
-    const { settings, projects, latestRole } = await getData();
+    const { settings, projects, latestRole, experienceYears, projectCount, skillCount } =
+        await getData();
+
+    const experienceLabel = experienceYears ? `${experienceYears}+ yr` : "1+ yr";
+    const projectsLabel = projectCount > 0 ? `${projectCount}+` : "20+";
+    const stackLabel = skillCount > 0 ? `${skillCount}+` : "20+";
 
     const name = settings?.name ?? "Sajjadul Islam";
     const tagline =
@@ -113,19 +156,20 @@ export default async function HomePage() {
                                 <div
                                     className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs mb-8"
                                     style={{
-                                        background: "rgba(34,197,94,0.08)",
-                                        border: "1px solid rgba(34,197,94,0.2)",
-                                        color: "#22C55E",
+                                        background:
+                                            "color-mix(in srgb, var(--accent) 8%, transparent)",
+                                        border: "1px solid color-mix(in srgb, var(--accent) 20%, transparent)",
+                                        color: "var(--accent)",
                                     }}
                                 >
-                                    <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E] animate-pulse" />
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
                                     Open to opportunities
                                 </div>
                             )}
 
                             {/* Headline */}
                             <h1
-                                className="text-h1 leading-[1.08] tracking-tight mb-6"
+                                className="text-display leading-[1.08] tracking-tight mb-6"
                                 style={{ color: "var(--text-primary)" }}
                             >
                                 {tagline}
@@ -178,7 +222,7 @@ export default async function HomePage() {
                                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm transition-colors"
                                     style={{
                                         background: "var(--bg-elevated)",
-                                        border: "1px solid var(--border)",
+                                        border: "1px solid var(--border-strong)",
                                         color: "var(--text-secondary)",
                                     }}
                                 >
@@ -239,7 +283,11 @@ export default async function HomePage() {
 
                         {/* Right — terminal code card */}
                         <div className="hidden lg:flex items-center justify-center">
-                            <HeroVisual />
+                            <HeroVisual
+                                experienceLabel={experienceLabel}
+                                projectsLabel={projectsLabel}
+                                stackLabel={stackLabel}
+                            />
                         </div>
                     </div>
                 </div>
@@ -284,7 +332,7 @@ export default async function HomePage() {
                                 <div key={project._id}>
                                     <Link
                                         href={`/projects/${project.slug}`}
-                                        className="group flex flex-col sm:flex-row sm:items-center gap-4 py-5 border-b transition-colors"
+                                        className="group flex flex-col sm:flex-row sm:items-center gap-4 -mx-4 px-4 py-5 border-b rounded-lg transition-colors hover:bg-[var(--bg-subtle)]"
                                         style={{ borderColor: "var(--border)" }}
                                     >
                                         <div className="flex-1 min-w-0">

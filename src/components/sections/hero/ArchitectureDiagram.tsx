@@ -4,7 +4,17 @@
 
 import React from "react";
 
-export const HeroVisual: React.FC = () => {
+interface HeroVisualProps {
+    experienceLabel: string;
+    projectsLabel: string;
+    stackLabel: string;
+}
+
+export const HeroVisual: React.FC<HeroVisualProps> = ({
+    experienceLabel,
+    projectsLabel,
+    stackLabel,
+}) => {
     return (
         <div className="w-full max-w-sm select-none">
             {/* Terminal window */}
@@ -111,9 +121,9 @@ export const HeroVisual: React.FC = () => {
             {/* Floating badge below the card */}
             <div className="flex items-center justify-center gap-6 mt-5">
                 {[
-                    { label: "Experience", value: "1+ yr" },
-                    { label: "Projects", value: "20+" },
-                    { label: "Stack", value: "20+" },
+                    { label: "Experience", value: experienceLabel },
+                    { label: "Projects", value: projectsLabel },
+                    { label: "Stack", value: stackLabel },
                 ].map(({ label, value }) => (
                     <div key={label} className="text-center">
                         <p

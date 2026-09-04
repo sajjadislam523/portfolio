@@ -91,7 +91,7 @@ export default async function StackPage() {
                         Technology
                     </p>
                     <h1
-                        className="text-h1 mb-4"
+                        className="text-display mb-4"
                         style={{ color: "var(--text-primary)" }}
                     >
                         Stack
@@ -140,7 +140,7 @@ export default async function StackPage() {
                                 <div className="grid grid-cols-[140px_1fr] gap-8 items-start">
                                     <div className="pt-1">
                                         <h2
-                                            className="text-sm font-semibold"
+                                            className="text-h4"
                                             style={{
                                                 color: "var(--text-primary)",
                                             }}

@@ -37,7 +37,7 @@ export default async function ContactPage() {
                         Contact
                     </p>
                     <h1
-                        className="text-h1 mb-4"
+                        className="text-display mb-4"
                         style={{ color: "var(--text-primary)" }}
                     >
                         Get in touch
@@ -50,7 +50,7 @@ export default async function ContactPage() {
                         <span
                             style={{
                                 color: settings?.availableForWork
-                                    ? "#22C55E"
+                                    ? "var(--accent)"
                                     : "var(--text-secondary)",
                             }}
                         >

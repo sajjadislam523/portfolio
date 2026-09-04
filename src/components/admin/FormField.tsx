@@ -48,10 +48,10 @@ export function FormField({
 
 // Shared input style — use with style prop to pick up theme vars
 export const inputClass =
-  'w-full rounded-lg px-3 py-2 text-sm outline-none transition-colors bg-[var(--bg-subtle)] border border-[var(--border)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)]'
+  'w-full rounded-md px-3 py-2 text-sm outline-none transition-colors bg-[var(--bg-subtle)] border border-[var(--border)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)]'
 
 export const textareaClass =
-  'w-full rounded-lg px-3 py-2 text-sm outline-none transition-colors bg-[var(--bg-subtle)] border border-[var(--border)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)] resize-y min-h-[100px]'
+  'w-full rounded-md px-3 py-2 text-sm outline-none transition-colors bg-[var(--bg-subtle)] border border-[var(--border)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)] resize-y min-h-[100px]'
 
 export const selectClass =
-  'w-full rounded-lg px-3 py-2 text-sm outline-none transition-colors bg-[var(--bg-subtle)] border border-[var(--border)] text-[var(--text-primary)] focus:border-[var(--accent)]'
+  'w-full rounded-md px-3 py-2 text-sm outline-none transition-colors bg-[var(--bg-subtle)] border border-[var(--border)] text-[var(--text-primary)] focus:border-[var(--accent)]'

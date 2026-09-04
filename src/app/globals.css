@@ -68,7 +68,8 @@
 @layer components {
   /* Reusable section spacing */
   .section {
-    padding-block: 5rem;
+    padding-top: 5rem;
+    padding-bottom: 3rem;
   }
   .section-sm {
     padding-block: 3rem;

@@ -25,7 +25,7 @@ export default async function ExperiencePage() {
     const experiences = await getExperiences();
 
     return (
-        <div className="pt-28 pb-24 h-screen">
+        <div className="pt-28 pb-24">
             <div className="container max-w-2xl">
                 <FadeIn>
                     <p
@@ -35,7 +35,7 @@ export default async function ExperiencePage() {
                         Career
                     </p>
                     <h1
-                        className="text-h1 mb-4"
+                        className="text-display mb-4"
                         style={{ color: "var(--text-primary)" }}
                     >
                         Experience

@@ -47,7 +47,7 @@ export default async function ProjectsPage() {
                             Work
                         </p>
                         <h1
-                            className="text-h1 mb-4"
+                            className="text-display mb-4"
                             style={{ color: "var(--text-primary)" }}
                         >
                             Projects
