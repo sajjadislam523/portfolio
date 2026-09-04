@@ -4,22 +4,22 @@
 /* Light is the default (no class on <html>); next-themes toggles a `.dark`  */
 /* class on <html> for dark mode, matching Tailwind's darkMode: ['class'].  */
 :root {
-  --bg-primary: #fafafa;
-  --bg-secondary: #f4f4f5;
-  --bg-elevated: #ffffff;
-  --bg-subtle: #f0f0f2;
-  --border: rgba(0, 0, 0, 0.08);
-  --border-strong: rgba(0, 0, 0, 0.14);
-  --text-primary: #18181b;
-  --text-secondary: #52525b;
-  --text-tertiary: #8a8a94;
+  --bg-primary: #efeef0;
+  --bg-secondary: #e6e5e8;
+  --bg-elevated: #f7f7f8;
+  --bg-subtle: #e2e1e5;
+  --border: rgba(0, 0, 0, 0.1);
+  --border-strong: rgba(0, 0, 0, 0.18);
+  --text-primary: #17171a;
+  --text-secondary: #4a4a52;
+  --text-tertiary: #7c7c86;
   --accent: #6d28d9;
-  --accent-glow: rgba(109, 40, 217, 0.1);
+  --accent-glow: rgba(109, 40, 217, 0.14);
   --accent-foreground: #ffffff;
   --success: #15803d;
   --success-glow: rgba(21, 128, 61, 0.12);
   --icon-filter: none;
-  --grid-opacity: 0.12;
+  --grid-opacity: 0.2;
 }
 
 .dark {

@@ -535,8 +535,12 @@ export default async function HomePage() {
             </section>
 
             {/* ── Experience ───────────────────────────────────────────────────────── */}
-            <section id="experience" className="section">
-                <div className="container max-w-2xl">
+            <section
+                id="experience"
+                className="section"
+                style={{ background: "var(--bg-secondary)" }}
+            >
+                <div className="container">
                     <FadeIn>
                         <p
                             className="text-xs font-medium uppercase tracking-widest mb-2"
@@ -552,13 +556,15 @@ export default async function HomePage() {
                         </h2>
                     </FadeIn>
 
-                    <ExperienceTimeline experiences={experiences} />
+                    <div className="max-w-2xl">
+                        <ExperienceTimeline experiences={experiences} />
+                    </div>
                 </div>
             </section>
 
             {/* ── Stack ────────────────────────────────────────────────────────────── */}
             <section id="stack" className="section">
-                <div className="container max-w-3xl">
+                <div className="container">
                     <FadeIn>
                         <p
                             className="text-xs font-medium uppercase tracking-widest mb-2"
@@ -673,69 +679,75 @@ export default async function HomePage() {
             </section>
 
             {/* ── Contact ──────────────────────────────────────────────────────────── */}
-            <section id="contact" className="section">
-                <div className="container max-w-2xl">
-                    <FadeIn>
-                        <p
-                            className="text-xs font-medium uppercase tracking-widest mb-2"
-                            style={{ color: "var(--accent)" }}
-                        >
-                            Contact
-                        </p>
-                        <h2
-                            className="text-h2 font-display mb-4"
-                            style={{ color: "var(--text-primary)" }}
-                        >
-                            Get in touch
-                        </h2>
-                        <p
-                            className="text-base mb-3"
-                            style={{ color: "var(--text-secondary)" }}
-                        >
-                            I&apos;m currently{" "}
-                            <span
-                                style={{
-                                    color: availableForWork
-                                        ? "var(--accent)"
-                                        : "var(--text-secondary)",
-                                }}
-                            >
-                                {availableForWork
-                                    ? "open to new opportunities"
-                                    : "not actively looking"}
-                            </span>
-                            . Whether you have a project, a question, or just
-                            want to say hello — my inbox is open.
-                        </p>
-                        {settings?.email && (
-                            <a
-                                href={`mailto:${settings.email}`}
-                                className="inline-flex items-center gap-1.5 text-sm mb-12 transition-opacity hover:opacity-70"
-                                style={{ color: "var(--accent)" }}
-                                aria-label={`Email ${settings.email}`}
-                            >
-                                {settings.email} ↗
-                            </a>
-                        )}
-                    </FadeIn>
-
-                    <FadeIn delay={0.08}>
-                        <div
-                            className="rounded-xl p-6"
-                            style={{
-                                background: "var(--bg-elevated)",
-                                border: "1px solid var(--border)",
-                            }}
-                        >
+            <section
+                id="contact"
+                className="section"
+                style={{ background: "var(--bg-secondary)" }}
+            >
+                <div className="container">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+                        <FadeIn>
                             <p
-                                className="text-sm font-medium mb-5"
+                                className="text-xs font-medium uppercase tracking-widest mb-2"
+                                style={{ color: "var(--accent)" }}
+                            >
+                                Contact
+                            </p>
+                            <h2
+                                className="text-h2 font-display mb-4"
                                 style={{ color: "var(--text-primary)" }}
                             >
-                                Send a message
+                                Get in touch
+                            </h2>
+                            <p
+                                className="text-base mb-3 max-w-md"
+                                style={{ color: "var(--text-secondary)" }}
+                            >
+                                I&apos;m currently{" "}
+                                <span
+                                    style={{
+                                        color: availableForWork
+                                            ? "var(--accent)"
+                                            : "var(--text-secondary)",
+                                    }}
+                                >
+                                    {availableForWork
+                                        ? "open to new opportunities"
+                                        : "not actively looking"}
+                                </span>
+                                . Whether you have a project, a question, or
+                                just want to say hello — my inbox is open.
                             </p>
-                            <ContactForm />
-                        </div>
-                    </FadeIn>
+                            {settings?.email && (
+                                <a
+                                    href={`mailto:${settings.email}`}
+                                    className="inline-flex items-center gap-1.5 text-sm transition-opacity hover:opacity-70"
+                                    style={{ color: "var(--accent)" }}
+                                    aria-label={`Email ${settings.email}`}
+                                >
+                                    {settings.email} ↗
+                                </a>
+                            )}
+                        </FadeIn>
+
+                        <FadeIn delay={0.08}>
+                            <div
+                                className="rounded-xl p-6"
+                                style={{
+                                    background: "var(--bg-elevated)",
+                                    border: "1px solid var(--border)",
+                                }}
+                            >
+                                <p
+                                    className="text-sm font-medium mb-5"
+                                    style={{ color: "var(--text-primary)" }}
+                                >
+                                    Send a message
+                                </p>
+                                <ContactForm />
+                            </div>
+                        </FadeIn>
+                    </div>
                 </div>
             </section>
         </>
