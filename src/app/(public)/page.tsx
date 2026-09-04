@@ -1,11 +1,21 @@
-import { FadeIn } from "@/components/motion/ScrollReveal";
+import { FadeIn, StaggerContainer, StaggerItem } from "@/components/motion/ScrollReveal";
+import { ContactForm } from "@/components/sections/contact/ContactForm";
+import { ExperienceTimeline } from "@/components/sections/experience/ExperienceTimeline";
 import { HeroVisual } from "@/components/sections/hero/HeroVisual";
 import { TechMarquee } from "@/components/sections/hero/TechMarquee";
+import { ProjectCard } from "@/components/sections/projects/ProjectCard";
 import { JsonLdPerson } from "@/components/shared/JsonLd";
 import { connectDB, Experience, Project, SiteSettings, Skill } from "@/lib/db";
-import type { IExperience, IProject, ISiteSettings } from "@/types";
-import { ArrowRight, FileText } from "lucide-react";
+import type {
+    IExperience,
+    IProject,
+    ISiteSettings,
+    ISkill,
+    SkillCategory,
+} from "@/types";
+import { ArrowUpRight, FileText } from "lucide-react";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 // Cache the homepage at the edge for 5 minutes.
@@ -13,35 +23,77 @@ import Link from "next/link";
 // hitting the serverless function + MongoDB every time.
 export const revalidate = 300;
 
+const CATEGORY_ORDER: SkillCategory[] = [
+    "frontend",
+    "backend",
+    "database",
+    "devops",
+    "tooling",
+];
+
+const CATEGORY_LABELS: Record<SkillCategory, string> = {
+    frontend: "Frontend",
+    backend: "Backend",
+    database: "Database",
+    devops: "DevOps",
+    tooling: "Tooling",
+};
+
+const CATEGORY_DESCRIPTIONS: Record<SkillCategory, string> = {
+    frontend: "UI frameworks, styling, and client-side tooling",
+    backend: "Server runtimes, APIs, and authentication",
+    database: "Data storage, ODMs, and real-time services",
+    devops: "Deployment, containerisation, and hosting",
+    tooling: "Development workflow and collaboration tools",
+};
+
+const PROFICIENCY_STYLE: Record<
+    ISkill["proficiency"],
+    { label: string; color: string; bg: string; border: string }
+> = {
+    expert: {
+        label: "Expert",
+        color: "var(--accent)",
+        bg: "var(--accent-glow)",
+        border: "var(--border-strong)",
+    },
+    proficient: {
+        label: "Proficient",
+        color: "var(--text-primary)",
+        bg: "var(--bg-subtle)",
+        border: "var(--border)",
+    },
+    familiar: {
+        label: "Familiar",
+        color: "var(--text-tertiary)",
+        bg: "transparent",
+        border: "var(--border)",
+    },
+};
+
 async function getData() {
     try {
         await connectDB();
-        const [
-            settingsDoc,
-            projectDocs,
-            experienceDocs,
-            allExperienceDocs,
-            projectCount,
-            skillCount,
-        ] = await Promise.all([
-            SiteSettings.findOne({}).lean(),
-            Project.find({ status: "featured" })
-                .sort({ order: 1 })
-                .limit(3)
-                .lean(),
-            Experience.find().sort({ order: 1 }).limit(1).lean(),
-            Experience.find().select("startDate").lean(),
-            Project.countDocuments(),
-            Skill.countDocuments(),
-        ]);
+        const [settingsDoc, projectDocs, experienceDocs, skillDocs] =
+            await Promise.all([
+                SiteSettings.findOne({}).lean(),
+                Project.find().sort({ order: 1 }).lean(),
+                Experience.find().sort({ order: 1 }).lean(),
+                Skill.find().sort({ category: 1, order: 1 }).lean(),
+            ]);
 
-        const earliestStart = allExperienceDocs.reduce<Date | null>(
-            (min, e) => {
-                const start = new Date(e.startDate);
-                return !min || start < min ? start : min;
-            },
-            null,
-        );
+        const allProjects = JSON.parse(
+            JSON.stringify(projectDocs),
+        ) as IProject[];
+        const experiences = JSON.parse(
+            JSON.stringify(experienceDocs),
+        ) as IExperience[];
+        const skills = JSON.parse(JSON.stringify(skillDocs)) as ISkill[];
+
+        const earliestStart = experiences.reduce<Date | null>((min, e) => {
+            const start = new Date(e.startDate);
+            return !min || start < min ? start : min;
+        }, null);
         const experienceYears = earliestStart
             ? Math.max(
                   1,
@@ -56,19 +108,27 @@ async function getData() {
             settings: settingsDoc
                 ? (JSON.parse(JSON.stringify(settingsDoc)) as ISiteSettings)
                 : null,
-            projects: JSON.parse(JSON.stringify(projectDocs)) as IProject[],
-            latestRole: experienceDocs[0]
-                ? (JSON.parse(JSON.stringify(experienceDocs[0])) as IExperience)
-                : null,
+            featuredProjects: allProjects.filter(
+                (p) => p.status === "featured",
+            ),
+            archivedProjects: allProjects.filter(
+                (p) => p.status === "archived",
+            ),
+            experiences,
+            latestRole: experiences[0] ?? null,
+            skills,
             experienceYears,
-            projectCount,
-            skillCount,
+            projectCount: allProjects.length,
+            skillCount: skills.length,
         };
     } catch {
         return {
             settings: null,
-            projects: [],
+            featuredProjects: [],
+            archivedProjects: [],
+            experiences: [],
             latestRole: null,
+            skills: [],
             experienceYears: null,
             projectCount: 0,
             skillCount: 0,
@@ -106,8 +166,17 @@ const TECH_STACK = [
 ];
 
 export default async function HomePage() {
-    const { settings, projects, latestRole, experienceYears, projectCount, skillCount } =
-        await getData();
+    const {
+        settings,
+        featuredProjects,
+        archivedProjects,
+        experiences,
+        latestRole,
+        skills,
+        experienceYears,
+        projectCount,
+        skillCount,
+    } = await getData();
 
     const experienceLabel = experienceYears ? `${experienceYears}+ yr` : "1+ yr";
     const projectsLabel = projectCount > 0 ? `${projectCount}+` : "20+";
@@ -121,6 +190,24 @@ export default async function HomePage() {
     const socialLinks = settings?.socialLinks ?? [];
     const resumeUrl = settings?.resumeUrl ?? "";
     const availableForWork = settings?.availableForWork ?? false;
+
+    // Split the tagline into sentences so the headline can give the first
+    // one visual weight, call out a second phrase in mono/accent, and drop
+    // any remaining sentences down to a smaller muted line.
+    const sentences = tagline
+        .split(/\.\s+/)
+        .map((s) => s.trim())
+        .filter(Boolean);
+    const [headline, accentPhrase, ...restSentences] = sentences;
+    const subline = restSentences.join(". ");
+
+    const groupedSkills = CATEGORY_ORDER.reduce<Record<SkillCategory, ISkill[]>>(
+        (acc, cat) => {
+            acc[cat] = skills.filter((s) => s.category === cat);
+            return acc;
+        },
+        {} as Record<SkillCategory, ISkill[]>,
+    );
 
     return (
         <>
@@ -172,17 +259,33 @@ export default async function HomePage() {
                             {/* Headline */}
                             <FadeIn delay={0.05}>
                                 <h1
-                                    className="text-display font-display leading-[1.05] tracking-tight mb-6"
+                                    className="text-display font-display leading-[1.05] tracking-tight mb-4"
                                     style={{ color: "var(--text-primary)" }}
                                 >
-                                    {tagline}
+                                    {headline}
+                                    {accentPhrase && (
+                                        <>
+                                            {" "}
+                                            <span className="headline-accent">
+                                                {accentPhrase}
+                                            </span>
+                                        </>
+                                    )}
                                 </h1>
+                                {subline && (
+                                    <p
+                                        className="text-h3 font-display mb-2"
+                                        style={{ color: "var(--text-secondary)" }}
+                                    >
+                                        {subline}
+                                    </p>
+                                )}
                             </FadeIn>
 
                             {/* Context line */}
                             <FadeIn delay={0.1}>
                                 <div
-                                    className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4 text-sm"
+                                    className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4 mt-4 text-sm"
                                     style={{ color: "var(--text-tertiary)" }}
                                 >
                                     <span>{name}</span>
@@ -216,7 +319,7 @@ export default async function HomePage() {
                             <FadeIn delay={0.2}>
                                 <div className="flex flex-wrap items-center gap-3 mb-6">
                                     <Link
-                                        href="/projects"
+                                        href="#projects"
                                         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-opacity hover:opacity-90"
                                         style={{
                                             background: "var(--accent)",
@@ -224,15 +327,15 @@ export default async function HomePage() {
                                         }}
                                     >
                                         View projects{" "}
-                                        <ArrowRight className="w-4 h-4" />
+                                        <ArrowUpRight className="w-4 h-4" />
                                     </Link>
                                     <Link
-                                        href="/contact"
+                                        href="#contact"
                                         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm transition-colors"
                                         style={{
                                             background: "var(--bg-elevated)",
                                             border: "1px solid var(--border-strong)",
-                                            color: "var(--text-secondary)",
+                                            color: "var(--text-primary)",
                                         }}
                                     >
                                         Get in touch
@@ -309,96 +412,332 @@ export default async function HomePage() {
             {/* ── Tech marquee ───────────────────────────────────────────────────── */}
             <TechMarquee techs={TECH_STACK} />
 
-            {/* ── Featured projects preview ───────────────────────────────────────── */}
-            {projects.length > 0 && (
-                <section className="section">
-                    <div className="container">
-                        <FadeIn>
-                            <div className="flex items-end justify-between mb-10">
-                                <div>
-                                    <p
-                                        className="text-xs font-medium uppercase tracking-widest mb-2"
-                                        style={{ color: "var(--accent)" }}
-                                    >
-                                        Selected work
-                                    </p>
-                                    <h2
-                                        className="text-h2 font-display"
-                                        style={{ color: "var(--text-primary)" }}
-                                    >
-                                        Featured projects
-                                    </h2>
-                                </div>
-                                <Link
-                                    href="/projects"
-                                    className="text-sm flex items-center gap-1.5 transition-colors"
+            {/* ── Projects ─────────────────────────────────────────────────────────── */}
+            <section id="projects" className="section">
+                <div className="container">
+                    <FadeIn>
+                        <p
+                            className="text-xs font-medium uppercase tracking-widest mb-2"
+                            style={{ color: "var(--accent)" }}
+                        >
+                            Selected work
+                        </p>
+                        <h2
+                            className="text-h2 font-display mb-10"
+                            style={{ color: "var(--text-primary)" }}
+                        >
+                            Featured projects
+                        </h2>
+                    </FadeIn>
+
+                    {featuredProjects.length > 0 ? (
+                        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {featuredProjects.map((project) => (
+                                <StaggerItem key={project._id}>
+                                    <ProjectCard project={project} />
+                                </StaggerItem>
+                            ))}
+                        </StaggerContainer>
+                    ) : (
+                        <p
+                            className="text-sm py-16 text-center"
+                            style={{ color: "var(--text-tertiary)" }}
+                        >
+                            No projects yet — check back soon.
+                        </p>
+                    )}
+
+                    {/* ── Archive ──────────────────────────────────────────────────── */}
+                    {archivedProjects.length > 0 && (
+                        <div className="mt-16">
+                            <div className="flex items-center gap-3 mb-6">
+                                <span
+                                    className="text-xs font-medium uppercase tracking-widest"
                                     style={{ color: "var(--text-tertiary)" }}
                                 >
-                                    All projects{" "}
-                                    <ArrowRight className="w-4 h-4" />
-                                </Link>
+                                    Archive
+                                </span>
+                                <div
+                                    className="flex-1 h-px"
+                                    style={{ background: "var(--border)" }}
+                                />
                             </div>
-                        </FadeIn>
 
-                        <div className="flex flex-col gap-px">
-                            {projects.map((project) => (
-                                <div key={project._id}>
+                            <div className="flex flex-col gap-3">
+                                {archivedProjects.map((project) => (
                                     <Link
+                                        key={project._id}
                                         href={`/projects/${project.slug}`}
-                                        className="group flex flex-col sm:flex-row sm:items-center gap-4 -mx-4 px-4 py-5 border-b rounded-lg transition-colors hover:bg-[var(--bg-subtle)]"
+                                        className="group flex items-center justify-between gap-4 py-3 border-b transition-colors"
                                         style={{ borderColor: "var(--border)" }}
                                     >
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-3 mb-1">
-                                                <h3
-                                                    className="text-base font-medium group-hover:opacity-80 transition-opacity"
+                                        <div className="flex items-center gap-4 min-w-0">
+                                            {project.coverImage && (
+                                                <div
+                                                    className="relative shrink-0 rounded-md overflow-hidden"
+                                                    style={{
+                                                        width: "48px",
+                                                        height: "32px",
+                                                        border: "1px solid var(--border)",
+                                                    }}
+                                                >
+                                                    <Image
+                                                        src={project.coverImage}
+                                                        alt={project.title}
+                                                        fill
+                                                        className="object-cover"
+                                                        sizes="48px"
+                                                    />
+                                                </div>
+                                            )}
+                                            <div className="min-w-0">
+                                                <p
+                                                    className="text-sm font-medium truncate group-hover:opacity-80 transition-opacity"
                                                     style={{
                                                         color: "var(--text-primary)",
                                                     }}
                                                 >
                                                     {project.title}
-                                                </h3>
-                                                <span
-                                                    className="text-xs"
+                                                </p>
+                                                <p
+                                                    className="text-xs truncate"
                                                     style={{
                                                         color: "var(--text-tertiary)",
                                                     }}
                                                 >
-                                                    {project.year}
-                                                </span>
+                                                    {project.tagline}
+                                                </p>
                                             </div>
-                                            <p
-                                                className="text-sm"
+                                        </div>
+
+                                        <div className="flex items-center gap-3 shrink-0">
+                                            <span
+                                                className="text-xs font-mono"
                                                 style={{
-                                                    color: "var(--text-secondary)",
+                                                    color: "var(--text-tertiary)",
                                                 }}
                                             >
-                                                {project.tagline}
+                                                {project.year}
+                                            </span>
+                                            <ArrowUpRight
+                                                className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                style={{
+                                                    color: "var(--accent)",
+                                                }}
+                                            />
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </section>
+
+            {/* ── Experience ───────────────────────────────────────────────────────── */}
+            <section id="experience" className="section">
+                <div className="container max-w-2xl">
+                    <FadeIn>
+                        <p
+                            className="text-xs font-medium uppercase tracking-widest mb-2"
+                            style={{ color: "var(--accent)" }}
+                        >
+                            Career
+                        </p>
+                        <h2
+                            className="text-h2 font-display mb-10"
+                            style={{ color: "var(--text-primary)" }}
+                        >
+                            Experience
+                        </h2>
+                    </FadeIn>
+
+                    <ExperienceTimeline experiences={experiences} />
+                </div>
+            </section>
+
+            {/* ── Stack ────────────────────────────────────────────────────────────── */}
+            <section id="stack" className="section">
+                <div className="container max-w-3xl">
+                    <FadeIn>
+                        <p
+                            className="text-xs font-medium uppercase tracking-widest mb-2"
+                            style={{ color: "var(--accent)" }}
+                        >
+                            Technology
+                        </p>
+                        <h2
+                            className="text-h2 font-display mb-6"
+                            style={{ color: "var(--text-primary)" }}
+                        >
+                            Stack
+                        </h2>
+
+                        {/* Proficiency legend */}
+                        <div className="flex items-center gap-4 mb-12">
+                            {Object.entries(PROFICIENCY_STYLE).map(
+                                ([key, style]) => (
+                                    <div
+                                        key={key}
+                                        className="flex items-center gap-1.5"
+                                    >
+                                        <span
+                                            className="w-2 h-2 rounded-full"
+                                            style={{ background: style.color }}
+                                        />
+                                        <span
+                                            className="text-xs"
+                                            style={{
+                                                color: "var(--text-tertiary)",
+                                            }}
+                                        >
+                                            {style.label}
+                                        </span>
+                                    </div>
+                                ),
+                            )}
+                        </div>
+                    </FadeIn>
+
+                    <StaggerContainer className="flex flex-col gap-10">
+                        {CATEGORY_ORDER.map((cat, catIdx) => {
+                            const catSkills = groupedSkills[cat];
+                            if (catSkills.length === 0) return null;
+
+                            return (
+                                <StaggerItem key={cat}>
+                                    <div className="grid grid-cols-[140px_1fr] gap-8 items-start">
+                                        <div className="pt-1">
+                                            <h3
+                                                className="text-h4"
+                                                style={{
+                                                    color: "var(--text-primary)",
+                                                }}
+                                            >
+                                                {CATEGORY_LABELS[cat]}
+                                            </h3>
+                                            <p
+                                                className="text-xs mt-1 leading-relaxed"
+                                                style={{
+                                                    color: "var(--text-tertiary)",
+                                                }}
+                                            >
+                                                {CATEGORY_DESCRIPTIONS[cat]}
                                             </p>
                                         </div>
-                                        <div className="flex flex-wrap gap-1.5 sm:justify-end">
-                                            {project.technologies
-                                                .slice(0, 4)
-                                                .map((t) => (
+
+                                        <div className="flex flex-wrap gap-2">
+                                            {catSkills.map((skill) => {
+                                                const style =
+                                                    PROFICIENCY_STYLE[
+                                                        skill.proficiency
+                                                    ];
+                                                return (
                                                     <span
-                                                        key={t}
-                                                        className="pill"
+                                                        key={skill._id}
+                                                        className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium"
+                                                        style={{
+                                                            background: style.bg,
+                                                            border: `1px solid ${style.border}`,
+                                                            color: style.color,
+                                                        }}
+                                                        title={`${skill.proficiency.charAt(0).toUpperCase() + skill.proficiency.slice(1)}${skill.projects.length > 0 ? ` · used in ${skill.projects.length} project${skill.projects.length > 1 ? "s" : ""}` : ""}`}
                                                     >
-                                                        {t}
+                                                        {skill.name}
                                                     </span>
-                                                ))}
+                                                );
+                                            })}
                                         </div>
-                                        <ArrowRight
-                                            className="w-4 h-4 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity -rotate-45"
-                                            style={{ color: "var(--accent)" }}
+                                    </div>
+
+                                    {catIdx < CATEGORY_ORDER.length - 1 && (
+                                        <hr
+                                            className="mt-10"
+                                            style={{ borderColor: "var(--border)" }}
                                         />
-                                    </Link>
-                                </div>
-                            ))}
+                                    )}
+                                </StaggerItem>
+                            );
+                        })}
+                    </StaggerContainer>
+
+                    {skills.length === 0 && (
+                        <p
+                            className="text-sm py-16 text-center"
+                            style={{ color: "var(--text-tertiary)" }}
+                        >
+                            No skills yet — check back soon.
+                        </p>
+                    )}
+                </div>
+            </section>
+
+            {/* ── Contact ──────────────────────────────────────────────────────────── */}
+            <section id="contact" className="section">
+                <div className="container max-w-2xl">
+                    <FadeIn>
+                        <p
+                            className="text-xs font-medium uppercase tracking-widest mb-2"
+                            style={{ color: "var(--accent)" }}
+                        >
+                            Contact
+                        </p>
+                        <h2
+                            className="text-h2 font-display mb-4"
+                            style={{ color: "var(--text-primary)" }}
+                        >
+                            Get in touch
+                        </h2>
+                        <p
+                            className="text-base mb-3"
+                            style={{ color: "var(--text-secondary)" }}
+                        >
+                            I&apos;m currently{" "}
+                            <span
+                                style={{
+                                    color: availableForWork
+                                        ? "var(--accent)"
+                                        : "var(--text-secondary)",
+                                }}
+                            >
+                                {availableForWork
+                                    ? "open to new opportunities"
+                                    : "not actively looking"}
+                            </span>
+                            . Whether you have a project, a question, or just
+                            want to say hello — my inbox is open.
+                        </p>
+                        {settings?.email && (
+                            <a
+                                href={`mailto:${settings.email}`}
+                                className="inline-flex items-center gap-1.5 text-sm mb-12 transition-opacity hover:opacity-70"
+                                style={{ color: "var(--accent)" }}
+                                aria-label={`Email ${settings.email}`}
+                            >
+                                {settings.email} ↗
+                            </a>
+                        )}
+                    </FadeIn>
+
+                    <FadeIn delay={0.08}>
+                        <div
+                            className="rounded-xl p-6"
+                            style={{
+                                background: "var(--bg-elevated)",
+                                border: "1px solid var(--border)",
+                            }}
+                        >
+                            <p
+                                className="text-sm font-medium mb-5"
+                                style={{ color: "var(--text-primary)" }}
+                            >
+                                Send a message
+                            </p>
+                            <ContactForm />
                         </div>
-                    </div>
-                </section>
-            )}
+                    </FadeIn>
+                </div>
+            </section>
         </>
     );
 }

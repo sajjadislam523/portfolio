@@ -21,10 +21,10 @@ function useHasMounted() {
 }
 
 const NAV_LINKS = [
-    { href: "/projects", label: "Projects", number: "01" },
-    { href: "/experience", label: "Experience", number: "02" },
-    { href: "/stack", label: "Stack", number: "03" },
-    { href: "/contact", label: "Contact", number: "04" },
+    { href: "/#projects", label: "Projects", number: "01" },
+    { href: "/#experience", label: "Experience", number: "02" },
+    { href: "/#stack", label: "Stack", number: "03" },
+    { href: "/#contact", label: "Contact", number: "04" },
 ];
 
 interface NavClientProps {
@@ -36,6 +36,7 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
     const pathname = usePathname();
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
+    const [activeSection, setActiveSection] = useState<string | null>(null);
     const { resolvedTheme, setTheme } = useTheme();
     const isLight = useHasMounted() && resolvedTheme === "light";
 
@@ -44,6 +45,29 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
         window.addEventListener("scroll", handler, { passive: true });
         return () => window.removeEventListener("scroll", handler);
     }, []);
+
+    // Scroll-spy — highlights the nav link for whichever section is nearest
+    // the vertical center of the viewport. Only relevant on the single-page
+    // landing; other routes (e.g. a project detail page) have no matching ids.
+    useEffect(() => {
+        if (pathname !== "/") return;
+        const ids = NAV_LINKS.map((l) => l.href.split("#")[1]);
+        const sections = ids
+            .map((id) => document.getElementById(id))
+            .filter((el): el is HTMLElement => el !== null);
+        if (sections.length === 0) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                for (const entry of entries) {
+                    if (entry.isIntersecting) setActiveSection(entry.target.id);
+                }
+            },
+            { rootMargin: "-45% 0px -45% 0px", threshold: 0 },
+        );
+        sections.forEach((el) => observer.observe(el));
+        return () => observer.disconnect();
+    }, [pathname]);
 
     const prevPathname = useRef(pathname);
 
@@ -103,8 +127,8 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                     <div className="hidden md:flex items-center gap-1">
                         {NAV_LINKS.map(({ href, label }) => {
                             const active =
-                                pathname === href ||
-                                pathname.startsWith(href + "/");
+                                pathname === "/" &&
+                                activeSection === href.split("#")[1];
                             return (
                                 <Link
                                     key={href}
@@ -304,8 +328,8 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                             >
                                 {NAV_LINKS.map(({ href, label, number }) => {
                                     const active =
-                                        pathname === href ||
-                                        pathname.startsWith(href + "/");
+                                        pathname === "/" &&
+                                        activeSection === href.split("#")[1];
                                     return (
                                         <StaggerItem key={href}>
                                             <Link

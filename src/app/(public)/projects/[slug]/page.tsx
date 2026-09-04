@@ -95,7 +95,7 @@ export default async function ProjectDetailPage({
             <div className="container max-w-2xl">
                 {/* Back link */}
                 <Link
-                    href="/projects"
+                    href="/#projects"
                     className="inline-flex items-center gap-1.5 text-sm mb-10 transition-colors hover:opacity-80"
                     style={{ color: "var(--text-tertiary)" }}
                 >

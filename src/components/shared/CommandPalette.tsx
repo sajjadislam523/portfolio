@@ -53,28 +53,28 @@ export function CommandPalette({ resumeUrl }: { resumeUrl?: string }) {
             label: "Projects",
             group: "Navigate",
             icon: <FolderKanban className="w-4 h-4" />,
-            action: () => navigate("/projects"),
+            action: () => navigate("/#projects"),
         },
         {
             id: "experience",
             label: "Experience",
             group: "Navigate",
             icon: <Briefcase className="w-4 h-4" />,
-            action: () => navigate("/experience"),
+            action: () => navigate("/#experience"),
         },
         {
             id: "stack",
             label: "Stack",
             group: "Navigate",
             icon: <Zap className="w-4 h-4" />,
-            action: () => navigate("/stack"),
+            action: () => navigate("/#stack"),
         },
         {
             id: "contact",
             label: "Contact",
             group: "Navigate",
             icon: <Mail className="w-4 h-4" />,
-            action: () => navigate("/contact"),
+            action: () => navigate("/#contact"),
         },
         ...(resumeUrl
             ? [

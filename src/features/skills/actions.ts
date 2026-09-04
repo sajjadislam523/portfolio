@@ -33,6 +33,7 @@ export async function createSkill(formData: FormData) {
 
   revalidatePath('/admin/skills')
   revalidatePath('/stack')
+  revalidatePath('/')
   return { success: true }
 }
 
@@ -56,6 +57,7 @@ export async function updateSkill(id: string, formData: FormData) {
 
   revalidatePath('/admin/skills')
   revalidatePath('/stack')
+  revalidatePath('/')
   return { success: true }
 }
 
@@ -65,5 +67,6 @@ export async function deleteSkill(id: string): Promise<import('@/lib/utils').Act
   await Skill.findByIdAndDelete(id)
   revalidatePath('/admin/skills')
   revalidatePath('/stack')
+  revalidatePath('/')
   return { success: true }
 }

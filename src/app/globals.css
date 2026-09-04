@@ -52,6 +52,11 @@
   to   { opacity: 1; }
 }
 
+@keyframes underlineGrow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
 /* ── Geist font faces (loaded via next/font in layout.tsx) ── */
 @layer base {
   *,
@@ -177,5 +182,30 @@
   .pill:hover {
     border-color: var(--accent);
     color: var(--accent);
+  }
+
+  /* Mono accent phrase inside the hero headline — smaller, monospaced,
+     accent-colored, with an underline that grows in on load. */
+  .headline-accent {
+    position: relative;
+    display: inline-block;
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 0.65em;
+    font-weight: 500;
+    color: var(--accent);
+    vertical-align: middle;
+    padding-bottom: 0.1em;
+  }
+  .headline-accent::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: var(--accent);
+    transform-origin: left center;
+    transform: scaleX(0);
+    animation: underlineGrow 0.6s ease-out 0.6s forwards;
   }
 }
