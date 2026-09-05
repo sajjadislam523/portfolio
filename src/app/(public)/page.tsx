@@ -389,6 +389,7 @@ export default async function HomePage() {
                                 experienceLabel={experienceLabel}
                                 projectsLabel={projectsLabel}
                                 stackLabel={stackLabel}
+                                groupedSkills={groupedSkills}
                             />
                         </FadeIn>
                     </div>
