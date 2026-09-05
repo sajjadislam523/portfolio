@@ -1,0 +1,15 @@
+{
+  "projectId": "6957f5a2-11f0-4858-b0b4-227b67e27647",
+  "shape": "package",
+  "pkg": "portfolio",
+  "globalName": "PortfolioDS",
+  "srcDir": ".design-sync/src-subset",
+  "tsconfig": ".design-sync/tsconfig.subset.json",
+  "cssEntry": ".design-sync/generated/compiled.css",
+  "extraFonts": [".design-sync/generated/fonts.css"],
+  "readmeHeader": ".design-sync/conventions.md",
+  "overrides": {
+    "ConfirmDialog": { "cardMode": "single", "viewport": "420x360" },
+    "StatCard": { "cardMode": "column" }
+  }
+}
