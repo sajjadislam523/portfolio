@@ -1,19 +1,62 @@
 // Terminal-style code card showing real tech choices in a format engineers
-// immediately recognise. Pure CSS, no JS, works before hydration.
+// immediately recognise. Server-renderable — no "use client" needed; the
+// only interactivity (hover, the blinking cursor) is pure CSS.
+//
+// design-sync fork: the real component uses next/link for the stat links
+// (there's no router in this preview environment anyway); this curated copy
+// swaps it for a plain <a> so the bundle doesn't pull in Next internals that
+// reference process.env.* and crash the whole design-system bundle — see
+// .design-sync/NOTES.md.
 
+import type { ISkill, SkillCategory } from "@/types";
 import React from "react";
 
 interface HeroVisualProps {
     experienceLabel: string;
     projectsLabel: string;
     stackLabel: string;
+    groupedSkills?: Partial<Record<SkillCategory, ISkill[]>>;
+}
+
+// Real skills win when present; this is only the fallback for an empty CMS.
+const FALLBACK_STACK: { prop: string; items: string[] }[] = [
+    { prop: "frontend", items: ["React", "Next.js", "TypeScript", "Tailwind"] },
+    { prop: "backend", items: ["Node", "Express"] },
+    { prop: "database", items: ["MongoDB"] },
+    { prop: "deploy", items: ["Docker", "Vercel"] },
+];
+
+const CATEGORY_TO_PROP: Partial<Record<SkillCategory, string>> = {
+    frontend: "frontend",
+    backend: "backend",
+    database: "database",
+    devops: "deploy",
+};
+
+function chunk<T>(items: T[], size: number): T[][] {
+    const out: T[][] = [];
+    for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size));
+    return out;
 }
 
 export const HeroVisual: React.FC<HeroVisualProps> = ({
     experienceLabel,
     projectsLabel,
     stackLabel,
+    groupedSkills,
 }) => {
+    const stack = groupedSkills
+        ? (Object.entries(CATEGORY_TO_PROP) as [SkillCategory, string][])
+              .map(([category, prop]) => ({
+                  prop,
+                  items: (groupedSkills[category] ?? [])
+                      .slice(0, 4)
+                      .map((s) => s.name),
+              }))
+              .filter((row) => row.items.length > 0)
+        : [];
+    const rows = stack.length > 0 ? stack : FALLBACK_STACK;
+
     return (
         <div className="w-full max-w-sm select-none">
             {/* Terminal window */}
@@ -62,38 +105,28 @@ export const HeroVisual: React.FC<HeroVisualProps> = ({
                     <Line>
                         <Kw>const</Kw> <Var>stack</Var> <Dim>=</Dim> {"{"}
                     </Line>
-                    <Line indent={1}>
-                        <Prop>frontend</Prop>
-                        <Dim>:</Dim> [
-                    </Line>
-                    <Line indent={2}>
-                        <Str>&apos;React&apos;</Str>
-                        <Dim>,</Dim> <Str>&apos;Next.js&apos;</Str>
-                        <Dim>,</Dim>
-                    </Line>
-                    <Line indent={2}>
-                        <Str>&apos;TypeScript&apos;</Str>
-                        <Dim>,</Dim> <Str>&apos;Tailwind&apos;</Str>
-                        <Dim>,</Dim>
-                    </Line>
-                    <Line indent={1}>
-                        ]<Dim>,</Dim>
-                    </Line>
-                    <Line indent={1}>
-                        <Prop>backend</Prop>
-                        <Dim>:</Dim> [<Str>&apos;Node&apos;</Str>
-                        <Dim>,</Dim> <Str>&apos;Express&apos;</Str>]<Dim>,</Dim>
-                    </Line>
-                    <Line indent={1}>
-                        <Prop>database</Prop>
-                        <Dim>:</Dim> <Str>&apos;MongoDB&apos;</Str>
-                        <Dim>,</Dim>
-                    </Line>
-                    <Line indent={1}>
-                        <Prop>deploy</Prop>
-                        <Dim>:</Dim> [<Str>&apos;Docker&apos;</Str>
-                        <Dim>,</Dim> <Str>&apos;Vercel&apos;</Str>]<Dim>,</Dim>
-                    </Line>
+                    {rows.map(({ prop, items }, i) => (
+                        <React.Fragment key={prop}>
+                            <Line indent={1}>
+                                <Prop>{prop}</Prop>
+                                <Dim>:</Dim> [
+                            </Line>
+                            {chunk(items, 2).map((pair, j) => (
+                                <Line indent={2} key={j}>
+                                    {pair.map((name, k) => (
+                                        <React.Fragment key={name}>
+                                            <Str>&apos;{name}&apos;</Str>
+                                            {k < pair.length - 1 && <Dim>, </Dim>}
+                                        </React.Fragment>
+                                    ))}
+                                    <Dim>,</Dim>
+                                </Line>
+                            ))}
+                            <Line indent={1}>
+                                ]<Dim>{i < rows.length - 1 ? "," : ""}</Dim>
+                            </Line>
+                        </React.Fragment>
+                    ))}
                     <Line>{"}"}</Line>
                     <Line>&nbsp;</Line>
                     <Line>
@@ -118,27 +151,19 @@ export const HeroVisual: React.FC<HeroVisualProps> = ({
                 </div>
             </div>
 
-            {/* Floating badge below the card */}
+            {/* Floating stats below the card — real links into the matching sections */}
             <div className="flex items-center justify-center gap-6 mt-5">
                 {[
-                    { label: "Experience", value: experienceLabel },
-                    { label: "Projects", value: projectsLabel },
-                    { label: "Stack", value: stackLabel },
-                ].map(({ label, value }) => (
-                    <div key={label} className="text-center">
-                        <p
-                            className="text-base font-semibold"
-                            style={{ color: "var(--text-primary)" }}
-                        >
+                    { label: "Experience", value: experienceLabel, href: "#experience" },
+                    { label: "Projects", value: projectsLabel, href: "#projects" },
+                    { label: "Stack", value: stackLabel, href: "#stack" },
+                ].map(({ label, value, href }) => (
+                    <a key={label} href={href} className="hero-stat text-center">
+                        <p className="hero-stat-value text-base font-semibold">
                             {value}
                         </p>
-                        <p
-                            className="text-xs"
-                            style={{ color: "var(--text-tertiary)" }}
-                        >
-                            {label}
-                        </p>
-                    </div>
+                        <p className="hero-stat-label text-xs">{label}</p>
+                    </a>
                 ))}
             </div>
 
@@ -147,6 +172,10 @@ export const HeroVisual: React.FC<HeroVisualProps> = ({
           0%, 100% { opacity: 1; }
           50%       { opacity: 0; }
         }
+        .hero-stat-value { color: var(--text-primary); transition: color 0.15s; }
+        .hero-stat-label { color: var(--text-tertiary); transition: color 0.15s; }
+        .hero-stat:hover .hero-stat-value,
+        .hero-stat:hover .hero-stat-label { color: var(--accent); }
       `}</style>
         </div>
     );

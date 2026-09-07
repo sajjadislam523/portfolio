@@ -177,3 +177,30 @@ Future syncs should re-apply this same reasoning (or actually fix
 `package-capture.mjs`'s settle strategy, e.g. an additional fixed
 `waitForTimeout` after `page.goto` — a legitimate fork if someone wants to
 invest in it) rather than treating the blank sheet as a real regression.
+
+## `HeroVisual` fork: `next/link` → plain `<a>` in the curated copy only
+
+As of the app commit "Make HeroVisual functional: real skills data,
+clickable stat links", the real `src/components/sections/hero/HeroVisual.tsx`
+imports `next/link` for its floating stat links. That's exactly the reason
+`TechMarquee` and `ProjectCard` were excluded from the sync in the first
+place (see above) — `next/link` pulls in Next internals referencing dozens
+of `process.env.*` values with no browser shim, which crashes the *whole*
+bundle at evaluation time, not just this component.
+
+Unlike TechMarquee/ProjectCard, HeroVisual was already a wanted, synced
+component with no other disqualifying import, so — with explicit user
+sign-off — the curated copy at
+`.design-sync/src-subset/components/sections/hero/HeroVisual.tsx` diverges
+from the real file here: `import Link from "next/link"` is dropped and the
+`<Link href={href}>` stat-link wrapper is replaced with a plain `<a
+href={href}>`. This is a deliberate, narrow exception to this file's usual
+"curated copy is byte-identical to the real file" rule, justified because
+Claude Design's preview environment has no App Router to begin with, so a
+real `<Link>` couldn't function there regardless.
+
+**Re-sync risk**: a straight `cp` of the real `HeroVisual.tsx` into the
+curated copy will reintroduce the `next/link` import and crash the bundle
+again. Any future re-sync that touches `HeroVisual.tsx` must re-apply this
+same `Link` → `<a>` patch to the curated copy by hand instead of a plain
+copy.
