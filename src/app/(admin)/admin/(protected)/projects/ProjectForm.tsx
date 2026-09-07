@@ -183,7 +183,7 @@ export function ProjectForm({ project, action }: ProjectFormProps) {
                 </FormField>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
                 <FormField label="Status" name="status">
                     <select
                         id="status"
@@ -196,6 +196,24 @@ export function ProjectForm({ project, action }: ProjectFormProps) {
                     </select>
                 </FormField>
 
+                <FormField
+                    label="Role"
+                    name="role"
+                    required
+                    hint="Your role on this project — shown in the projects ledger"
+                >
+                    <input
+                        id="role"
+                        name="role"
+                        defaultValue={project?.role}
+                        placeholder="Full stack"
+                        className={inputClass}
+                        required
+                    />
+                </FormField>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
                 <FormField label="Year" name="year" required>
                     <input
                         id="year"
@@ -209,11 +227,7 @@ export function ProjectForm({ project, action }: ProjectFormProps) {
                     />
                 </FormField>
 
-                <FormField
-                    label="Order"
-                    name="order"
-                    hint="Lower = appears first"
-                >
+                <FormField label="Order" name="order" hint="Lower = appears first">
                     <input
                         id="order"
                         name="order"
@@ -224,6 +238,34 @@ export function ProjectForm({ project, action }: ProjectFormProps) {
                     />
                 </FormField>
             </div>
+
+            <label
+                className="flex items-start gap-3 rounded-lg p-4"
+                style={{
+                    background: "var(--bg-subtle)",
+                    border: "1px solid var(--border)",
+                }}
+            >
+                <input
+                    type="checkbox"
+                    name="featured"
+                    defaultChecked={project?.featured ?? false}
+                    className="mt-0.5 h-4 w-4 shrink-0"
+                    style={{ accentColor: "var(--accent)" }}
+                />
+                <span className="flex flex-col gap-1">
+                    <span
+                        className="text-sm font-medium"
+                        style={{ color: "var(--text-primary)" }}
+                    >
+                        Lead row on the homepage
+                    </span>
+                    <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                        Renders this project first, at double weight, with a 16:9
+                        cover. Checking it clears the flag on every other project.
+                    </span>
+                </span>
+            </label>
 
             <div
                 className="flex items-center gap-3 pt-2 border-t"

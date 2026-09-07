@@ -52,9 +52,18 @@ function parseProjectFormData(formData: FormData) {
             github: formData.get("links.github") ?? "",
         },
         status: formData.get("status") ?? "featured",
+        role: formData.get("role")?.toString().trim() ?? "",
+        featured: formData.get("featured") === "on",
         order: Number(formData.get("order") ?? 0),
         year: Number(formData.get("year") ?? new Date().getFullYear()),
     };
+}
+
+async function clearOtherFeatured(keepId?: string) {
+    await Project.updateMany(
+        { featured: true, ...(keepId ? { _id: { $ne: keepId } } : {}) },
+        { $set: { featured: false } },
+    );
 }
 
 export async function createProject(formData: FormData): Promise<ActionResult> {
@@ -72,6 +81,8 @@ export async function createProject(formData: FormData): Promise<ActionResult> {
     if (existing) {
         return { error: "A project with this slug already exists." };
     }
+
+    if (parsed.data.featured) await clearOtherFeatured();
 
     await Project.create(parsed.data);
 
@@ -95,6 +106,9 @@ export async function updateProject(
     }
 
     await connectDB();
+
+    if (parsed.data.featured) await clearOtherFeatured(id);
+
     await Project.findByIdAndUpdate(id, parsed.data, { new: true });
 
     revalidatePath("/admin/projects");

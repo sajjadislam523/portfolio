@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Design handoff reference bundle — not production source.
+    "design_handoff_landing_redesign/**",
+    // Design-sync tooling and its generated/vendored bundle — gitignored, not source.
+    ".ds-sync/**",
+    "ds-bundle/**",
   ]),
 ]);
 

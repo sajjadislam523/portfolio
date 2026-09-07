@@ -45,6 +45,11 @@ export const projectSchema = z.object({
         github: z.string().url().optional().or(z.literal("")),
     }),
     status: z.enum(["featured", "archived"]).default("featured"),
+    role: z
+        .string()
+        .min(2, "Add a role — it shows in the projects ledger")
+        .max(60),
+    featured: z.boolean().default(false),
     order: z.number().int().min(0).default(0),
     year: z.number().int().min(2000).max(2100),
 });

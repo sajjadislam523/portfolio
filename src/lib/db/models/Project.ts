@@ -32,6 +32,8 @@ const ProjectSchema = new Schema<ProjectDocument>(
             default: "featured",
             index: true,
         },
+        role: { type: String, required: true, trim: true },
+        featured: { type: Boolean, default: false, index: true },
         order: { type: Number, default: 0, index: true },
         year: { type: Number, required: true },
     },
@@ -44,6 +46,7 @@ const ProjectSchema = new Schema<ProjectDocument>(
 
 // Compound index for the public-facing query pattern
 ProjectSchema.index({ status: 1, order: 1 });
+ProjectSchema.index({ featured: -1, status: 1, order: 1 });
 
 export const Project =
     mongoose.models.Project ??

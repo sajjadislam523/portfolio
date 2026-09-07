@@ -29,6 +29,10 @@ export interface IProject {
         github?: string;
     };
     status: ProjectStatus;
+    /** Shown in the ledger's meta rail — "Full stack", "Frontend", "Lead". */
+    role: string;
+    /** Hand-picked lead row on the projects section. One project at a time. */
+    featured: boolean;
     order: number;
     year: number;
     createdAt: string;
