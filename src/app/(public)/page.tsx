@@ -1,4 +1,4 @@
-import { FadeIn } from "@/components/motion/ScrollReveal";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { ContactForm } from "@/components/sections/contact/ContactForm";
 import { ExperienceTimeline } from "@/components/sections/experience/ExperienceTimeline";
 import { Hero } from "@/components/sections/hero/Hero";
@@ -172,7 +172,7 @@ export default async function HomePage() {
             {/* ── Projects ─────────────────────────────────────────────────────────── */}
             <section id="projects" className="section zone-canvas">
                 <div className="container">
-                    <FadeIn>
+                    <ScrollReveal>
                         <div className="flex items-center gap-3 mb-2">
                             <div
                                 className="w-6 h-px"
@@ -191,7 +191,7 @@ export default async function HomePage() {
                         >
                             Featured projects
                         </h2>
-                    </FadeIn>
+                    </ScrollReveal>
 
                     {featuredProjects.length > 0 ? (
                         <ProjectLedger
@@ -242,7 +242,7 @@ export default async function HomePage() {
                 style={{ background: "var(--bg-secondary)" }}
             >
                 <div className="container">
-                    <FadeIn>
+                    <ScrollReveal>
                         <div className="flex items-center gap-3 mb-2">
                             <div
                                 className="w-6 h-px"
@@ -261,7 +261,7 @@ export default async function HomePage() {
                         >
                             Experience
                         </h2>
-                    </FadeIn>
+                    </ScrollReveal>
 
                     <div className="max-w-2xl">
                         <ExperienceTimeline experiences={experiences} />
@@ -272,7 +272,7 @@ export default async function HomePage() {
             {/* ── Stack ────────────────────────────────────────────────────────────── */}
             <section id="stack" className="section">
                 <div className="container">
-                    <FadeIn>
+                    <ScrollReveal>
                         <div className="flex items-center gap-3 mb-2">
                             <div
                                 className="w-6 h-px"
@@ -316,7 +316,7 @@ export default async function HomePage() {
                                 ),
                             )}
                         </div>
-                    </FadeIn>
+                    </ScrollReveal>
 
                     {skills.length > 0 ? (
                         <SkillTabs
@@ -342,7 +342,7 @@ export default async function HomePage() {
             >
                 <div className="container">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-                        <FadeIn>
+                        <ScrollReveal>
                             <div className="flex items-center gap-3 mb-2">
                                 <div
                                     className="w-6 h-px"
@@ -390,9 +390,9 @@ export default async function HomePage() {
                                     {settings.email} ↗
                                 </a>
                             )}
-                        </FadeIn>
+                        </ScrollReveal>
 
-                        <FadeIn delay={0.08}>
+                        <ScrollReveal delay={0.08}>
                             <div
                                 className="rounded-xl p-6"
                                 style={{
@@ -408,7 +408,7 @@ export default async function HomePage() {
                                 </p>
                                 <ContactForm />
                             </div>
-                        </FadeIn>
+                        </ScrollReveal>
                     </div>
                 </div>
             </section>

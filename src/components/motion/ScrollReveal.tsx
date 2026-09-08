@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, useReducedMotion } from 'framer-motion'
 
 // ─── ScrollReveal ─────────────────────────────────────────────────────────────
 // For elements BELOW the fold — uses Intersection Observer which is reliable
@@ -19,13 +19,15 @@ export function ScrollReveal({ children, delay = 0, className }: ScrollRevealPro
   // amount:0 = trigger the moment any pixel is visible
   // No negative margin — negative margins prevent above-fold items firing
   const isInView = useInView(ref, { once: true, amount: 0 })
+  const shouldReduceMotion = useReducedMotion()
+  const rise = shouldReduceMotion ? 0 : 16
 
   return (
     <motion.div
       ref={ref}
       className={className}
-      initial={{ opacity: 0, y: 16 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: rise }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: rise }}
       transition={{ duration: 0.5, delay, ease: [0.21, 0.47, 0.32, 0.98] }}
     >
       {children}
@@ -64,11 +66,14 @@ export function StaggerContainer({
 }
 
 export function StaggerItem({ children, className }: { children: React.ReactNode; className?: string }) {
+  const shouldReduceMotion = useReducedMotion()
+  const rise = shouldReduceMotion ? 0 : 14
+
   return (
     <motion.div
       className={className}
       variants={{
-        hidden:  { opacity: 0, y: 14 },
+        hidden:  { opacity: 0, y: rise },
         visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.21, 0.47, 0.32, 0.98] } },
       }}
     >

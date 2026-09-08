@@ -1,5 +1,8 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import type { IProject } from "@/types";
+import { motion, useReducedMotion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,8 +22,14 @@ import Link from "next/link";
 //
 // Cards are not themselves links — the title is — so the Live/Source chip
 // anchors can sit as siblings inside the card without nesting <a> in <a>.
-// Hover lifts and scales the whole card and its border warms toward the
-// accent, via CSS only (no client component needed).
+//
+// Each card fades and rises into place the moment it individually scrolls
+// into view (whileInView, once), staggered by grid position, then the same
+// motion.div owns the hover lift/scale via whileHover. Both live on one
+// element deliberately — Motion writes transform as an inline style, so a
+// second CSS `transform` from a Tailwind hover: utility on the same node
+// would just get clobbered by it; border-color/shadow hovers stay in CSS
+// since those don't share that conflict.
 //
 //   density="full"    — cover image + tagline. The #projects section.
 //   density="compact" — no cover, no tagline, tighter grid. Archive.
@@ -46,7 +55,50 @@ const META = "font-mono text-[12.5px] leading-[1.5]";
 const LABEL = "font-mono text-[11px] font-[550] uppercase tracking-[0.14em]";
 
 const CARD =
-    "group/card relative flex flex-col overflow-hidden rounded-2xl border border-[var(--line-strong)] bg-[var(--zone-surface)] shadow-[var(--elev-1)] transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.015] hover:shadow-[var(--elev-3)] hover:border-[color-mix(in_srgb,var(--accent-on-canvas)_45%,var(--line-strong))]";
+    "group/card relative flex flex-col overflow-hidden rounded-2xl border border-[var(--line-strong)] bg-[var(--zone-surface)] shadow-[var(--elev-1)] transition-[box-shadow,border-color] duration-300 ease-out hover:shadow-[var(--elev-3)] hover:border-[color-mix(in_srgb,var(--accent-on-canvas)_45%,var(--line-strong))]";
+
+const EASE = [0.21, 0.47, 0.32, 0.98] as const;
+/** Cascades cards in roughly by row without a long tail on big grids. */
+const revealDelay = (index: number) => Math.min(index, 5) * 0.06;
+
+/**
+ * Scroll-reveal + hover-lift wrapper shared by both card variants. Fades and
+ * rises into view once, on its own viewport intersection, then handles the
+ * hover lift itself so it isn't fighting a CSS `transform` on the same node.
+ */
+function CardShell({
+    revealIndex,
+    className,
+    children,
+}: {
+    /** Position in the reveal cascade — grid order, not the printed 01/02 label. */
+    revealIndex: number;
+    className?: string;
+    children: React.ReactNode;
+}) {
+    const shouldReduceMotion = useReducedMotion();
+
+    return (
+        <motion.div
+            className={cn(CARD, className)}
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.5, delay: revealDelay(revealIndex), ease: EASE }}
+            whileHover={
+                shouldReduceMotion
+                    ? undefined
+                    : {
+                          y: -6,
+                          scale: 1.015,
+                          transition: { type: "spring", stiffness: 300, damping: 22 },
+                      }
+            }
+        >
+            {children}
+        </motion.div>
+    );
+}
 
 function GithubIcon({ className }: { className?: string }) {
     return (
@@ -144,7 +196,7 @@ function TechPills({ project, limit }: { project: IProject; limit: number }) {
 /** The hand-picked project — a double-wide tile with a taller cover. */
 function LeadCard({ project, index }: { project: IProject; index: number }) {
     return (
-        <div className={cn(CARD, "sm:col-span-2")}>
+        <CardShell revealIndex={0} className="sm:col-span-2">
             <CoverImage project={project} tall />
             <div className="flex flex-1 flex-col gap-3 p-7">
                 <div
@@ -190,25 +242,27 @@ function LeadCard({ project, index }: { project: IProject; index: number }) {
                     <LinkChips project={project} long />
                 </div>
             </div>
-        </div>
+        </CardShell>
     );
 }
 
 function ProjectCard({
     project,
     index,
+    revealIndex,
     density,
     muted,
 }: {
     project: IProject;
     index: number;
+    revealIndex: number;
     density: Density;
     muted: boolean;
 }) {
     const full = density === "full";
 
     return (
-        <div className={cn(CARD, full ? "" : "shadow-none")}>
+        <CardShell revealIndex={revealIndex} className={full ? "" : "shadow-none"}>
             {full && <CoverImage project={project} />}
             <div className={cn("flex flex-1 flex-col gap-2.5", full ? "p-6" : "p-4")}>
                 <div
@@ -250,7 +304,7 @@ function ProjectCard({
                     <LinkChips project={project} />
                 </div>
             </div>
-        </div>
+        </CardShell>
     );
 }
 
@@ -285,6 +339,7 @@ export function ProjectLedger({
                     key={project._id}
                     project={project}
                     index={indexOffset + i + (lead ? 2 : 1)}
+                    revealIndex={lead ? i + 1 : i}
                     density={density}
                     muted={muted}
                 />
