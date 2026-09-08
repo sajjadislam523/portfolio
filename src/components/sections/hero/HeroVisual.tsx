@@ -1,6 +1,7 @@
-// Terminal-style code card showing real tech choices in a format engineers
-// immediately recognise. Server-renderable — no "use client" needed; the
-// only interactivity (hover, the blinking cursor) is pure CSS.
+// Terminal-style code card — a personal `engineer.ts` object rather than a
+// generic tech-stack dump, so the panel reads as identity, not a spec sheet.
+// Server-renderable — no "use client" needed; the only interactivity
+// (hover, the blinking cursor) is pure CSS.
 
 import type { ISkill, SkillCategory } from "@/types";
 import Link from "next/link";
@@ -13,19 +14,20 @@ interface HeroVisualProps {
     groupedSkills?: Partial<Record<SkillCategory, ISkill[]>>;
 }
 
+// The conceptual, curated framing — always shown, not CMS-driven.
+const FOCUS = ["Digital Products", "Interactive Web", "Product Engineering"];
+
 // Real skills win when present; this is only the fallback for an empty CMS.
-const FALLBACK_STACK: { prop: string; items: string[] }[] = [
-    { prop: "frontend", items: ["React", "Next.js", "TypeScript", "Tailwind"] },
-    { prop: "backend", items: ["Node", "Express"] },
-    { prop: "database", items: ["MongoDB"] },
-    { prop: "deploy", items: ["Docker", "Vercel"] },
+// Trimmed to frontend/backend only — the panel got smaller and more
+// personal, not a full stack inventory (that's what the Stack section is for).
+const FALLBACK_ROWS: { prop: string; items: string[] }[] = [
+    { prop: "frontend", items: ["React", "Next.js"] },
+    { prop: "backend", items: ["Node.js", "PostgreSQL"] },
 ];
 
 const CATEGORY_TO_PROP: Partial<Record<SkillCategory, string>> = {
     frontend: "frontend",
     backend: "backend",
-    database: "database",
-    devops: "deploy",
 };
 
 function chunk<T>(items: T[], size: number): T[][] {
@@ -40,66 +42,85 @@ export const HeroVisual: React.FC<HeroVisualProps> = ({
     stackLabel,
     groupedSkills,
 }) => {
-    const stack = groupedSkills
+    const skillRows = groupedSkills
         ? (Object.entries(CATEGORY_TO_PROP) as [SkillCategory, string][])
               .map(([category, prop]) => ({
                   prop,
-                  items: (groupedSkills[category] ?? [])
-                      .slice(0, 4)
-                      .map((s) => s.name),
+                  items: (groupedSkills[category] ?? []).slice(0, 2).map((s) => s.name),
               }))
               .filter((row) => row.items.length > 0)
         : [];
-    const rows = stack.length > 0 ? stack : FALLBACK_STACK;
+    const rows = skillRows.length > 0 ? skillRows : FALLBACK_ROWS;
 
     return (
-        <div className="w-full max-w-sm select-none">
+        <div className="w-full max-w-60 select-none sm:max-w-68 lg:max-w-80">
             {/* Terminal window */}
             <div
-                className="rounded-xl overflow-hidden"
+                className="overflow-hidden rounded-xl"
                 style={{
-                    background: "var(--bg-elevated)",
-                    border: "1px solid var(--border-strong)",
-                    boxShadow:
-                        "0 24px 64px color-mix(in srgb, var(--text-primary) 20%, transparent)",
+                    // The one raised surface inside the hero zone — reads
+                    // --zone-hero-raised rather than the generic --bg-elevated,
+                    // so it participates in the same zone/surface model as the
+                    // canvas cards below the fold instead of a separate scale.
+                    background: "var(--zone-hero-raised)",
+                    border: "1px solid var(--hero-line)",
+                    boxShadow: "var(--shadow-hero)",
                 }}
             >
                 {/* Title bar */}
                 <div
                     className="flex items-center gap-2 px-4 py-3 border-b"
                     style={{
-                        borderColor: "var(--border)",
-                        background: "var(--bg-secondary)",
+                        borderColor: "var(--hero-line)",
+                        background: "var(--hero-surface-soft)",
                     }}
                 >
+                    {/* Traffic-light chrome — a quiet, recognizable convention, not
+                        a decorative accent, so it's muted rather than saturated. */}
                     <span
                         className="w-3 h-3 rounded-full"
-                        style={{ background: "#EF4444" }}
+                        style={{ background: "#EF4444", opacity: 0.55 }}
                     />
                     <span
                         className="w-3 h-3 rounded-full"
-                        style={{ background: "#F59E0B" }}
+                        style={{ background: "#F59E0B", opacity: 0.55 }}
                     />
                     <span
                         className="w-3 h-3 rounded-full"
-                        style={{ background: "#22C55E" }}
+                        style={{ background: "#22C55E", opacity: 0.55 }}
                     />
                     <span
                         className="ml-2 text-xs font-mono"
                         style={{ color: "var(--text-tertiary)" }}
                     >
-                        stack.ts
+                        engineer.ts
                     </span>
                 </div>
 
                 {/* Code body */}
                 <div className="p-5 font-mono text-xs leading-relaxed">
                     <Line>
-                        <Dim>{/* // Full stack engineer */}</Dim>
+                        <Kw>const</Kw> <Var>engineer</Var> <Dim>=</Dim> {"{"}
                     </Line>
-                    <Line>
-                        <Kw>const</Kw> <Var>stack</Var> <Dim>=</Dim> {"{"}
+
+                    <Line indent={1}>
+                        <Prop>role</Prop>
+                        <Dim>:</Dim> <Str>&apos;Full Stack Engineer&apos;</Str>
+                        <Dim>,</Dim>
                     </Line>
+
+                    <Line indent={1}>
+                        <Prop>focus</Prop>
+                        <Dim>:</Dim> [
+                    </Line>
+                    {FOCUS.map((item) => (
+                        <Line indent={2} key={item}>
+                            <Str>&apos;{item}&apos;</Str>
+                            <Dim>,</Dim>
+                        </Line>
+                    ))}
+                    <Line indent={1}>],</Line>
+
                     {rows.map(({ prop, items }, i) => (
                         <React.Fragment key={prop}>
                             <Line indent={1}>
@@ -125,7 +146,7 @@ export const HeroVisual: React.FC<HeroVisualProps> = ({
                     <Line>{"}"}</Line>
                     <Line>&nbsp;</Line>
                     <Line>
-                        <Dim>{/* // Currently building */}</Dim>
+                        <Dim>{/* // currently building → */}</Dim>
                     </Line>
                     <Line>
                         <Kw>export default</Kw> <Fn>portfolio</Fn>()
@@ -154,10 +175,10 @@ export const HeroVisual: React.FC<HeroVisualProps> = ({
                     { label: "Stack", value: stackLabel, href: "#stack" },
                 ].map(({ label, value, href }) => (
                     <Link key={label} href={href} className="hero-stat text-center">
-                        <p className="hero-stat-value text-base font-semibold">
+                        <p className="hero-stat-value text-sm font-semibold">
                             {value}
                         </p>
-                        <p className="hero-stat-label text-xs">{label}</p>
+                        <p className="hero-stat-label text-[11px]">{label}</p>
                     </Link>
                 ))}
             </div>
@@ -177,6 +198,10 @@ export const HeroVisual: React.FC<HeroVisualProps> = ({
 };
 
 // ── Tiny primitives for readable code coloring ────────────────────────────────
+// Two muted, cool-toned hues (--code-keyword, --code-string) plus the site's
+// one accent (on property names — the content that matters) give the panel
+// realistic, recognizable syntax differentiation without reintroducing a
+// rainbow IDE theme.
 
 function Line({
     children,
@@ -193,11 +218,11 @@ function Line({
 }
 
 function Kw({ children }: { children: React.ReactNode }) {
-    return <span style={{ color: "#C792EA" }}>{children} </span>;
+    return <span style={{ color: "var(--code-keyword)" }}>{children} </span>;
 }
 
 function Var({ children }: { children: React.ReactNode }) {
-    return <span style={{ color: "#82AAFF" }}>{children}</span>;
+    return <span style={{ color: "var(--text-primary)" }}>{children}</span>;
 }
 
 function Prop({ children }: { children: React.ReactNode }) {
@@ -205,11 +230,11 @@ function Prop({ children }: { children: React.ReactNode }) {
 }
 
 function Str({ children }: { children: React.ReactNode }) {
-    return <span style={{ color: "#C3E88D" }}>{children}</span>;
+    return <span style={{ color: "var(--code-string)" }}>{children}</span>;
 }
 
 function Fn({ children }: { children: React.ReactNode }) {
-    return <span style={{ color: "#82AAFF" }}>{children}</span>;
+    return <span style={{ color: "var(--text-primary)" }}>{children}</span>;
 }
 
 function Dim({ children }: { children?: React.ReactNode }) {

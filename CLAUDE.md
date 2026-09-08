@@ -22,6 +22,41 @@ Ran a manual review against the checklists in the skills above (UX/accessibility
 
 No open priority items from this pass. The previous priority-fix list (hero typography, ghost button border, `h-screen` on the experience page, accent-color consistency, section padding, etc.) was fully implemented in commit `3c61094` and has been removed from this file.
 
+## Design system — source of truth (public site)
+
+The public site (`src/app/(public)/`) has an established art direction:
+**Cinematic Technical / Sci-Fi Editorial.** A near-black environment lit by
+one cold blue accent used as a light source, not a decoration; strong,
+oversized typography as the primary hierarchy tool; restrained monospace
+technical metadata; subtle atmospheric lighting (never a big glow); editorial,
+asymmetric spacing; thin low-contrast borders; minimal surface treatment (no
+heavy cards or glassmorphism); understated Motion — one-time entrance
+reveals plus small, purposeful hover feedback, never continuous or decorative
+animation.
+
+The tokens in `src/app/globals.css` (`:root`, `.dark`, `@theme inline`) are
+the actual source of truth, not this description — read them before adding a
+color, radius, shadow, or spacing value, and reuse an existing token rather
+than inventing a new one.
+
+Before adding or modifying any component on the public site, check:
+
+1. Does it belong to this visual language?
+2. Does it improve hierarchy?
+3. Does it add useful interaction?
+4. Is it visually consistent with existing components?
+5. Could the design be stronger without it?
+
+Do not introduce purple/rainbow gradients, heavy glassmorphism, neon glow,
+3D objects, particle effects, excessive rounded "cards," pill-badge overuse,
+or an animation style that doesn't match the rest of the site's restrained,
+one-time-reveal-plus-quiet-hover motion language — regardless of how good it
+looks in isolation or in a component-library demo. When in doubt, prefer
+removing a visual element over adding one; that has been the deciding rule
+through every redesign pass so far, and a 2026-09-09 QA pass already used it
+to delete a marquee component and an unused shadcn `Card` that had drifted
+from this direction.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

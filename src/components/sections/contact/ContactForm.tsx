@@ -4,7 +4,15 @@ import { useTransition, useState } from 'react'
 import { toast } from 'sonner'
 import { CheckCircle, Loader2 } from 'lucide-react'
 import { submitContactMessage } from '@/features/contact/actions'
-import { inputClass, textareaClass } from '@/components/admin/FormField'
+
+// Underline-only fields, not boxed shadcn-style inputs — the form is meant
+// to read as quiet and secondary to the section's own CTA, not as a
+// component-library demo. Border color is set via a class (not inline
+// style) on both the resting and focus states so the `focus:` variant can
+// actually win the cascade instead of losing to an inline style.
+const fieldClass =
+  'w-full border-0 border-b border-[var(--line)] bg-transparent px-0 pb-2.5 pt-1 text-sm text-[var(--text-primary)] outline-none transition-colors placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)]'
+const labelClass = 'font-mono text-[11px] uppercase tracking-wide'
 
 export function ContactForm() {
   const [isPending, startTransition] = useTransition()
@@ -43,21 +51,21 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="flex flex-col gap-2">
+          <label className={labelClass} style={{ color: 'var(--text-tertiary)' }}>
             Name <span style={{ color: 'var(--accent)' }}>*</span>
           </label>
           <input
             name="name"
             placeholder="Your name"
             required
-            className={inputClass}
+            className={fieldClass}
           />
         </div>
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
+        <div className="flex flex-col gap-2">
+          <label className={labelClass} style={{ color: 'var(--text-tertiary)' }}>
             Email <span style={{ color: 'var(--accent)' }}>*</span>
           </label>
           <input
@@ -65,41 +73,40 @@ export function ContactForm() {
             type="email"
             placeholder="you@example.com"
             required
-            className={inputClass}
+            className={fieldClass}
           />
         </div>
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
+      <div className="flex flex-col gap-2">
+        <label className={labelClass} style={{ color: 'var(--text-tertiary)' }}>
           Subject <span style={{ color: 'var(--accent)' }}>*</span>
         </label>
         <input
           name="subject"
           placeholder="What's this about?"
           required
-          className={inputClass}
+          className={fieldClass}
         />
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
+      <div className="flex flex-col gap-2">
+        <label className={labelClass} style={{ color: 'var(--text-tertiary)' }}>
           Message <span style={{ color: 'var(--accent)' }}>*</span>
         </label>
         <textarea
           name="message"
           placeholder="Tell me about your project or question..."
           required
-          className={textareaClass}
-          style={{ minHeight: '120px' }}
+          className={`${fieldClass} resize-y`}
+          style={{ minHeight: '96px' }}
         />
       </div>
 
       <button
         type="submit"
         disabled={isPending}
-        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-opacity disabled:opacity-60 w-full sm:w-auto"
-        style={{ background: 'var(--accent)', color: 'var(--accent-foreground)' }}
+        className="btn btn-primary-canvas mt-1 w-full disabled:opacity-60 sm:w-auto"
       >
         {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
         {isPending ? 'Sending…' : 'Send message'}

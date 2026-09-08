@@ -1,22 +1,50 @@
-"use client";
+// A career timeline integrated directly into the page — text, a thin
+// connecting line, and a subtle divider between entries, rather than a
+// stack of bordered/shadowed cards. Every entry is always expanded; there
+// is nothing to click. The only interactivity is a quiet CSS group-hover
+// (node brightens, role brightens, tech line nudges) and a one-time reveal
+// as the section scrolls into view — no client state needed, so this stays
+// a server component apart from the two small motion islands it composes.
 
 import { StaggerContainer, StaggerItem } from "@/components/motion/ScrollReveal";
-import { formatDateRange } from "@/lib/utils";
+import { TimelineLine } from "@/components/sections/experience/TimelineLine";
 import type { IExperience } from "@/types";
-import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { Fragment } from "react";
+
+// Highlights metric-shaped substrings ($40k, 35%, 3x, 10,000, 500+) in an
+// accomplishment line — never invented, only what's already in the text.
+const METRIC_PATTERN =
+    /(\$[\d,.]+[kKmMbB]?|\d+(?:\.\d+)?%|\d+(?:\.\d+)?x\b|\d{1,3}(?:,\d{3})+|\d+\+)/g;
+
+function highlightMetrics(text: string): React.ReactNode {
+    const parts = text.split(METRIC_PATTERN);
+    if (parts.length === 1) return text;
+    return parts.map((part, i) =>
+        i % 2 === 1 ? (
+            <span key={i} style={{ color: "var(--accent)", fontWeight: 600 }}>
+                {part}
+            </span>
+        ) : (
+            <Fragment key={i}>{part}</Fragment>
+        ),
+    );
+}
+
+/** Compact year label — "2025" for a single year, "2024—" ongoing, "2022—24" spanning years. */
+function yearLabel(startDate: string, endDate: string | null): string {
+    const startYear = new Date(startDate).getFullYear();
+    if (!endDate) return `${startYear}—`;
+    const endYear = new Date(endDate).getFullYear();
+    return startYear === endYear
+        ? `${startYear}`
+        : `${startYear}—${String(endYear).slice(2)}`;
+}
 
 export function ExperienceTimeline({
     experiences,
 }: {
     experiences: IExperience[];
 }) {
-    const [openId, setOpenId] = useState<string | null>(
-        experiences[0]?._id ?? null,
-    );
-    const [hoverId, setHoverId] = useState<string | null>(null);
-
     if (experiences.length === 0) {
         return (
             <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
@@ -26,221 +54,142 @@ export function ExperienceTimeline({
     }
 
     return (
-        <StaggerContainer className="relative flex flex-col">
-            {/* Vertical timeline line */}
-            <div
-                className="absolute left-[7px] top-3 bottom-3 w-px"
-                style={{ background: "var(--border)" }}
-            />
+        <div className="relative">
+            {/* Continuous connecting line — thin, low-contrast, never glowing.
+                Its horizontal offset matches the node column's center at each
+                breakpoint: 12px on mobile, 108px at sm (72px date + 24px gap +
+                half the 24px node column), 140px at lg (96px date + 32px gap). */}
+            <TimelineLine className="absolute top-2 bottom-2 left-3 w-px sm:left-27 lg:left-35" />
 
-            {experiences.map((exp, index) => {
-                const isOpen = openId === exp._id;
-                const isHovered = hoverId === exp._id;
-                const isCurrent = !exp.endDate;
+            <StaggerContainer className="flex flex-col">
+                {experiences.map((exp, index) => {
+                    const isCurrent = !exp.endDate;
+                    const contributions = exp.accomplishments.slice(0, 4);
 
-                return (
-                    <StaggerItem key={exp._id} className="relative pl-8 pb-8">
-                        {/* Timeline dot */}
-                        <div
-                            className="absolute left-0 top-[18px] w-3.5 h-3.5 rounded-full border-2 transition-all duration-200"
-                            style={{
-                                background:
-                                    isOpen || isHovered
-                                        ? "var(--accent)"
-                                        : "var(--bg-secondary)",
-                                borderColor:
-                                    isOpen || isHovered
-                                        ? "var(--accent)"
-                                        : "var(--border-strong)",
-                                boxShadow: isOpen
-                                    ? "0 0 8px var(--accent-glow)"
-                                    : "none",
-                            }}
-                        />
-
-                        {/* Card */}
-                        <div
-                            className="rounded-xl overflow-hidden transition-all duration-200"
-                            style={{
-                                background: "var(--bg-elevated)",
-                                border: `1px solid ${isOpen ? "var(--accent)" : isHovered ? "var(--border-strong)" : "var(--border)"}`,
-                                boxShadow: isOpen
-                                    ? "0 0 0 1px var(--accent-glow)"
-                                    : "none",
-                            }}
-                            onMouseEnter={() => setHoverId(exp._id)}
-                            onMouseLeave={() => setHoverId(null)}
-                        >
-                            {/* Clickable header — type=button prevents any form submission */}
-                            <button
-                                type="button"
-                                className="w-full flex items-start justify-between gap-4 px-5 py-4 text-left transition-colors duration-150"
-                                style={{
-                                    WebkitTapHighlightColor: "transparent",
-                                    background:
-                                        isHovered && !isOpen
-                                            ? "var(--bg-subtle)"
-                                            : "transparent",
-                                }}
-                                onClick={() =>
-                                    setOpenId(isOpen ? null : exp._id)
-                                }
-                                aria-expanded={isOpen}
-                            >
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 flex-wrap">
-                                        <span
-                                            className="text-sm font-semibold transition-colors duration-150"
-                                            style={{
-                                                color:
-                                                    isOpen || isHovered
-                                                        ? "var(--accent)"
-                                                        : "var(--text-primary)",
-                                            }}
-                                        >
-                                            {exp.role}
-                                        </span>
-                                        {isCurrent && (
-                                            <span
-                                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs"
-                                                style={{
-                                                    background:
-                                                        "var(--success-glow)",
-                                                    border: "1px solid color-mix(in srgb, var(--success) 25%, transparent)",
-                                                    color: "var(--success)",
-                                                }}
-                                            >
-                                                <span className="w-1 h-1 rounded-full bg-[var(--success)]" />
-                                                Current
-                                            </span>
-                                        )}
-                                    </div>
-                                    <p
-                                        className="text-sm mt-0.5 transition-colors duration-150"
-                                        style={{
-                                            color: isHovered
-                                                ? "var(--text-primary)"
-                                                : "var(--text-secondary)",
-                                        }}
-                                    >
-                                        {exp.company}
-                                        <span
-                                            style={{
-                                                color: "var(--text-tertiary)",
-                                            }}
-                                        >
-                                            {" "}
-                                            · {exp.location}
-                                        </span>
-                                    </p>
-                                    <p
-                                        className="text-xs mt-1 font-mono"
-                                        style={{
-                                            color: "var(--text-tertiary)",
-                                        }}
-                                    >
-                                        {formatDateRange(
-                                            exp.startDate,
-                                            exp.endDate,
-                                        )}
-                                    </p>
-                                </div>
-
-                                <div className="flex items-start gap-3 shrink-0">
+                    return (
+                        <StaggerItem key={exp._id}>
+                            <div className="group grid grid-cols-[24px_minmax(0,1fr)] gap-x-6 pb-14 last:pb-0 sm:grid-cols-[72px_24px_minmax(0,1fr)] lg:grid-cols-[96px_24px_minmax(0,1fr)] lg:gap-x-8">
+                                {/* Date column — sm and up only */}
+                                <div className="hidden pt-1 sm:block">
                                     <span
-                                        className="text-xs font-mono shrink-0 self-start mt-1"
+                                        className="font-mono text-small"
                                         style={{ color: "var(--text-tertiary)" }}
                                     >
-                                        {String(index + 1).padStart(2, "0")}
+                                        {yearLabel(exp.startDate, exp.endDate)}
                                     </span>
-                                    <ChevronDown
-                                        className="w-4 h-4 shrink-0 mt-1 transition-all duration-200"
-                                        style={{
-                                            color: isOpen
-                                                ? "var(--accent)"
-                                                : "var(--text-tertiary)",
-                                            transform: isOpen
-                                                ? "rotate(180deg)"
-                                                : "rotate(0deg)",
-                                        }}
+                                </div>
+
+                                {/* Node */}
+                                <div className="flex justify-center pt-1.5">
+                                    <span
+                                        className="block h-2.5 w-2.5 rounded-full border-2 transition-all duration-300"
+                                        style={
+                                            isCurrent
+                                                ? {
+                                                      background: "var(--accent)",
+                                                      borderColor: "var(--accent)",
+                                                      boxShadow:
+                                                          "0 0 6px var(--accent-glow)",
+                                                  }
+                                                : {
+                                                      background: "transparent",
+                                                      borderColor: "var(--line-strong)",
+                                                  }
+                                        }
                                     />
                                 </div>
-                            </button>
 
-                            {/* Expanded content — mounted/unmounted with an animated height */}
-                            <AnimatePresence initial={false}>
-                                {isOpen && (
-                                    <motion.div
-                                        key="content"
-                                        initial={{ height: 0, opacity: 0 }}
-                                        animate={{ height: "auto", opacity: 1 }}
-                                        exit={{ height: 0, opacity: 0 }}
-                                        transition={{ duration: 0.28, ease: "easeInOut" }}
-                                        style={{ overflow: "hidden" }}
-                                    >
+                                {/* Content */}
+                                <div className="flex flex-col gap-3">
+                                    {index > 0 && (
                                         <div
-                                            className="px-5 pb-5 border-t"
-                                            style={{ borderColor: "var(--border)" }}
+                                            className="mb-2 h-px w-full"
+                                            style={{ background: "var(--line-hairline)" }}
+                                            aria-hidden
+                                        />
+                                    )}
+
+                                    {/* Mobile-only date — sm and up rely on the column */}
+                                    <span
+                                        className="font-mono text-small sm:hidden"
+                                        style={{ color: "var(--text-tertiary)" }}
+                                    >
+                                        {yearLabel(exp.startDate, exp.endDate)}
+                                    </span>
+
+                                    <div>
+                                        <h3
+                                            className="m-0 text-h3 font-display transition-colors duration-200"
+                                            style={{ color: "var(--text-primary)" }}
                                         >
-                                            {exp.description && (
-                                                <p
-                                                    className="text-sm leading-relaxed mt-4 mb-4"
-                                                    style={{
-                                                        color: "var(--text-secondary)",
-                                                    }}
-                                                >
-                                                    {exp.description}
-                                                </p>
-                                            )}
+                                            <span className="group-hover:text-accent">
+                                                {exp.role}
+                                            </span>
+                                        </h3>
+                                        <p
+                                            className="mt-1 text-body"
+                                            style={{ color: "var(--text-secondary)" }}
+                                        >
+                                            {exp.company}
+                                            <span style={{ color: "var(--text-tertiary)" }}>
+                                                {" "}
+                                                · {exp.location}
+                                            </span>
+                                        </p>
+                                    </div>
 
-                                            {exp.accomplishments.length > 0 && (
-                                                <ul className="flex flex-col gap-2 mb-4">
-                                                    {exp.accomplishments.map(
-                                                        (item, i) => (
-                                                            <li
-                                                                key={i}
-                                                                className="flex gap-2.5 text-sm"
-                                                                style={{
-                                                                    color: "var(--text-secondary)",
-                                                                }}
-                                                            >
-                                                                <span
-                                                                    className="shrink-0 mt-[3px]"
-                                                                    style={{
-                                                                        color: "var(--accent)",
-                                                                    }}
-                                                                >
-                                                                    ·
-                                                                </span>
-                                                                {item}
-                                                            </li>
-                                                        ),
-                                                    )}
-                                                </ul>
-                                            )}
+                                    {exp.description && (
+                                        <p
+                                            className="max-w-[62ch] text-body-lg"
+                                            style={{ color: "var(--text-secondary)" }}
+                                        >
+                                            {exp.description}
+                                        </p>
+                                    )}
 
-                                            {exp.technologies.length > 0 && (
-                                                <div className="flex flex-wrap gap-1.5">
-                                                    {exp.technologies.map(
-                                                        (tech) => (
-                                                            <span
-                                                                key={tech}
-                                                                className="pill"
-                                                            >
-                                                                {tech}
-                                                            </span>
-                                                        ),
-                                                    )}
-                                                </div>
-                                            )}
+                                    {contributions.length > 0 && (
+                                        <div className="flex flex-col gap-2">
+                                            <span
+                                                className="font-mono text-eyebrow uppercase"
+                                                style={{ color: "var(--text-tertiary)" }}
+                                            >
+                                                Selected contributions
+                                            </span>
+                                            <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
+                                                {contributions.map((item, i) => (
+                                                    <li
+                                                        key={i}
+                                                        className="flex gap-2.5 text-body-lg"
+                                                        style={{ color: "var(--text-secondary)" }}
+                                                    >
+                                                        <span
+                                                            className="mt-0.75 shrink-0"
+                                                            style={{ color: "var(--text-tertiary)" }}
+                                                            aria-hidden
+                                                        >
+                                                            ·
+                                                        </span>
+                                                        <span>{highlightMetrics(item)}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
                                         </div>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    </StaggerItem>
-                );
-            })}
-        </StaggerContainer>
+                                    )}
+
+                                    {exp.technologies.length > 0 && (
+                                        <div
+                                            className="pt-1 font-mono text-small uppercase tracking-wide transition-transform duration-300 group-hover:-translate-y-0.5"
+                                            style={{ color: "var(--text-tertiary)" }}
+                                        >
+                                            {exp.technologies.join(" / ")}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </StaggerItem>
+                    );
+                })}
+            </StaggerContainer>
+        </div>
     );
 }

@@ -28,17 +28,28 @@ const config: Config = {
         'accent-fg':   'var(--accent-foreground)',
       },
       fontFamily: {
+        // Two voices only: `sans` for reading copy, `display` for headings
+        // and numerals, `mono` as the technical/label accent that shows up
+        // in eyebrows, meta rows and the index-number motif. No third
+        // decorative face — see the 2026-09-08 design-system pass.
         sans: ['var(--font-geist-sans)', 'Inter', 'system-ui', 'sans-serif'],
         mono: ['var(--font-geist-mono)', 'Fira Code', 'monospace'],
         display: ['var(--font-display)', 'var(--font-geist-sans)', 'system-ui', 'sans-serif'],
-        script: ['var(--font-script)', 'cursive'],
       },
+      // Modular type scale — weight steps DOWN as size steps up, tracking
+      // tightens in proportion. The hero headline (`display`) is the one
+      // deliberately oversized element on the page; everything else is
+      // built to support it, not compete with it.
       fontSize: {
-        'display': ['4rem', { lineHeight: '1.05', letterSpacing: '-0.04em', fontWeight: '700' }],
-        'h1':      ['3rem', { lineHeight: '1.1',  letterSpacing: '-0.03em', fontWeight: '600' }],
-        'h2':      ['2rem', { lineHeight: '1.2',  letterSpacing: '-0.02em', fontWeight: '600' }],
-        'h3':      ['1.5rem',{ lineHeight: '1.3', letterSpacing: '-0.01em', fontWeight: '500' }],
-        'h4':      ['1.25rem',{ lineHeight: '1.4',fontWeight: '500' }],
+        'display': ['clamp(3.75rem, 2.75rem + 4vw, 7rem)', { lineHeight: '0.95', letterSpacing: '-0.045em', fontWeight: '600' }],
+        'h1':      ['clamp(2.5rem, 1.75rem + 3vw, 4rem)', { lineHeight: '1.05', letterSpacing: '-0.035em', fontWeight: '600' }],
+        'h2':      ['clamp(1.875rem, 1.5rem + 1.5vw, 2.75rem)', { lineHeight: '1.12', letterSpacing: '-0.03em', fontWeight: '600' }],
+        'h3':      ['1.375rem', { lineHeight: '1.25', letterSpacing: '-0.016em', fontWeight: '560' }],
+        'h4':      ['1.125rem', { lineHeight: '1.35', letterSpacing: '-0.008em', fontWeight: '550' }],
+        'body-lg': ['1.0625rem', { lineHeight: '1.62', letterSpacing: '-0.006em' }],
+        'body':    ['0.9375rem', { lineHeight: '1.65' }],
+        'small':   ['0.8125rem', { lineHeight: '1.5' }],
+        'eyebrow': ['0.75rem', { lineHeight: '1.4', letterSpacing: '0.16em', fontWeight: '550' }],
       },
       spacing: {
         '18': '4.5rem',
@@ -46,38 +57,19 @@ const config: Config = {
         '26': '6.5rem',
         '30': '7.5rem',
       },
-      borderRadius: {
-        'sm':  '6px',
-        DEFAULT: '8px',
-        'md':  '10px',
-        'lg':  '14px',
-        'xl':  '18px',
-        '2xl': '24px',
-      },
+      // Radius scale lives in globals.css (`@theme inline`, --radius-*) so
+      // there is exactly one source of truth for `rounded-*` utilities —
+      // no separate JS scale to drift out of sync with the CSS tokens.
       boxShadow: {
         'glow':    '0 0 24px var(--accent-glow)',
         'glow-sm': '0 0 12px var(--accent-glow)',
-        'card':    '0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px var(--border)',
-        'card-hover': '0 4px 16px rgba(0,0,0,0.5), 0 0 0 1px var(--border-strong)',
-      },
-      animation: {
-        'fade-in':     'fadeIn 0.25s ease-out',
-        'slide-up':    'slideUp 0.3s ease-out',
-        'pulse-slow':  'pulse 3s ease-in-out infinite',
-        'spin-slow':   'spin 8s linear infinite',
-      },
-      keyframes: {
-        fadeIn: {
-          '0%':   { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
-        slideUp: {
-          '0%':   { opacity: '0', transform: 'translateY(12px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
       },
       transitionTimingFunction: {
         'spring': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'expo-out': 'cubic-bezier(0.16, 1, 0.3, 1)',
+      },
+      transitionDuration: {
+        '400': '400ms',
       },
     },
   },

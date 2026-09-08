@@ -33,6 +33,9 @@ export default async function PublicLayout({
             <main>{children}</main>
             <SiteFooter
                 name={settings?.name ?? "Sajjadul Islam"}
+                tagline={settings?.tagline}
+                location={settings?.location}
+                email={settings?.email}
                 socialLinks={settings?.socialLinks ?? []}
             />
         </div>

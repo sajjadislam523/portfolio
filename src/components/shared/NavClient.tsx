@@ -92,17 +92,15 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
             {/* ── Top bar ── */}
             <header className="fixed top-0 inset-x-0 z-50 flex justify-center pt-4 px-4 pointer-events-none">
                 <nav
-                    className="pointer-events-auto w-full max-w-4xl flex items-center justify-between h-12 px-4 rounded-2xl transition-all duration-300"
+                    className="pointer-events-auto w-full max-w-4xl flex items-center justify-between h-11 px-4 rounded-md transition-all duration-300"
                     style={{
                         background:
                             scrolled || menuOpen
-                                ? "color-mix(in srgb, var(--bg-primary) 88%, transparent)"
-                                : "color-mix(in srgb, var(--bg-primary) 60%, transparent)",
-                        backdropFilter: "blur(20px)",
-                        border: "1px solid var(--border)",
-                        boxShadow: scrolled
-                            ? "0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px var(--border)"
-                            : "0 2px 12px rgba(0,0,0,0.2)",
+                                ? "color-mix(in srgb, var(--bg-primary) 78%, transparent)"
+                                : "color-mix(in srgb, var(--bg-primary) 46%, transparent)",
+                        backdropFilter: "blur(14px)",
+                        border: "1px solid var(--border-strong)",
+                        boxShadow: scrolled ? "var(--shadow-sm)" : "var(--shadow-xs)",
                     }}
                 >
                     {/* Logo */}
@@ -112,10 +110,10 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                         style={{ color: "var(--text-primary)" }}
                     >
                         <span
-                            className="w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold shrink-0"
+                            className="w-6 h-6 rounded flex items-center justify-center font-mono text-[11px] shrink-0"
                             style={{
-                                background: "var(--accent)",
-                                color: "var(--accent-foreground)",
+                                border: "1px solid var(--border-strong)",
+                                color: "var(--accent)",
                             }}
                         >
                             S
@@ -123,9 +121,10 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                         Sajjadul Islam
                     </Link>
 
-                    {/* Desktop nav */}
+                    {/* Desktop nav — index number + label; a thin underline is the
+                        only active indicator, no filled pill. */}
                     <div className="hidden md:flex items-center gap-1">
-                        {NAV_LINKS.map(({ href, label }) => {
+                        {NAV_LINKS.map(({ href, label, number }) => {
                             const active =
                                 pathname === "/" &&
                                 activeSection === href.split("#")[1];
@@ -133,28 +132,50 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                                 <Link
                                     key={href}
                                     href={href}
-                                    className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                                        active
-                                            ? ""
-                                            : "hover:text-[var(--text-primary)] hover:bg-[var(--bg-subtle)]"
-                                    }`}
-                                    style={{
-                                        color: active
-                                            ? "var(--text-primary)"
-                                            : "var(--text-tertiary)",
-                                        background: active
-                                            ? "var(--bg-elevated)"
-                                            : "transparent",
-                                    }}
+                                    className="group relative flex items-center gap-1.5 px-3 py-1.5 text-sm"
                                 >
-                                    {label}
+                                    <span
+                                        className="index-mark text-[10px]"
+                                        style={{
+                                            color: active
+                                                ? "var(--accent)"
+                                                : "var(--text-secondary)",
+                                        }}
+                                    >
+                                        {number}
+                                    </span>
+                                    <span
+                                        style={{
+                                            color: active
+                                                ? "var(--text-primary)"
+                                                : "var(--text-secondary)",
+                                        }}
+                                    >
+                                        {label}
+                                    </span>
+                                    {/* Small active indicator — a thin underline with a
+                                        faint glow, still no filled pill. */}
+                                    <span
+                                        className={`absolute inset-x-3 -bottom-px h-[1.5px] transition-opacity duration-300 ${
+                                            active
+                                                ? "opacity-100"
+                                                : "opacity-0 group-hover:opacity-50"
+                                        }`}
+                                        style={{
+                                            background: "var(--accent)",
+                                            boxShadow: active
+                                                ? "0 0 4px var(--accent-glow)"
+                                                : "none",
+                                        }}
+                                    />
                                 </Link>
                             );
                         })}
                     </div>
 
-                    {/* Desktop right side */}
-                    <div className="hidden md:flex items-center gap-3">
+                    {/* Desktop right side — thin-bordered ghost controls, no filled
+                        backgrounds; "Available" is a status dot, not a badge. */}
+                    <div className="hidden md:flex items-center gap-4">
                         <button
                             type="button"
                             onClick={() =>
@@ -162,10 +183,9 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                                     resolvedTheme === "dark" ? "light" : "dark",
                                 )
                             }
-                            className="flex items-center justify-center w-8 h-8 rounded-lg transition-colors"
+                            className="flex items-center justify-center w-8 h-8 rounded-md transition-colors"
                             style={{
-                                background: "var(--bg-elevated)",
-                                border: "1px solid var(--border)",
+                                border: "1px solid var(--border-strong)",
                                 color: "var(--text-secondary)",
                             }}
                             aria-label={
@@ -182,15 +202,16 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                         </button>
                         {availableForWork && (
                             <div
-                                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs"
-                                style={{
-                                    background:
-                                        "color-mix(in srgb, var(--accent) 10%, transparent)",
-                                    border: "1px solid color-mix(in srgb, var(--accent) 25%, transparent)",
-                                    color: "var(--accent)",
-                                }}
+                                className="flex items-center gap-1.5 font-mono text-xs"
+                                style={{ color: "var(--text-secondary)" }}
                             >
-                                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
+                                <span
+                                    className="w-1.5 h-1.5 rounded-full animate-pulse"
+                                    style={{
+                                        background: "var(--accent)",
+                                        boxShadow: "0 0 6px var(--accent-glow)",
+                                    }}
+                                />
                                 Available
                             </div>
                         )}
@@ -199,10 +220,9 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                                 href={resumeUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="px-3 py-1.5 rounded-lg text-xs font-medium transition-opacity hover:opacity-80"
+                                className="px-3 py-1.5 rounded-md font-mono text-xs transition-opacity hover:opacity-80"
                                 style={{
-                                    background: "var(--bg-elevated)",
-                                    border: "1px solid var(--border)",
+                                    border: "1px solid var(--border-strong)",
                                     color: "var(--text-secondary)",
                                 }}
                             >
@@ -214,7 +234,7 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                     {/* Hamburger — mobile only, 44×44 minimum tap target */}
                     <button
                         type="button"
-                        className="md:hidden relative z-10 flex items-center justify-center rounded-lg"
+                        className="md:hidden relative z-10 flex items-center justify-center rounded-md"
                         style={{
                             width: "44px",
                             height: "44px",
@@ -332,28 +352,31 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                                         activeSection === href.split("#")[1];
                                     return (
                                         <StaggerItem key={href}>
+                                            {/* Left accent tick — the same restrained active
+                                                indicator as the desktop underline, not a
+                                                filled highlight box. */}
                                             <Link
                                                 href={href}
-                                                className="flex items-center justify-between px-4 py-3.5 rounded-xl transition-colors group"
+                                                className="flex items-center justify-between px-4 py-3.5 transition-colors"
                                                 style={{
+                                                    borderLeft: `2px solid ${active ? "var(--accent)" : "transparent"}`,
                                                     background: active
-                                                        ? "var(--accent-glow)"
+                                                        ? "var(--bg-subtle)"
                                                         : "transparent",
-                                                    border: `1px solid ${active ? "var(--border-strong)" : "transparent"}`,
                                                 }}
                                             >
                                                 <span
                                                     className="text-base font-medium"
                                                     style={{
                                                         color: active
-                                                            ? "var(--accent)"
-                                                            : "var(--text-primary)",
+                                                            ? "var(--text-primary)"
+                                                            : "var(--text-secondary)",
                                                     }}
                                                 >
                                                     {label}
                                                 </span>
                                                 <span
-                                                    className="text-xs font-mono"
+                                                    className="index-mark text-xs"
                                                     style={{
                                                         color: active
                                                             ? "var(--accent)"
@@ -378,15 +401,16 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                             >
                                 {availableForWork && (
                                     <div
-                                        className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs w-fit"
-                                        style={{
-                                            background:
-                                                "color-mix(in srgb, var(--accent) 8%, transparent)",
-                                            border: "1px solid color-mix(in srgb, var(--accent) 20%, transparent)",
-                                            color: "var(--accent)",
-                                        }}
+                                        className="flex items-center gap-2 font-mono text-xs w-fit"
+                                        style={{ color: "var(--text-tertiary)" }}
                                     >
-                                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
+                                        <span
+                                            className="w-1.5 h-1.5 rounded-full animate-pulse"
+                                            style={{
+                                                background: "var(--accent)",
+                                                boxShadow: "0 0 6px var(--accent-glow)",
+                                            }}
+                                        />
                                         Open to opportunities
                                     </div>
                                 )}
@@ -399,9 +423,8 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                                                 : "dark",
                                         )
                                     }
-                                    className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm transition-colors w-fit"
+                                    className="flex items-center gap-2 px-4 py-3 rounded-md text-sm transition-colors w-fit"
                                     style={{
-                                        background: "var(--bg-elevated)",
                                         border: "1px solid var(--border)",
                                         color: "var(--text-secondary)",
                                     }}
@@ -418,9 +441,8 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                                         href={resumeUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-colors"
+                                        className="flex items-center justify-between px-4 py-3 rounded-md text-sm transition-colors"
                                         style={{
-                                            background: "var(--bg-elevated)",
                                             border: "1px solid var(--border)",
                                             color: "var(--text-secondary)",
                                         }}

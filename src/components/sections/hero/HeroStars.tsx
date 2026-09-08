@@ -7,10 +7,12 @@ import { useEffect, useRef } from "react";
 //
 // The DOM-based version (56 twinkling <span> dots) read as sparse and flat.
 // This redraws the same idea on a single <canvas> so density can go up by an
-// order of magnitude without paying per-node DOM/CSS cost: ~230 stars across
-// a far/mid/near layer, each with its own size, drift speed and twinkle rate,
-// plus a cursor-following bloom that brightens nearby stars instead of
-// swapping in a second masked copy of the field.
+// order of magnitude without paying per-node DOM/CSS cost.
+//
+// Tuned down for the "cinematic technical" pass: fewer stars, lower ceiling
+// opacity, a slower twinkle, and a tighter/softer cursor bloom. The field is
+// meant to read as atmosphere behind the headline, not as a second focal
+// point — see the brief's "never let the stars compete with the typography."
 //
 // Canvas has no server-rendered content, so there is no SSR/hydration
 // mismatch to guard against — star positions are generated once on mount and
@@ -29,12 +31,12 @@ type Layer = {
 };
 
 const LAYERS: Layer[] = [
-    { count: 110, minR: 0.4, maxR: 1.0, minOpacity: 0.12, maxOpacity: 0.32, speed: 0.6, twinkleSpeed: 0.5, lit: false },
-    { count: 80, minR: 0.9, maxR: 1.7, minOpacity: 0.22, maxOpacity: 0.55, speed: 1.1, twinkleSpeed: 0.8, lit: false },
-    { count: 45, minR: 1.5, maxR: 2.6, minOpacity: 0.4, maxOpacity: 0.85, speed: 1.8, twinkleSpeed: 1.2, lit: true },
+    { count: 80, minR: 0.4, maxR: 0.9, minOpacity: 0.08, maxOpacity: 0.2, speed: 0.4, twinkleSpeed: 0.35, lit: false },
+    { count: 55, minR: 0.8, maxR: 1.5, minOpacity: 0.14, maxOpacity: 0.36, speed: 0.75, twinkleSpeed: 0.55, lit: false },
+    { count: 28, minR: 1.3, maxR: 2.2, minOpacity: 0.22, maxOpacity: 0.55, speed: 1.2, twinkleSpeed: 0.8, lit: true },
 ];
 
-const SPOTLIGHT_RADIUS = 220;
+const SPOTLIGHT_RADIUS = 170;
 
 type Star = {
     x: number; // 0..1 of canvas width
@@ -178,10 +180,10 @@ export function HeroStars() {
                     const d = Math.sqrt(dx * dx + dy * dy);
                     if (d < SPOTLIGHT_RADIUS) {
                         const boost = 1 - d / SPOTLIGHT_RADIUS;
-                        opacity = Math.min(1, opacity + boost * 0.65);
-                        radius = star.r + boost * 1.4;
+                        opacity = Math.min(1, opacity + boost * 0.35);
+                        radius = star.r + boost * 0.8;
                         color = litColor;
-                        glow = boost * 8;
+                        glow = boost * 4;
                     }
                 }
 

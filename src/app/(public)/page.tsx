@@ -1,13 +1,19 @@
 import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { ContactForm } from "@/components/sections/contact/ContactForm";
+import { MagneticCTA } from "@/components/sections/contact/MagneticCTA";
 import { ExperienceTimeline } from "@/components/sections/experience/ExperienceTimeline";
 import { Hero } from "@/components/sections/hero/Hero";
-import { TechMarquee } from "@/components/sections/hero/TechMarquee";
-import { ProjectLedger } from "@/components/sections/projects/ProjectLedger";
-import { CATEGORY_ORDER, PROFICIENCY_STYLE } from "@/components/sections/stack/constants";
-import { SkillTabs } from "@/components/sections/stack/SkillTabs";
+import { ProjectIndexList } from "@/components/sections/projects/ProjectIndexList";
+import {
+    ProjectFeatureRow,
+    ProjectShowcase,
+} from "@/components/sections/projects/ProjectShowcase";
+import { CATEGORY_ORDER } from "@/components/sections/stack/constants";
+import { SkillGroups } from "@/components/sections/stack/SkillGroups";
 import { JsonLdPerson } from "@/components/shared/JsonLd";
+import { SectionHeading } from "@/components/shared/SectionHeading";
 import { connectDB, Experience, Project, SiteSettings, Skill } from "@/lib/db";
+import { ArrowUpRight } from "lucide-react";
 import type {
     IExperience,
     IProject,
@@ -16,6 +22,7 @@ import type {
     SkillCategory,
 } from "@/types";
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 
 // Cache the homepage at the edge for 5 minutes.
 // This means Vercel serves it from CDN on cold starts instead of
@@ -98,22 +105,21 @@ export async function generateMetadata(): Promise<Metadata> {
     };
 }
 
-const TECH_STACK = [
-    "React.js",
-    "Next.js",
-    "TypeScript",
-    "TailwindCSS",
-    "Node.js",
-    "Express.js",
-    "MongoDB",
-    "JWT",
-    "Stripe",
-    "TanStack Query",
-    "Docker",
-    "Vercel",
-    "shadcn/ui",
-    "Framer Motion",
-    "Git",
+// A restrained echo of the hero's star field for Contact — a handful of
+// fixed positions rendered with the existing `.hero-star` CSS keyframe, not
+// a second canvas/pointer-tracked instance. Deliberately sparse: this is a
+// closing whisper, not a second interactive effect.
+const CONTACT_STARS: { top: string; left: string; size: number; dur: string; delay: string }[] = [
+    { top: "12%", left: "8%", size: 2, dur: "5.2s", delay: "0.4s" },
+    { top: "22%", left: "88%", size: 1.5, dur: "4.6s", delay: "1.1s" },
+    { top: "68%", left: "14%", size: 1.5, dur: "6s", delay: "0.2s" },
+    { top: "78%", left: "92%", size: 2, dur: "5.5s", delay: "2s" },
+    { top: "40%", left: "5%", size: 1, dur: "4.2s", delay: "1.6s" },
+    { top: "8%", left: "60%", size: 1, dur: "5.8s", delay: "0.8s" },
+    { top: "85%", left: "48%", size: 1.5, dur: "5s", delay: "1.3s" },
+    { top: "30%", left: "95%", size: 1, dur: "4.9s", delay: "2.4s" },
+    { top: "55%", left: "3%", size: 2, dur: "6.2s", delay: "0.6s" },
+    { top: "15%", left: "40%", size: 1, dur: "4.4s", delay: "1.9s" },
 ];
 
 export default async function HomePage() {
@@ -166,39 +172,56 @@ export default async function HomePage() {
                 groupedSkills={groupedSkills}
             />
 
-            {/* ── Tech marquee ───────────────────────────────────────────────────── */}
-            <TechMarquee techs={TECH_STACK} />
-
-            {/* ── Projects ─────────────────────────────────────────────────────────── */}
+            {/* ── Projects — the visual centerpiece ───────────────────────────────── */}
             <section id="projects" className="section zone-canvas">
                 <div className="container">
+                    {/* Bespoke header — deliberately not the shared SectionHeading;
+                        this section is meant to be a bigger visual moment than
+                        Experience/Stack/Contact, so it earns its own composition
+                        instead of reusing theirs. */}
                     <ScrollReveal>
-                        <div className="flex items-center gap-3 mb-2">
-                            <div
-                                className="w-6 h-px"
-                                style={{ background: "var(--accent)" }}
-                            />
-                            <p
-                                className="text-xs font-medium uppercase tracking-widest"
+                        <div className="mb-20 lg:mb-28">
+                            <span
+                                className="font-mono text-eyebrow uppercase"
                                 style={{ color: "var(--accent)" }}
                             >
-                                Selected work
-                            </p>
+                                01 / Selected work
+                            </span>
+                            <h2
+                                className="m-0 mt-4 max-w-2xl text-h1 font-display"
+                                style={{ color: "var(--text-primary)" }}
+                            >
+                                Projects where engineering, product thinking and
+                                interface design meet.
+                            </h2>
                         </div>
-                        <h2
-                            className="text-h2 font-display mb-10"
-                            style={{ color: "var(--text-primary)" }}
-                        >
-                            Featured projects
-                        </h2>
                     </ScrollReveal>
 
                     {featuredProjects.length > 0 ? (
-                        <ProjectLedger
-                            projects={featuredProjects}
-                            density="full"
-                            leadRow
-                        />
+                        <div className="flex flex-col gap-24 lg:gap-32">
+                            {featuredProjects.slice(0, 2).map((project, i) => (
+                                <ScrollReveal key={project._id}>
+                                    <ProjectShowcase
+                                        project={project}
+                                        displayIndex={String(i + 1).padStart(2, "0")}
+                                        reverse={i % 2 === 1}
+                                    />
+                                </ScrollReveal>
+                            ))}
+
+                            {featuredProjects.length > 2 && (
+                                <div className="flex flex-col">
+                                    {featuredProjects.slice(2).map((project, i) => (
+                                        <ScrollReveal key={project._id}>
+                                            <ProjectFeatureRow
+                                                project={project}
+                                                displayIndex={String(i + 3).padStart(2, "0")}
+                                            />
+                                        </ScrollReveal>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     ) : (
                         <p
                             className="text-sm py-16 text-center"
@@ -208,28 +231,21 @@ export default async function HomePage() {
                         </p>
                     )}
 
-                    {/* ── Archive ──────────────────────────────────────────────────── */}
+                    {/* ── Archive — a project index, not a second row of cards ───────── */}
                     {archivedProjects.length > 0 && (
-                        <div className="mt-16">
-                            <div className="flex items-center gap-3 mb-6">
-                                <span
-                                    className="text-xs font-medium uppercase tracking-widest"
-                                    style={{ color: "var(--text-tertiary)" }}
-                                >
-                                    Archive
-                                </span>
-                                <div
-                                    className="flex-1 h-px"
-                                    style={{ background: "var(--border)" }}
+                        <div className="mt-28 lg:mt-36">
+                            <span
+                                className="mb-8 block font-mono text-eyebrow uppercase"
+                                style={{ color: "var(--text-tertiary)" }}
+                            >
+                                Archive
+                            </span>
+                            <ScrollReveal>
+                                <ProjectIndexList
+                                    projects={archivedProjects}
+                                    indexOffset={featuredProjects.length}
                                 />
-                            </div>
-
-                            <ProjectLedger
-                                projects={archivedProjects}
-                                density="compact"
-                                muted
-                                indexOffset={featuredProjects.length}
-                            />
+                            </ScrollReveal>
                         </div>
                     )}
                 </div>
@@ -243,24 +259,12 @@ export default async function HomePage() {
             >
                 <div className="container">
                     <ScrollReveal>
-                        <div className="flex items-center gap-3 mb-2">
-                            <div
-                                className="w-6 h-px"
-                                style={{ background: "var(--accent)" }}
-                            />
-                            <p
-                                className="text-xs font-medium uppercase tracking-widest"
-                                style={{ color: "var(--accent)" }}
-                            >
-                                Career
-                            </p>
-                        </div>
-                        <h2
-                            className="text-h2 font-display mb-10"
-                            style={{ color: "var(--text-primary)" }}
-                        >
-                            Experience
-                        </h2>
+                        <SectionHeading
+                            index="02"
+                            eyebrow="Career"
+                            heading="Experience"
+                            className="mb-14"
+                        />
                     </ScrollReveal>
 
                     <div className="max-w-2xl">
@@ -269,60 +273,23 @@ export default async function HomePage() {
                 </div>
             </section>
 
-            {/* ── Stack ────────────────────────────────────────────────────────────── */}
+            {/* ── Stack — quieter than Projects; supporting evidence, not the
+                main attraction ──────────────────────────────────────────────── */}
             <section id="stack" className="section">
                 <div className="container">
                     <ScrollReveal>
-                        <div className="flex items-center gap-3 mb-2">
-                            <div
-                                className="w-6 h-px"
-                                style={{ background: "var(--accent)" }}
-                            />
-                            <p
-                                className="text-xs font-medium uppercase tracking-widest"
-                                style={{ color: "var(--accent)" }}
-                            >
-                                Technology
-                            </p>
-                        </div>
-                        <h2
-                            className="text-h2 font-display mb-6"
-                            style={{ color: "var(--text-primary)" }}
-                        >
-                            Stack
-                        </h2>
-
-                        {/* Proficiency legend */}
-                        <div className="flex items-center gap-4 mb-12">
-                            {Object.entries(PROFICIENCY_STYLE).map(
-                                ([key, style]) => (
-                                    <div
-                                        key={key}
-                                        className="flex items-center gap-1.5"
-                                    >
-                                        <span
-                                            className="w-2 h-2 rounded-full"
-                                            style={{ background: style.color }}
-                                        />
-                                        <span
-                                            className="text-xs"
-                                            style={{
-                                                color: "var(--text-tertiary)",
-                                            }}
-                                        >
-                                            {style.label}
-                                        </span>
-                                    </div>
-                                ),
-                            )}
-                        </div>
+                        <SectionHeading
+                            index="03"
+                            eyebrow="Technology"
+                            heading="Tools I use to turn ideas into products."
+                            className="mb-14"
+                        />
                     </ScrollReveal>
 
                     {skills.length > 0 ? (
-                        <SkillTabs
-                            groupedSkills={groupedSkills}
-                            proficiencyStyle={PROFICIENCY_STYLE}
-                        />
+                        <ScrollReveal>
+                            <SkillGroups skills={skills} />
+                        </ScrollReveal>
                     ) : (
                         <p
                             className="text-sm py-16 text-center"
@@ -334,82 +301,133 @@ export default async function HomePage() {
                 </div>
             </section>
 
-            {/* ── Contact ──────────────────────────────────────────────────────────── */}
+            {/* ── Contact — the emotional and visual conclusion of the site ──────── */}
             <section
                 id="contact"
-                className="section"
+                className="section bg-noise relative overflow-hidden"
                 style={{ background: "var(--bg-secondary)" }}
             >
-                <div className="container">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-                        <ScrollReveal>
-                            <div className="flex items-center gap-3 mb-2">
-                                <div
-                                    className="w-6 h-px"
-                                    style={{ background: "var(--accent)" }}
-                                />
-                                <p
-                                    className="text-xs font-medium uppercase tracking-widest"
-                                    style={{ color: "var(--accent)" }}
-                                >
-                                    Contact
-                                </p>
-                            </div>
-                            <h2
-                                className="text-h2 font-display mb-4"
-                                style={{ color: "var(--text-primary)" }}
-                            >
-                                Get in touch
-                            </h2>
-                            <p
-                                className="text-base mb-3 max-w-md"
-                                style={{ color: "var(--text-secondary)" }}
-                            >
-                                I&apos;m currently{" "}
-                                <span
-                                    style={{
-                                        color: availableForWork
-                                            ? "var(--accent)"
-                                            : "var(--text-secondary)",
-                                    }}
-                                >
-                                    {availableForWork
-                                        ? "open to new opportunities"
-                                        : "not actively looking"}
-                                </span>
-                                . Whether you have a project, a question, or
-                                just want to say hello — my inbox is open.
-                            </p>
-                            {settings?.email && (
-                                <a
-                                    href={`mailto:${settings.email}`}
-                                    className="inline-flex items-center gap-1.5 text-sm transition-opacity hover:opacity-70"
-                                    style={{ color: "var(--accent)" }}
-                                    aria-label={`Email ${settings.email}`}
-                                >
-                                    {settings.email} ↗
-                                </a>
-                            )}
-                        </ScrollReveal>
+                {/* Restrained star-field continuation — a quiet echo of the hero,
+                    pure CSS, no canvas or pointer tracking. A closing whisper,
+                    not a second interactive effect. */}
+                <div className="pointer-events-none absolute inset-0" aria-hidden>
+                    {CONTACT_STARS.map((s, i) => (
+                        <span
+                            key={i}
+                            className="hero-star"
+                            style={
+                                {
+                                    top: s.top,
+                                    left: s.left,
+                                    width: s.size,
+                                    height: s.size,
+                                    opacity: 0.6,
+                                    "--dur": s.dur,
+                                    "--delay": s.delay,
+                                } as CSSProperties
+                            }
+                        />
+                    ))}
+                </div>
 
-                        <ScrollReveal delay={0.08}>
-                            <div
-                                className="rounded-xl p-6"
+                {/* One extremely subtle blue illumination — not a second glow */}
+                <div
+                    className="pointer-events-none absolute inset-0"
+                    style={{
+                        background:
+                            "radial-gradient(ellipse 55% 45% at 50% 35%, var(--accent-wash) 0%, transparent 70%)",
+                        filter: "blur(64px)",
+                    }}
+                    aria-hidden
+                />
+
+                <div className="container relative z-10">
+                    <ScrollReveal>
+                        <div className="mx-auto max-w-3xl text-center">
+                            <span
+                                className="font-mono text-eyebrow uppercase"
+                                style={{ color: "var(--accent)" }}
+                            >
+                                04 / Contact
+                            </span>
+
+                            <h2
+                                className="m-0 mt-4 text-display font-display uppercase"
                                 style={{
-                                    background: "var(--bg-elevated)",
-                                    border: "1px solid var(--border)",
+                                    color: "var(--text-primary)",
+                                    letterSpacing: "-0.02em",
                                 }}
                             >
-                                <p
-                                    className="text-sm font-medium mb-5"
-                                    style={{ color: "var(--text-primary)" }}
+                                <span className="block">Let&apos;s build</span>
+                                <span className="block">something</span>
+                                <span className="block">interesting.</span>
+                            </h2>
+
+                            <p
+                                className="mx-auto mt-6 max-w-md text-body-lg"
+                                style={{ color: "var(--text-secondary)" }}
+                            >
+                                If you&apos;re working on something ambitious,
+                                I&apos;d love to hear about it.
+                            </p>
+
+                            <div className="mt-10 flex flex-col items-center gap-5">
+                                <MagneticCTA
+                                    href="#contact-form"
+                                    className="btn btn-primary-canvas px-8 py-4 text-base"
                                 >
-                                    Send a message
-                                </p>
+                                    Start a conversation
+                                    <ArrowUpRight className="h-4 w-4" />
+                                </MagneticCTA>
+
+                                {settings?.email && (
+                                    <a
+                                        href={`mailto:${settings.email}`}
+                                        className="font-mono text-small transition-colors hover:text-[var(--accent-on-canvas)]"
+                                        style={{ color: "var(--text-tertiary)" }}
+                                        aria-label={`Email ${settings.email}`}
+                                    >
+                                        {settings.email}
+                                    </a>
+                                )}
+
+                                <div
+                                    className="flex items-center gap-2 font-mono text-small"
+                                    style={{ color: "var(--text-tertiary)" }}
+                                >
+                                    <span
+                                        className={`h-1.5 w-1.5 rounded-full ${availableForWork ? "animate-pulse" : ""}`}
+                                        style={{
+                                            background: availableForWork
+                                                ? "var(--accent)"
+                                                : "var(--text-tertiary)",
+                                            boxShadow: availableForWork
+                                                ? "0 0 6px var(--accent-glow)"
+                                                : "none",
+                                        }}
+                                    />
+                                    {availableForWork
+                                        ? "Open to new opportunities"
+                                        : "Not actively looking, but always happy to talk"}
+                                </div>
+                            </div>
+                        </div>
+                    </ScrollReveal>
+
+                    {/* The form — kept functional, deliberately quiet */}
+                    <ScrollReveal delay={0.1}>
+                        <div id="contact-form" className="mx-auto mt-24 max-w-xl scroll-mt-24">
+                            <div className="surface rounded-md p-6">
+                                <span
+                                    className="mb-5 block font-mono text-[11px] uppercase tracking-wide"
+                                    style={{ color: "var(--text-tertiary)" }}
+                                >
+                                    Or send a message
+                                </span>
                                 <ContactForm />
                             </div>
-                        </ScrollReveal>
-                    </div>
+                        </div>
+                    </ScrollReveal>
                 </div>
             </section>
         </>

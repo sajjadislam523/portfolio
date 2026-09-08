@@ -186,10 +186,11 @@ export function CommandPalette({ resumeUrl }: { resumeUrl?: string }) {
                             stiffness: 400,
                             damping: 30,
                         }}
-                        className="fixed top-[20vh] left-1/2 -translate-x-1/2 z-101 w-full max-w-md rounded-xl overflow-hidden shadow-2xl"
+                        className="fixed top-[20vh] left-1/2 -translate-x-1/2 z-101 w-full max-w-md rounded-lg overflow-hidden"
                         style={{
                             background: "var(--bg-elevated)",
                             border: "1px solid var(--border-strong)",
+                            boxShadow: "var(--shadow-md)",
                         }}
                     >
                         {/* Search input */}

@@ -1,7 +1,7 @@
 import { FadeIn } from "@/components/motion/ScrollReveal";
 import { HeroStars } from "@/components/sections/hero/HeroStars";
 import { HeroVisual } from "@/components/sections/hero/HeroVisual";
-import { RotatingWord } from "@/components/sections/hero/RotatingWord";
+import { ScrollCue } from "@/components/sections/hero/ScrollCue";
 import type {
     IExperience,
     ISiteSettings,
@@ -12,19 +12,14 @@ import { ArrowUpRight, FileText } from "lucide-react";
 import Link from "next/link";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Hero — Redesign Blueprint §05, rev 2.
+// Hero — "Cinematic Technical / Sci-Fi Editorial" refinement pass 2.
 //
-// Changes from the current hero:
-//   1. Asymmetric 7/5 split. The headline gets the wide column; the terminal
-//      card gets the narrow one. Equal columns are what read as a template.
-//   2. ONE directional wash behind the card, replacing the centred radial
-//      glow + two blurred orbs. Four unshaped effects became one.
-//   3. The grid is gone. <HeroStars /> carries the ground instead, and lights
-//      up under the cursor. See §01.
-//   4. The ground is .zone-hero — derived from the theme, not pinned to black,
-//      so the toggle reaches the hero while it still reads as its own plate.
-//
-// Rev 2 also drops the client rail: the plate now ends on the CTA row.
+// Pass 1 fixed the confusing three-line rotating headline but over-corrected
+// into a hero that read as a clean, generic developer-template hero: too
+// much empty space, too little identity. This pass restores content —
+// a real positioning statement, a three-tier technical-identity block, a
+// scroll cue — without reintroducing the things pass 1 removed on purpose
+// (the rotating word, the filled availability capsule, the oversized panel).
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface HeroProps {
@@ -38,6 +33,25 @@ interface HeroProps {
 
 const META = "font-mono text-[12.5px] leading-[1.5]";
 
+// The site's own curated core stack, kept short and personal rather than
+// an exhaustive inventory (that's what the Stack section is for).
+const CORE_STACK = ["React", "Next.js", "TypeScript", "Node.js"];
+
+/** Interleaves a faint "/" between metadata nodes — one separator rule for
+ *  the whole technical-identity line instead of ad hoc conditionals. */
+function withSeparators(nodes: React.ReactNode[]): React.ReactNode[] {
+    return nodes.flatMap((node, i) =>
+        i === 0
+            ? [node]
+            : [
+                  <span key={`sep-${i}`} className="opacity-40" aria-hidden>
+                      /
+                  </span>,
+                  node,
+              ],
+    );
+}
+
 export function Hero({
     settings,
     latestRole,
@@ -47,59 +61,62 @@ export function Hero({
     groupedSkills,
 }: HeroProps) {
     const name = settings?.name ?? "Sajjadul Islam";
-    const bio = settings?.bio ?? "";
+    const positioningStatement =
+        settings?.bio ||
+        "I build production-grade digital products and web experiences where engineering meets thoughtful product design.";
     const socialLinks = settings?.socialLinks ?? [];
     const resumeUrl = settings?.resumeUrl ?? "";
     const availableForWork = settings?.availableForWork ?? false;
 
     return (
-        <section className="zone-hero flex min-h-screen items-center pt-20">
-            {/* §01 — the star field owns its own alpha, animation and spotlight */}
+        <section className="zone-hero relative flex min-h-screen items-center pt-20">
+            {/* The star field carries the ground — toned down to an atmospheric
+                resting state so it never competes with the headline. */}
             <HeroStars />
 
-            {/* §05 — the one remaining background effect, aimed at the card */}
+            {/* One extremely subtle blue light source, aimed at the panel —
+                the only atmospheric effect on the page, not a decorative glow. */}
             <div
                 className="pointer-events-none absolute"
                 style={{
-                    top: "-10%",
-                    right: "-6%",
-                    width: "46%",
-                    height: "78%",
+                    top: "-6%",
+                    right: "-4%",
+                    width: "40%",
+                    height: "62%",
                     background:
                         "radial-gradient(ellipse at center, var(--accent-wash) 0%, transparent 70%)",
-                    filter: "blur(44px)",
+                    filter: "blur(52px)",
                 }}
             />
 
             <div className="relative z-10 flex w-full flex-col">
                 <div className="container grid grid-cols-1 items-center gap-[clamp(28px,4vw,56px)] py-[clamp(28px,4.5vw,56px)] lg:grid-cols-12">
                     {/* ── Left — 7 of 12 ── */}
-                    <div className="flex min-w-0 flex-col gap-[22px] lg:col-span-7">
+                    <div className="flex min-w-0 flex-col gap-5.5 lg:col-span-7">
+                        {/* 1. Status — a light source (a dot), not a filled badge */}
                         {availableForWork && (
                             <FadeIn>
                                 <div
-                                    className="inline-flex items-center gap-[9px] rounded-full py-1.5 pl-[11px] pr-[13px] font-mono text-xs"
-                                    style={{
-                                        background: "var(--accent-glow)",
-                                        border: "1px solid color-mix(in srgb, var(--accent) 30%, transparent)",
-                                        color: "var(--accent-on-canvas)",
-                                    }}
+                                    className="inline-flex items-center gap-2 font-mono text-xs"
+                                    style={{ color: "var(--hero-fg-faint)" }}
                                 >
                                     <span
                                         className="h-1.5 w-1.5 animate-pulse rounded-full"
-                                        style={{ background: "var(--accent-on-canvas)" }}
+                                        style={{
+                                            background: "var(--accent)",
+                                            boxShadow: "0 0 6px var(--accent-glow)",
+                                        }}
                                     />
                                     Open to opportunities
                                 </div>
                             </FadeIn>
                         )}
 
+                        {/* 2 + 3. Kicker + headline — one static statement, uppercase,
+                            not a rotating one. */}
                         <FadeIn delay={0.05}>
-                            {/* Denser star field sits behind this plate now, so the
-                                headline gets its own soft backdrop-blur surface to
-                                stay crisp and legible on top of it. */}
                             <div
-                                className="-mx-3 -my-2 rounded-2xl px-3 py-2 backdrop-blur-sm"
+                                className="-mx-3 -my-2 rounded-lg px-3 py-2 backdrop-blur-sm"
                                 style={{
                                     background:
                                         "color-mix(in srgb, var(--zone-hero) 45%, transparent)",
@@ -109,147 +126,115 @@ export function Hero({
                                     className={`${META} mb-3 block tracking-wider`}
                                     style={{ color: "var(--hero-fg-faint)" }}
                                 >
-                                    Hi, I&apos;m {name} —
+                                    Hi, I&apos;m {name}.
                                 </span>
 
-                                {/* §03 — font-semibold, NOT font-extrabold: Space Grotesk
-                                    loads 500/600/700, so 800 was being synthesised.
-                                    line-height 1 on all three lines so the script
-                                    face in the middle sits on the same baseline. */}
-                                <h1 className="m-0" style={{ lineHeight: 1 }}>
-                                    <span
-                                        className="block font-display font-semibold tracking-[-0.042em]"
-                                        style={{
-                                            fontSize: "clamp(2.75rem, 5vw, 4rem)",
-                                            lineHeight: 1,
-                                            color: "var(--hero-fg)",
-                                        }}
-                                    >
-                                        Full Stack
-                                    </span>
-
-                                    {/* Dancing Script sized 1.18x to compensate for its
-                                        lower x-height — see §03. */}
-                                    <span
-                                        className="block"
-                                        style={{
-                                            fontSize: "clamp(3.2rem, 6vw, 4.8rem)",
-                                            lineHeight: 1,
-                                        }}
-                                    >
-                                        <RotatingWord />
-                                    </span>
-
-                                    <span
-                                        className="block font-display font-semibold tracking-[-0.042em]"
-                                        style={{
-                                            fontSize: "clamp(2.75rem, 5vw, 4rem)",
-                                            lineHeight: 1,
-                                            color: "var(--hero-fg)",
-                                        }}
-                                    >
-                                        Engineer
-                                    </span>
+                                <h1
+                                    className="m-0 text-display font-display uppercase"
+                                    style={{
+                                        color: "var(--hero-fg)",
+                                        letterSpacing: "-0.02em",
+                                    }}
+                                >
+                                    <span className="block">Full Stack</span>
+                                    <span className="block">Engineer</span>
                                 </h1>
                             </div>
                         </FadeIn>
 
-                        {bio && (
-                            <FadeIn delay={0.1}>
-                                <p
-                                    className="max-w-[54ch] text-[1.0625rem] leading-[1.62] tracking-[-0.008em]"
-                                    style={{
-                                        color: "var(--hero-fg-muted)",
-                                        textWrap: "pretty",
-                                    }}
-                                >
-                                    {bio}
-                                </p>
-                            </FadeIn>
-                        )}
-
-                        <FadeIn delay={0.15}>
-                            <div
-                                className={`${META} flex flex-wrap gap-3`}
-                                style={{ color: "var(--hero-fg-faint)" }}
+                        {/* 4. Positioning statement */}
+                        <FadeIn delay={0.1}>
+                            <p
+                                className="max-w-[54ch] text-body-lg"
+                                style={{
+                                    color: "var(--hero-fg-muted)",
+                                    textWrap: "pretty",
+                                }}
                             >
-                                <span>{name}</span>
-                                {latestRole && (
-                                    <>
-                                        <span className="opacity-45">/</span>
-                                        <span>{latestRole.role}</span>
-                                        <span className="opacity-45">/</span>
-                                        <span>{latestRole.company}</span>
-                                    </>
-                                )}
-                                <span className="opacity-45">/</span>
-                                <span>{settings?.location ?? "Dhaka, Bangladesh"}</span>
-                            </div>
+                                {positioningStatement}
+                            </p>
                         </FadeIn>
 
-                        {/* ── CTA row — the plate now ends here (rev 2) ── */}
-                        <FadeIn delay={0.2}>
-                            <div className="flex flex-wrap items-center gap-[10px]">
-                                <Link
-                                    href="#projects"
-                                    className="inline-flex items-center gap-[9px] rounded-lg px-5 py-[11px] text-[0.9375rem] font-[520] transition-opacity hover:opacity-90"
-                                    style={{
-                                        background: "var(--hero-cta-bg)",
-                                        color: "var(--hero-cta-fg)",
-                                        boxShadow: "var(--hero-cta-shadow)",
-                                    }}
-                                >
+                        {/* 5 + 6. Primary / secondary CTA */}
+                        <FadeIn delay={0.15}>
+                            <div className="flex flex-wrap items-center gap-2.5">
+                                <Link href="#projects" className="btn btn-primary">
                                     View projects <ArrowUpRight className="h-4 w-4" />
                                 </Link>
-                                <Link
-                                    href="#contact"
-                                    className="inline-flex items-center gap-2 rounded-lg px-5 py-[11px] text-[0.9375rem] font-[450] transition-colors"
-                                    style={{
-                                        background: "var(--hero-surface-soft)",
-                                        border: "1px solid var(--hero-line)",
-                                        color: "var(--hero-fg-muted)",
-                                    }}
-                                >
+                                <Link href="#contact" className="btn btn-secondary">
                                     Get in touch
                                 </Link>
                             </div>
                         </FadeIn>
 
-                        <FadeIn delay={0.25}>
-                            <div
-                                className={`${META} flex flex-wrap items-center gap-[18px]`}
-                                style={{ color: "var(--hero-fg-faint)" }}
-                            >
-                                {socialLinks.map((link) => (
-                                    <a
-                                        key={link.platform}
-                                        href={link.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="transition-opacity hover:opacity-70"
+                        {/* 7. Technical identity metadata — three understated tiers:
+                            who/what/where, the core stack, then links. */}
+                        <FadeIn delay={0.2}>
+                            <div className="flex flex-col gap-2">
+                                <div
+                                    className={`${META} flex flex-wrap items-center gap-3 uppercase tracking-wide`}
+                                    style={{ color: "var(--hero-fg-muted)" }}
+                                >
+                                    {withSeparators([
+                                        <span key="name">{name}</span>,
+                                        <span key="role">
+                                            {latestRole?.role ?? "Full Stack Engineer"}
+                                        </span>,
+                                        <span key="location">
+                                            {settings?.location ?? "Dhaka, Bangladesh"}
+                                        </span>,
+                                    ])}
+                                </div>
+
+                                <div
+                                    className={`${META} uppercase tracking-wide`}
+                                    style={{ color: "var(--hero-fg-faint)" }}
+                                >
+                                    {CORE_STACK.join(" · ")}
+                                </div>
+
+                                {(socialLinks.length > 0 || resumeUrl) && (
+                                    <div
+                                        className={`${META} flex flex-wrap items-center gap-4`}
+                                        style={{ color: "var(--hero-fg-faint)" }}
                                     >
-                                        {link.platform} ↗
-                                    </a>
-                                ))}
-                                {resumeUrl && (
-                                    <a
-                                        href={resumeUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-1.5 transition-opacity hover:opacity-70"
-                                    >
-                                        <FileText className="h-3.5 w-3.5" />
-                                        Résumé ↗
-                                    </a>
+                                        {socialLinks.map((link) => (
+                                            <a
+                                                key={link.platform}
+                                                href={link.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="transition-opacity hover:opacity-70"
+                                            >
+                                                {link.platform} ↗
+                                            </a>
+                                        ))}
+                                        {resumeUrl && (
+                                            <a
+                                                href={resumeUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center gap-1.5 transition-opacity hover:opacity-70"
+                                            >
+                                                <FileText className="h-3.5 w-3.5" />
+                                                Résumé ↗
+                                            </a>
+                                        )}
+                                    </div>
                                 )}
                             </div>
                         </FadeIn>
                     </div>
 
-                    {/* ── Right — 5 of 12 ── */}
+                    {/* ── Right — 5 of 12 — 8. floating system panel. Smaller, and
+                        nudged toward the upper edge of its row rather than
+                        vertically centred, so it doesn't anchor the composition's
+                        weight as heavily as it did in pass 1. Visible (not hidden)
+                        below `lg` now too — centred beneath the text on mobile
+                        instead of disappearing. ── */}
                     <FadeIn
                         delay={0.15}
-                        className="hidden min-w-0 justify-end lg:col-span-5 lg:flex"
+                        className="flex min-w-0 justify-center lg:col-span-5 lg:mt-6 lg:justify-end lg:self-start"
                     >
                         <HeroVisual
                             experienceLabel={experienceLabel}
@@ -260,6 +245,9 @@ export function Hero({
                     </FadeIn>
                 </div>
             </div>
+
+            {/* 9. Scroll cue */}
+            <ScrollCue />
         </section>
     );
 }
