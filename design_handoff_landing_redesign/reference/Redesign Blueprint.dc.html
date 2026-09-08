@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
+<style>
+  body { margin: 0; background: #E9ECF1; }
+  * { box-sizing: border-box; }
+  a { color: #2A6A96; text-decoration: none; border-bottom: 1px solid rgba(42,106,150,0.3); }
+  a:hover { color: #0E1218; border-bottom-color: #0E1218; }
+  @keyframes bpPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+  @keyframes bpTwinkle { 0%,100% { opacity: 0.28; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1); } }
+</style>
+</helmet>
+
+<div style="{{ rootStyle }}">
+<div style="background: #E9ECF1; padding: clamp(20px, 4vw, 64px) clamp(14px, 3vw, 40px); font-family: 'Geist', system-ui, sans-serif; color: #131820; -webkit-font-smoothing: antialiased;">
+<div style="max-width: 1180px; margin: 0 auto; background: #FAFBFC; border: 1px solid rgba(19,24,32,0.1); border-radius: 16px; box-shadow: 0 2px 4px rgba(20,28,44,0.05), 0 12px 28px -8px rgba(20,28,44,0.12), 0 40px 64px -32px rgba(20,28,44,0.18); overflow: hidden;">
+
+  <!-- Masthead -->
+  <div style="background: #0E1218; color: #EEF2F7; padding: clamp(28px, 5vw, 56px) clamp(20px, 4vw, 56px) clamp(24px, 4vw, 44px); position: relative; overflow: hidden;">
+    <div style="position: absolute; inset: 0; pointer-events: none;">
+      <sc-for list="{{ mastStars }}" as="s" hint-placeholder-count="0">
+        <span style="position: absolute; left: {{ s.x }}%; top: {{ s.y }}%; width: {{ s.d }}px; height: {{ s.d }}px; border-radius: 999px; background: rgba(190,212,238,0.34); animation: bpTwinkle {{ s.dur }}s ease-in-out {{ s.delay }}s infinite;"></span>
+      </sc-for>
+    </div>
+    <div style="position: absolute; top: -30%; right: -4%; width: 42%; height: 130%; background: radial-gradient(ellipse at center, var(--bp-accent-wash, rgba(140,192,232,0.18)) 0%, transparent 70%); filter: blur(50px); pointer-events: none;"></div>
+    <div style="position: relative; display: flex; flex-direction: column; gap: 22px;">
+      <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: center; font: 450 12px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.06em; color: #7F8996;">
+        <span style="color: var(--bp-accent, #8CC0E8);">sajjadislam523/portfolio</span>
+        <span>·</span><span>redesign/single-page-landing</span>
+        <span>·</span><span>d694e50b9870</span>
+        <span>·</span><span>next-themes / space grotesk / dancing script</span>
+      </div>
+      <h1 style="margin: 0; font-size: clamp(2.4rem, 6.2vw, 4.4rem); font-weight: 450; line-height: 0.98; letter-spacing: -0.042em; max-width: 20ch;">Redesign Blueprint</h1>
+      <p style="margin: 0; max-width: 62ch; font-size: clamp(0.95rem, 1.3vw, 1.0625rem); line-height: 1.62; letter-spacing: -0.006em; color: #AEB7C2;">A layout, type and token specification for the single-page portfolio, written against the <strong style="font-weight: 560; color: #EEF2F7;">redesign/single-page-landing</strong> branch — the single-page build, not <code style="font: 450 13px/1 'IBM Plex Mono', monospace; color: #AEB7C2;">main</code>. Every recommendation below names the file and the current value it replaces.</p>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px;">
+        <span style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(140,192,232,0.28); background: rgba(140,192,232,0.09); font: 450 12px/1 'IBM Plex Mono', monospace; color: var(--bp-accent, #8CC0E8);"><span style="width: 6px; height: 6px; border-radius: 999px; background: var(--bp-accent, #8CC0E8); animation: bpPulse 2.4s ease-in-out infinite;"></span>19 source files read</span>
+        <span style="display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.13); font: 450 12px/1 'IBM Plex Mono', monospace; color: #7F8996;">7 sections</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 00 Diagnosis ── -->
+  <div style="padding: clamp(32px, 5vw, 64px) clamp(20px, 4vw, 56px); border-bottom: 1px solid rgba(19,24,32,0.09);">
+    <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 28px;">
+      <span style="font: 500 13px/1 'IBM Plex Mono', monospace; color: var(--bp-accent-ink, #2A6A96);">00</span>
+      <h2 style="margin: 0; font-size: clamp(1.5rem, 2.6vw, 1.875rem); font-weight: 520; line-height: 1.1; letter-spacing: -0.026em;">What reads as amateurish</h2>
+      <div style="flex: 1; height: 1px; background: rgba(19,24,32,0.12);"></div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 1px; background: rgba(19,24,32,0.1); border: 1px solid rgba(19,24,32,0.1); border-radius: 12px; overflow: hidden;">
+
+      <div style="background: #FAFBFC; padding: 22px 20px; display: flex; flex-direction: column; gap: 10px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">01 · Background stack</span>
+        <h3 style="margin: 0; font-size: 1.1875rem; font-weight: 560; line-height: 1.28; letter-spacing: -0.014em;">Four background effects, stacked</h3>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;"><code style="font: 450 13px/1 'IBM Plex Mono', monospace; background: rgba(19,24,32,0.06); padding: 2px 5px; border-radius: 4px;">.bg-grid</code> now reads <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">--border-strong</code> through <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">--grid-opacity</code>, so it does render on light — at <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">rgba(0,0,0,0.15)</code> × <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">0.5</code>, roughly 7.5% black on <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">#fafaf9</code>. Faint, unshaped, and running edge to edge beneath a radial glow and two blurred accent orbs. Four overlapping effects, none of them directed. §01 replaces all four with one star field and a single directional glow.</p>
+        <span style="font: 450 12px/1.5 'IBM Plex Mono', monospace; color: #616B7A; margin-top: auto; padding-top: 8px;">→ §01, §02</span>
+      </div>
+
+      <div style="background: #FAFBFC; padding: 22px 20px; display: flex; flex-direction: column; gap: 10px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">02 · Palette</span>
+        <h3 style="margin: 0; font-size: 1.1875rem; font-weight: 560; line-height: 1.28; letter-spacing: -0.014em;">Cool accent on warm ground</h3>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;">The light set exists now, and <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">#6d28d9</code> clears contrast on <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">#fafaf9</code> comfortably — so this is temperature, not ratio. Both paper grounds (<code style="font: 450 13px/1 'IBM Plex Mono', monospace;">#fafaf9</code>, <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">#f0efe8</code>) are warm greys; the accent is a cool violet; <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">--success</code> adds a third hue. Nothing in the palette agrees with anything else — and a fixed black hero on top of it ignores the theme toggle entirely.</p>
+        <span style="font: 450 12px/1.5 'IBM Plex Mono', monospace; color: #616B7A; margin-top: auto; padding-top: 8px;">→ §02</span>
+      </div>
+
+      <div style="background: #FAFBFC; padding: 22px 20px; display: flex; flex-direction: column; gap: 10px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">03 · Type</span>
+        <h3 style="margin: 0; font-size: 1.1875rem; font-weight: 560; line-height: 1.28; letter-spacing: -0.014em;">The headline asks for a weight that was never loaded</h3>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;"><code style="font: 450 13px/1 'IBM Plex Mono', monospace;">layout.tsx</code> loads Space Grotesk at 500/600/700. The hero applies <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">font-extrabold</code> — 800. No 800 face exists, so the browser synthesises one, and faux-bold at <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">clamp(3.5rem, 7vw, 6rem)</code> is the flattest, muddiest thing on the page. Line two then switches to Dancing Script — a calligraphic face with a much lower x-height — so a synthesised 800 and a script face compete across the same three lines, neither scoped to a job.</p>
+        <span style="font: 450 12px/1.5 'IBM Plex Mono', monospace; color: #616B7A; margin-top: auto; padding-top: 8px;">→ §03</span>
+      </div>
+
+      <div style="background: #FAFBFC; padding: 22px 20px; display: flex; flex-direction: column; gap: 10px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">04 · Elevation</span>
+        <h3 style="margin: 0; font-size: 1.1875rem; font-weight: 560; line-height: 1.28; letter-spacing: -0.014em;">Per-mode shadows, still single-pass</h3>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;">The branch adds <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">--card-shadow</code> / <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">--card-shadow-hover</code> per mode, which is the right structure. Both are still one blur plus a spread ring — no ambient layer, no top hairline. <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">.card-shine</code>'s diagonal sweep is doing the job elevation should be doing.</p>
+        <span style="font: 450 12px/1.5 'IBM Plex Mono', monospace; color: #616B7A; margin-top: auto; padding-top: 8px;">→ §04</span>
+      </div>
+
+      <div style="background: #FAFBFC; padding: 22px 20px; display: flex; flex-direction: column; gap: 10px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">05 · Rhythm</span>
+        <h3 style="margin: 0; font-size: 1.1875rem; font-weight: 560; line-height: 1.28; letter-spacing: -0.014em;">Asymmetric section padding</h3>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;"><code style="font: 450 13px/1 'IBM Plex Mono', monospace;">.section</code> is <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">5rem</code> top / <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">3rem</code> bottom, so stacked sections collide at 8rem in one place and 6rem in another. Pages then override it ad hoc — <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">pt-28 pb-20</code>, <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">mb-16</code>, <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">mt-20</code>. Nothing lands on a shared baseline.</p>
+        <span style="font: 450 12px/1.5 'IBM Plex Mono', monospace; color: #616B7A; margin-top: auto; padding-top: 8px;">→ §04</span>
+      </div>
+
+      <div style="background: #FAFBFC; padding: 22px 20px; display: flex; flex-direction: column; gap: 10px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">06 · Zones</span>
+        <h3 style="margin: 0; font-size: 1.1875rem; font-weight: 560; line-height: 1.28; letter-spacing: -0.014em;">The two backgrounds are 2% apart</h3>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;">You already alternate zones — hero, projects and stack on <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">--bg-primary</code>, experience and contact on <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">--bg-secondary</code>. In light that is <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">#fafaf9</code> against <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">#f0efe8</code>: about two percent of luminance. The separation you asked for is already wired up — it simply cannot be seen.</p>
+        <span style="font: 450 12px/1.5 'IBM Plex Mono', monospace; color: #616B7A; margin-top: auto; padding-top: 8px;">→ §06</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 01 Background architecture ── -->
+  <div style="padding: clamp(32px, 5vw, 64px) clamp(20px, 4vw, 56px); border-bottom: 1px solid rgba(19,24,32,0.09);">
+    <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 12px;">
+      <span style="font: 500 13px/1 'IBM Plex Mono', monospace; color: var(--bp-accent-ink, #2A6A96);">01</span>
+      <h2 style="margin: 0; font-size: clamp(1.5rem, 2.6vw, 1.875rem); font-weight: 520; line-height: 1.1; letter-spacing: -0.026em;">Two-zone background system</h2>
+      <div style="flex: 1; height: 1px; background: rgba(19,24,32,0.12);"></div>
+    </div>
+    <p style="margin: 0 0 28px; max-width: 74ch; font-size: 1.0625rem; line-height: 1.62; letter-spacing: -0.008em; color: #4A5563;">You asked for the hero to own one background and the rest of the page another. Split the page into two named zones — <strong style="font-weight: 560;">hero</strong> and <strong style="font-weight: 560;">canvas</strong> — but derive both from the same theme rather than pinning the hero to black. The hero ground is the deep end of the ramp in dark mode and a pale blue plate in light; either way it sits one clear step off the canvas, so it still reads as its own plate while the toggle visibly reaches it. The grid goes with it: a scattered star field carries the hero instead, and it lights up under the cursor.</p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 20px;">
+      <div style="border: 1px solid rgba(19,24,32,0.12); border-radius: 12px; overflow: hidden;">
+        <div style="height: 148px; background: #0E1218; position: relative; overflow: hidden;">
+          <div style="position: absolute; inset: 0; pointer-events: none;">
+      <sc-for list="{{ mastStars }}" as="s" hint-placeholder-count="0">
+        <span style="position: absolute; left: {{ s.x }}%; top: {{ s.y }}%; width: {{ s.d }}px; height: {{ s.d }}px; border-radius: 999px; background: rgba(190,212,238,0.5); animation: bpTwinkle {{ s.dur }}s ease-in-out {{ s.delay }}s infinite;"></span>
+      </sc-for>
+    </div>
+          <div style="position: absolute; top: -40%; right: -10%; width: 60%; height: 150%; background: radial-gradient(ellipse at center, var(--bp-accent-wash, rgba(140,192,232,0.2)) 0%, transparent 70%); filter: blur(34px);"></div>
+          <span style="position: absolute; left: 16px; bottom: 14px; font: 450 12px/1 'IBM Plex Mono', monospace; color: #AEB7C2;">zone: hero — dark</span>
+        </div>
+        <div style="padding: 16px; display: flex; flex-direction: column; gap: 6px; font: 450 12.5px/1.7 'IBM Plex Mono', monospace; color: #4A5563;">
+          <span>--hero-ground: #0E1218</span>
+          <span>--hero-raised: #151A21</span>
+          <span>--hero-star: rgba(190,212,238,.42)</span>
+          <span>--hero-star-lit: var(--accent)</span>
+          <span>--hero-fg: #EEF2F7</span>
+          <span>--hero-fg-muted: #AEB7C2</span>
+        </div>
+      </div>
+
+      <div style="border: 1px solid rgba(19,24,32,0.12); border-radius: 12px; overflow: hidden;">
+        <div style="height: 148px; background: #E7EDF5; position: relative; overflow: hidden;">
+          <div style="position: absolute; inset: 0; pointer-events: none;">
+      <sc-for list="{{ mastStars }}" as="s" hint-placeholder-count="0">
+        <span style="position: absolute; left: {{ s.x }}%; top: {{ s.y }}%; width: {{ s.d }}px; height: {{ s.d }}px; border-radius: 999px; background: rgba(42,106,150,0.34); animation: bpTwinkle {{ s.dur }}s ease-in-out {{ s.delay }}s infinite;"></span>
+      </sc-for>
+    </div>
+          <div style="position: absolute; top: -40%; right: -10%; width: 60%; height: 150%; background: radial-gradient(ellipse at center, rgba(42,106,150,0.14) 0%, transparent 70%); filter: blur(34px);"></div>
+          <span style="position: absolute; left: 16px; bottom: 14px; font: 450 12px/1 'IBM Plex Mono', monospace; color: #4A5563;">zone: hero — light</span>
+        </div>
+        <div style="padding: 16px; display: flex; flex-direction: column; gap: 6px; font: 450 12.5px/1.7 'IBM Plex Mono', monospace; color: #4A5563;">
+          <span>--hero-ground: #E7EDF5</span>
+          <span>--hero-raised: #FFFFFF</span>
+          <span>--hero-star: rgba(42,106,150,.30)</span>
+          <span>--hero-star-lit: var(--accent-on-canvas)</span>
+          <span>--hero-fg: #131820</span>
+          <span>--hero-fg-muted: #4A5563</span>
+        </div>
+      </div>
+
+      <div style="border: 1px solid rgba(19,24,32,0.12); border-radius: 12px; overflow: hidden;">
+        <div style="height: 148px; background: #EEF1F5; position: relative;">
+          <div style="position: absolute; inset: 0; background-image: radial-gradient(rgba(19,24,32,0.11) 1px, transparent 1px); background-size: 18px 18px;"></div>
+          <span style="position: absolute; left: 16px; bottom: 14px; font: 450 12px/1 'IBM Plex Mono', monospace; color: #5C6675;">zone: canvas — light</span>
+        </div>
+        <div style="padding: 16px; display: flex; flex-direction: column; gap: 6px; font: 450 12.5px/1.7 'IBM Plex Mono', monospace; color: #4A5563;">
+          <span>--zone-canvas: #F5F7FA</span>
+          <span>--zone-canvas-alt: #EEF1F5</span>
+          <span>--zone-surface: #FFFFFF</span>
+          <span>--canvas-fg: #131820</span>
+          <span>--canvas-fg-muted: #4A5563</span>
+          <span>--canvas-fg-faint: #616B7A</span>
+        </div>
+      </div>
+
+      <div style="border: 1px solid rgba(19,24,32,0.12); border-radius: 12px; overflow: hidden;">
+        <div style="height: 148px; background: #161A20; position: relative;">
+          <div style="position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.09) 1px, transparent 1px); background-size: 18px 18px;"></div>
+          <span style="position: absolute; left: 16px; bottom: 14px; font: 450 12px/1 'IBM Plex Mono', monospace; color: #AEB7C2;">zone: canvas — dark</span>
+        </div>
+        <div style="padding: 16px; display: flex; flex-direction: column; gap: 6px; font: 450 12.5px/1.7 'IBM Plex Mono', monospace; color: #4A5563;">
+          <span>--zone-canvas: #161A20</span>
+          <span>--zone-canvas-alt: #1C2129</span>
+          <span>--zone-surface: #20262F</span>
+          <span>--canvas-fg: #EEF2F7</span>
+          <span>--canvas-fg-muted: #AEB7C2</span>
+          <span>--canvas-fg-faint: #7F8996</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px;">
+      <div style="padding: 18px 20px; border-radius: 10px; background: #EEF1F5; border: 1px solid rgba(19,24,32,0.1); display: flex; flex-direction: column; gap: 8px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">Why the hero follows the theme</span>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;">A hero pinned to one near-black in both modes reads as a foreign object in light mode — nothing else on the page is that dark, so the plate looks pasted on rather than designed in. Deriving it from the same ramp keeps the separation you asked for (one step off the canvas, in both directions) while the accent, the dots, the card and the glow all re-tune per mode from one set of tokens. One hero design, two grounds.</p>
+      </div>
+      <div style="padding: 18px 20px; border-radius: 10px; background: #EEF1F5; border: 1px solid rgba(19,24,32,0.1); display: flex; flex-direction: column; gap: 8px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">The star field, precisely</span>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;">Around 56 dots at 1–3px, seeded from a fixed integer so positions are stable between renders and across SSR, each twinkling on its own 3–7s cycle. A second copy of the same field sits above it in <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">--hero-star-lit</code>, masked to a 200px radial at the cursor — so the dots near the pointer brighten and the rest stay quiet. It replaces the grid, the radial glow and both blurred orbs; only one directional wash stays, behind the card.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 02 Color tokens ── -->
+  <div style="padding: clamp(32px, 5vw, 64px) clamp(20px, 4vw, 56px); border-bottom: 1px solid rgba(19,24,32,0.09);">
+    <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 12px;">
+      <span style="font: 500 13px/1 'IBM Plex Mono', monospace; color: var(--bp-accent-ink, #2A6A96);">02</span>
+      <h2 style="margin: 0; font-size: clamp(1.5rem, 2.6vw, 1.875rem); font-weight: 520; line-height: 1.1; letter-spacing: -0.026em;">Accent: one light blue, two values</h2>
+      <div style="flex: 1; height: 1px; background: rgba(19,24,32,0.12);"></div>
+    </div>
+    <p style="margin: 0 0 28px; max-width: 74ch; font-size: 1.0625rem; line-height: 1.62; letter-spacing: -0.008em; color: #4A5563;">Purple at <code style="font: 450 14px/1 'IBM Plex Mono', monospace;">#7C6AF7</code> has no darker sibling to fall back to, so it survives on dark and collapses on light. The replacement is a light blue held at two values: the bright one carries the dark hero, its lit dots and every accent on ink; the steel one carries the same accents on paper. What makes the pair work is cooling the neutrals with it — both grounds now share the accent's hue at two to four percent saturation instead of pulling warm against it, so the accent reads as part of the ground rather than a sticker on it.</p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 12px; margin-bottom: 24px;">
+      <div style="border-radius: 10px; overflow: hidden; border: 1px solid rgba(19,24,32,0.1);">
+        <div style="height: 84px; background: var(--bp-accent, #8CC0E8);"></div>
+        <div style="padding: 12px; display: flex; flex-direction: column; gap: 3px; font: 450 12px/1.5 'IBM Plex Mono', monospace; color: #4A5563;"><span style="color: #131820;">--accent</span><span>#8CC0E8</span><span style="color: #616B7A;">on hero dark · 9.8:1</span></div>
+      </div>
+      <div style="border-radius: 10px; overflow: hidden; border: 1px solid rgba(19,24,32,0.1);">
+        <div style="height: 84px; background: #5D9BC9;"></div>
+        <div style="padding: 12px; display: flex; flex-direction: column; gap: 3px; font: 450 12px/1.5 'IBM Plex Mono', monospace; color: #4A5563;"><span style="color: #131820;">--accent-strong</span><span>#5D9BC9</span><span style="color: #616B7A;">fills, hover</span></div>
+      </div>
+      <div style="border-radius: 10px; overflow: hidden; border: 1px solid rgba(19,24,32,0.1);">
+        <div style="height: 84px; background: var(--bp-accent-ink, #2A6A96);"></div>
+        <div style="padding: 12px; display: flex; flex-direction: column; gap: 3px; font: 450 12px/1.5 'IBM Plex Mono', monospace; color: #4A5563;"><span style="color: #131820;">--accent-on-canvas</span><span>#2A6A96</span><span style="color: #616B7A;">on paper · 5.3:1</span></div>
+      </div>
+      <div style="border-radius: 10px; overflow: hidden; border: 1px solid rgba(19,24,32,0.1);">
+        <div style="height: 84px; background: #0E1218;"></div>
+        <div style="padding: 12px; display: flex; flex-direction: column; gap: 3px; font: 450 12px/1.5 'IBM Plex Mono', monospace; color: #4A5563;"><span style="color: #131820;">--accent-foreground</span><span>#0E1218</span><span style="color: #616B7A;">text on light blue</span></div>
+      </div>
+      <div style="border-radius: 10px; overflow: hidden; border: 1px solid rgba(19,24,32,0.1);">
+        <div style="height: 84px; background: #0E1218; display: flex; align-items: center; justify-content: center;"><span style="width: 56px; height: 56px; border-radius: 8px; background: rgba(140,192,232,0.18);"></span></div>
+        <div style="padding: 12px; display: flex; flex-direction: column; gap: 3px; font: 450 12px/1.5 'IBM Plex Mono', monospace; color: #4A5563;"><span style="color: #131820;">--accent-wash</span><span>a(140,192,232,.18)</span><span style="color: #616B7A;">glow, lit dots</span></div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 20px;">
+      <div style="border-radius: 12px; overflow: hidden; border: 1px solid rgba(19,24,32,0.12);">
+        <div style="padding: 12px 16px; background: #EEF1F5; font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #5C6675;">Light blue on the dark hero</div>
+        <div style="background: #0E1218; padding: 24px 20px; display: flex; flex-direction: column; gap: 14px;">
+          <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bp-accent, #8CC0E8);">Selected work</span>
+          <span style="font-size: 1.75rem; font-weight: 500; letter-spacing: -0.028em; color: #EEF2F7; line-height: 1.1;">Legible at every weight</span>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <span style="padding: 8px 16px; border-radius: 8px; background: var(--bp-accent, #8CC0E8); color: #0E1218; font-size: 0.875rem; font-weight: 520;">Primary</span>
+            <span style="padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); color: #AEB7C2; font-size: 0.875rem; font-weight: 450;">Secondary</span>
+          </div>
+        </div>
+      </div>
+      <div style="border-radius: 12px; overflow: hidden; border: 1px solid rgba(19,24,32,0.12);">
+        <div style="padding: 12px 16px; background: #EEF1F5; font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #5C6675;">Steel on canvas</div>
+        <div style="background: #F5F7FA; padding: 24px 20px; display: flex; flex-direction: column; gap: 14px;">
+          <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bp-accent-ink, #2A6A96);">Selected work</span>
+          <span style="font-size: 1.75rem; font-weight: 500; letter-spacing: -0.028em; color: #131820; line-height: 1.1;">Same hue, darker value</span>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <span style="padding: 8px 16px; border-radius: 8px; background: var(--bp-accent-ink, #2A6A96); color: #FFFFFF; font-size: 0.875rem; font-weight: 520;">Primary</span>
+            <span style="padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(19,24,32,0.18); color: #4A5563; font-size: 0.875rem; font-weight: 450;">Secondary</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 03 Typography ── -->
+  <div style="padding: clamp(32px, 5vw, 64px) clamp(20px, 4vw, 56px); border-bottom: 1px solid rgba(19,24,32,0.09);">
+    <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 12px;">
+      <span style="font: 500 13px/1 'IBM Plex Mono', monospace; color: var(--bp-accent-ink, #2A6A96);">03</span>
+      <h2 style="margin: 0; font-size: clamp(1.5rem, 2.6vw, 1.875rem); font-weight: 520; line-height: 1.1; letter-spacing: -0.026em;">Typographic system</h2>
+      <div style="flex: 1; height: 1px; background: rgba(19,24,32,0.12);"></div>
+    </div>
+    <p style="margin: 0 0 32px; max-width: 74ch; font-size: 1.0625rem; line-height: 1.62; letter-spacing: -0.008em; color: #4A5563;">The branch loads four families: Geist Sans, Geist Mono, Space Grotesk as <code style="font: 450 14px/1 'IBM Plex Mono', monospace;">--font-display</code> and Dancing Script as <code style="font: 450 14px/1 'IBM Plex Mono', monospace;">--font-script</code>. Four families is more than a page can carry unscoped — and one of them is currently asked for at a weight it was never loaded at. Keep all four; give each exactly one job: Geist for body and UI, Space Grotesk for display at a weight that actually exists, Dancing Script scoped strictly to the rotating word, and IBM Plex Mono for metadata in place of Geist Mono, which lacks the aperture and x-height that dense technical labels need at 12–13px. Then three rules replace the 500/600/700 ladder: weight <em>decreases</em> as size increases, tracking tightens in proportion to size, and all metadata moves to the mono register so it stops competing with prose.</p>
+
+    <div style="display: flex; flex-direction: column; gap: 1px; background: rgba(19,24,32,0.1); border: 1px solid rgba(19,24,32,0.1); border-radius: 12px; overflow: hidden;">
+      <div style="background: #FAFBFC; padding: 26px 22px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 220px); gap: 20px; align-items: end;">
+        <span style="font-size: clamp(2.25rem, 5vw, 3.5rem); font-weight: 450; line-height: 0.98; letter-spacing: -0.042em; color: #131820;">Display</span>
+        <div style="display: flex; flex-direction: column; gap: 4px; font: 450 12px/1.55 'IBM Plex Mono', monospace; color: #5C6675;"><span style="color: #131820;">--type-display</span><span>clamp(2.75rem, 6.5vw, 4.75rem)</span><span>450 / 0.98 / -0.042em</span></div>
+      </div>
+      <div style="background: #FAFBFC; padding: 26px 22px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 220px); gap: 20px; align-items: end;">
+        <span style="font-size: clamp(1.75rem, 3.4vw, 2.5rem); font-weight: 500; line-height: 1.04; letter-spacing: -0.032em; color: #131820;">Heading one</span>
+        <div style="display: flex; flex-direction: column; gap: 4px; font: 450 12px/1.55 'IBM Plex Mono', monospace; color: #5C6675;"><span style="color: #131820;">--type-h1</span><span>clamp(2rem, 4vw, 3rem)</span><span>500 / 1.04 / -0.032em</span></div>
+      </div>
+      <div style="background: #FAFBFC; padding: 26px 22px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 220px); gap: 20px; align-items: end;">
+        <span style="font-size: 1.75rem; font-weight: 520; line-height: 1.12; letter-spacing: -0.026em; color: #131820;">Heading two</span>
+        <div style="display: flex; flex-direction: column; gap: 4px; font: 450 12px/1.55 'IBM Plex Mono', monospace; color: #5C6675;"><span style="color: #131820;">--type-h2</span><span>1.75rem</span><span>520 / 1.12 / -0.026em</span></div>
+      </div>
+      <div style="background: #FAFBFC; padding: 26px 22px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 220px); gap: 20px; align-items: end;">
+        <span style="font-size: 1.1875rem; font-weight: 560; line-height: 1.28; letter-spacing: -0.014em; color: #131820;">Heading three</span>
+        <div style="display: flex; flex-direction: column; gap: 4px; font: 450 12px/1.55 'IBM Plex Mono', monospace; color: #5C6675;"><span style="color: #131820;">--type-h3</span><span>1.1875rem</span><span>560 / 1.28 / -0.014em</span></div>
+      </div>
+      <div style="background: #FAFBFC; padding: 26px 22px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 220px); gap: 20px; align-items: end;">
+        <span style="font-size: 1.0625rem; font-weight: 400; line-height: 1.62; letter-spacing: -0.008em; color: #131820; max-width: 46ch;">Body large — used for section leads and the hero positioning line, where one paragraph has to carry the argument.</span>
+        <div style="display: flex; flex-direction: column; gap: 4px; font: 450 12px/1.55 'IBM Plex Mono', monospace; color: #5C6675;"><span style="color: #131820;">--type-body-lg</span><span>1.0625rem</span><span>400 / 1.62 / -0.008em</span></div>
+      </div>
+      <div style="background: #FAFBFC; padding: 26px 22px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 220px); gap: 20px; align-items: end;">
+        <span style="font-size: 0.9375rem; font-weight: 400; line-height: 1.65; color: #4A5563; max-width: 52ch;">Body — project taglines, descriptions, form copy. Set on the muted foreground, never on the primary, so headings stay dominant.</span>
+        <div style="display: flex; flex-direction: column; gap: 4px; font: 450 12px/1.55 'IBM Plex Mono', monospace; color: #5C6675;"><span style="color: #131820;">--type-body</span><span>0.9375rem</span><span>400 / 1.65 / -0.004em</span></div>
+      </div>
+      <div style="background: #FAFBFC; padding: 26px 22px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 220px); gap: 20px; align-items: end;">
+        <span style="font: 450 13px/1.5 'IBM Plex Mono', monospace; color: #4A5563;">2024 — Node.js · MongoDB · Stripe</span>
+        <div style="display: flex; flex-direction: column; gap: 4px; font: 450 12px/1.55 'IBM Plex Mono', monospace; color: #5C6675;"><span style="color: #131820;">--type-meta</span><span>0.8125rem mono</span><span>450 / 1.5 / 0</span></div>
+      </div>
+      <div style="background: #FAFBFC; padding: 26px 22px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 220px); gap: 20px; align-items: end;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bp-accent-ink, #2A6A96);">Section label</span>
+        <div style="display: flex; flex-direction: column; gap: 4px; font: 450 12px/1.55 'IBM Plex Mono', monospace; color: #5C6675;"><span style="color: #131820;">--type-label</span><span>0.6875rem mono caps</span><span>550 / 1.4 / +0.14em</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 16px;">
+      <div style="padding: 18px 20px; border-radius: 10px; background: #EEF1F5; display: flex; flex-direction: column; gap: 6px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">The headline bypasses all of this</span>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;">The hero sets <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">font-display font-extrabold</code> with an inline <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">clamp(3.5rem, 7vw, 6rem)</code> — it never touches the <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">text-display</code> token, so the ramp below cannot reach it. Space Grotesk is loaded at 500/600/700; <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">font-extrabold</code> asks for 800 and gets a synthesised face. Either load 800 or drop to <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">font-semibold</code> — and move the size onto <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">--type-display</code> so the token governs it.</p>
+      </div>
+      <div style="padding: 18px 20px; border-radius: 10px; background: #EEF1F5; display: flex; flex-direction: column; gap: 6px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">On Dancing Script</span>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;">Staying — so it has to be handled rather than merely placed. Three corrections. Its x-height sits well below Space Grotesk's, so at <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">clamp(3rem, 6vw, 5.2rem)</code> line two reads smaller than the lines around it: size it up to roughly <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">1.18×</code> the display line and set <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">line-height: 1</code> on all three so the baselines settle. Replace <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">minWidth: 10ch</code> — a <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">ch</code> unit on a calligraphic face reflows the whole headline every three seconds — with a hidden sizer holding the longest word. And drop the flanking lines to <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">600</code>: a script face cannot hold its own beside a synthesised 800.</p>
+      </div>
+      <div style="padding: 18px 20px; border-radius: 10px; background: #EEF1F5; display: flex; flex-direction: column; gap: 6px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">Replaces</span>
+        <p style="margin: 0; font: 450 12.5px/1.7 'IBM Plex Mono', monospace; color: #4A5563;">display 4rem/700 → 450<br />h1 3rem/600 → 500<br />h2 2rem/600 → 1.75rem/520<br />h3 1.5rem/500 → 1.1875rem/560<br />h4 1.25rem/500 → deleted</p>
+      </div>
+      <div style="padding: 18px 20px; border-radius: 10px; background: #EEF1F5; display: flex; flex-direction: column; gap: 6px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">Also change</span>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;">Body <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">line-height: 1.6</code> in <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">globals.css</code> applies to headings too. Set it to <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">1.65</code> on body and let each heading token carry its own.</p>
+      </div>
+      <div style="padding: 18px 20px; border-radius: 10px; background: #EEF1F5; display: flex; flex-direction: column; gap: 6px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">Measure</span>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;">Cap prose at <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">62ch</code> and headlines at <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">20ch</code>. The hero <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">max-w-md</code> currently cuts bio copy at ~48ch, which fragments it.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 04 Elevation, borders, rhythm ── -->
+  <div style="padding: clamp(32px, 5vw, 64px) clamp(20px, 4vw, 56px); border-bottom: 1px solid rgba(19,24,32,0.09);">
+    <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 12px;">
+      <span style="font: 500 13px/1 'IBM Plex Mono', monospace; color: var(--bp-accent-ink, #2A6A96);">04</span>
+      <h2 style="margin: 0; font-size: clamp(1.5rem, 2.6vw, 1.875rem); font-weight: 520; line-height: 1.1; letter-spacing: -0.026em;">Shadows, borders, rhythm</h2>
+      <div style="flex: 1; height: 1px; background: rgba(19,24,32,0.12);"></div>
+    </div>
+    <p style="margin: 0 0 28px; max-width: 74ch; font-size: 1.0625rem; line-height: 1.62; letter-spacing: -0.008em; color: #4A5563;">Three shadow levels, each built from a tight contact layer plus a wide ambient layer, tinted warm rather than pure black. Raised surfaces additionally carry a 1px top highlight — that inset hairline is most of what separates a premium card from a flat one.</p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 20px; margin-bottom: 40px;">
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="height: 96px; border-radius: 10px; background: #FFFFFF; border: 1px solid rgba(19,24,32,0.08); box-shadow: 0 1px 2px rgba(20,28,44,0.06);"></div>
+        <div style="display: flex; flex-direction: column; gap: 3px; font: 450 12px/1.55 'IBM Plex Mono', monospace; color: #5C6675;"><span style="color: #131820;">--elev-1</span><span>0 1px 2px rgba(20,28,44,.06)</span><span style="color: #616B7A;">resting rows, inputs</span></div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="height: 96px; border-radius: 10px; background: #FFFFFF; border: 1px solid rgba(19,24,32,0.08); box-shadow: 0 1px 2px rgba(20,28,44,0.05), 0 4px 10px -3px rgba(20,28,44,0.10);"></div>
+        <div style="display: flex; flex-direction: column; gap: 3px; font: 450 12px/1.55 'IBM Plex Mono', monospace; color: #5C6675;"><span style="color: #131820;">--elev-2</span><span>+ 0 4px 10px -3px /.10</span><span style="color: #616B7A;">hovered cards</span></div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="height: 96px; border-radius: 10px; background: #FFFFFF; border: 1px solid rgba(19,24,32,0.08); box-shadow: 0 2px 4px rgba(20,28,44,0.05), 0 12px 28px -8px rgba(20,28,44,0.14), 0 32px 56px -28px rgba(20,28,44,0.18);"></div>
+        <div style="display: flex; flex-direction: column; gap: 3px; font: 450 12px/1.55 'IBM Plex Mono', monospace; color: #5C6675;"><span style="color: #131820;">--elev-3</span><span>+ 0 32px 56px -28px /.18</span><span style="color: #616B7A;">hero card, palette, modals</span></div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="height: 96px; border-radius: 10px; background: #151A21; border: 1px solid rgba(255,255,255,0.09); box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 2px 4px rgba(0,0,0,0.3), 0 16px 32px -10px rgba(0,0,0,0.55), 0 40px 64px -32px rgba(0,0,0,0.6);"></div>
+        <div style="display: flex; flex-direction: column; gap: 3px; font: 450 12px/1.55 'IBM Plex Mono', monospace; color: #5C6675;"><span style="color: #131820;">--elev-3-ink</span><span>+ inset 0 1px 0 rgba(255,255,255,.06)</span><span style="color: #616B7A;">raised on the ink zone</span></div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 24px;">
+      <div>
+        <span style="display: block; font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A; margin-bottom: 14px;">Borders &amp; radii</span>
+        <div style="display: flex; flex-direction: column; gap: 1px; background: rgba(19,24,32,0.1); border: 1px solid rgba(19,24,32,0.1); border-radius: 10px; overflow: hidden;">
+          <div style="background: #FAFBFC; padding: 12px 16px; display: flex; justify-content: space-between; gap: 16px; font: 450 12.5px/1.5 'IBM Plex Mono', monospace;"><span style="color: #131820;">--line-hairline</span><span style="color: #5C6675;">rgba(19,24,32,.07)</span></div>
+          <div style="background: #FAFBFC; padding: 12px 16px; display: flex; justify-content: space-between; gap: 16px; font: 450 12.5px/1.5 'IBM Plex Mono', monospace;"><span style="color: #131820;">--line</span><span style="color: #5C6675;">rgba(19,24,32,.11)</span></div>
+          <div style="background: #FAFBFC; padding: 12px 16px; display: flex; justify-content: space-between; gap: 16px; font: 450 12.5px/1.5 'IBM Plex Mono', monospace;"><span style="color: #131820;">--line-strong</span><span style="color: #5C6675;">rgba(19,24,32,.19)</span></div>
+          <div style="background: #FAFBFC; padding: 12px 16px; display: flex; justify-content: space-between; gap: 16px; font: 450 12.5px/1.5 'IBM Plex Mono', monospace;"><span style="color: #131820;">--line-focus</span><span style="color: #5C6675;">#2A6A96, 2px, offset 3</span></div>
+          <div style="background: #FAFBFC; padding: 12px 16px; display: flex; justify-content: space-between; gap: 16px; font: 450 12.5px/1.5 'IBM Plex Mono', monospace;"><span style="color: #131820;">--r-xs / sm / md</span><span style="color: #5C6675;">4 / 6 / 10px</span></div>
+          <div style="background: #FAFBFC; padding: 12px 16px; display: flex; justify-content: space-between; gap: 16px; font: 450 12.5px/1.5 'IBM Plex Mono', monospace;"><span style="color: #131820;">--r-lg / xl / pill</span><span style="color: #5C6675;">14 / 20 / 999px</span></div>
+        </div>
+        <p style="margin: 14px 0 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;">Your current set has two levels, both white-alpha. Hairline is for internal dividers inside an already-bordered container, where <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">--line</code> would read as a double rule. Images always carry <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">inset 0 0 0 1px var(--line)</code> so they don't bleed edge-to-edge against the surface.</p>
+      </div>
+      <div>
+        <span style="display: block; font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A; margin-bottom: 14px;">Vertical rhythm</span>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 14px;"><span style="width: 132px; flex-shrink: 0; font: 450 12.5px/1.5 'IBM Plex Mono', monospace; color: #131820;">--space-2 · 8px</span><span style="height: 10px; width: 8px; background: rgba(19,24,32,0.16); border-radius: 2px;"></span></div>
+          <div style="display: flex; align-items: center; gap: 14px;"><span style="width: 132px; flex-shrink: 0; font: 450 12.5px/1.5 'IBM Plex Mono', monospace; color: #131820;">--space-4 · 16px</span><span style="height: 10px; width: 16px; background: rgba(19,24,32,0.16); border-radius: 2px;"></span></div>
+          <div style="display: flex; align-items: center; gap: 14px;"><span style="width: 132px; flex-shrink: 0; font: 450 12.5px/1.5 'IBM Plex Mono', monospace; color: #131820;">--space-6 · 24px</span><span style="height: 10px; width: 24px; background: rgba(19,24,32,0.16); border-radius: 2px;"></span></div>
+          <div style="display: flex; align-items: center; gap: 14px;"><span style="width: 132px; flex-shrink: 0; font: 450 12.5px/1.5 'IBM Plex Mono', monospace; color: #131820;">--space-10 · 40px</span><span style="height: 10px; width: 40px; background: rgba(19,24,32,0.16); border-radius: 2px;"></span></div>
+          <div style="display: flex; align-items: center; gap: 14px;"><span style="width: 132px; flex-shrink: 0; font: 450 12.5px/1.5 'IBM Plex Mono', monospace; color: #131820;">--rhythm-sm · 72px</span><span style="height: 10px; width: 72px; background: var(--bp-accent, #8CC0E8); border-radius: 2px;"></span></div>
+          <div style="display: flex; align-items: center; gap: 14px;"><span style="width: 132px; flex-shrink: 0; font: 450 12.5px/1.5 'IBM Plex Mono', monospace; color: #131820;">--rhythm · 112px</span><span style="height: 10px; width: 112px; background: var(--bp-accent, #8CC0E8); border-radius: 2px;"></span></div>
+          <div style="display: flex; align-items: center; gap: 14px;"><span style="width: 132px; flex-shrink: 0; font: 450 12.5px/1.5 'IBM Plex Mono', monospace; color: #131820;">--rhythm-lg · 160px</span><span style="height: 10px; width: 160px; background: var(--bp-accent, #8CC0E8); border-radius: 2px;"></span></div>
+        </div>
+        <p style="margin: 14px 0 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;">Section padding becomes symmetric — <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">padding-block: var(--rhythm)</code> — and zone changes absorb one rhythm step instead of doubling it. Container widens to <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">1180px</code> with a <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">clamp(20px, 4vw, 56px)</code> gutter, replacing the fixed <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">1120px / 1.5rem</code>. Delete the <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">spacing.18/22/26/30</code> extensions — nothing uses them consistently.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 05 Hero ── -->
+  <div style="padding: clamp(32px, 5vw, 64px) clamp(20px, 4vw, 56px); border-bottom: 1px solid rgba(19,24,32,0.09);">
+    <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 12px;">
+      <span style="font: 500 13px/1 'IBM Plex Mono', monospace; color: var(--bp-accent-ink, #2A6A96);">05</span>
+      <h2 style="margin: 0; font-size: clamp(1.5rem, 2.6vw, 1.875rem); font-weight: 520; line-height: 1.1; letter-spacing: -0.026em;">Hero layout</h2>
+      <div style="flex: 1; height: 1px; background: rgba(19,24,32,0.12);"></div>
+    </div>
+    <p style="margin: 0 0 24px; max-width: 74ch; font-size: 1.0625rem; line-height: 1.62; letter-spacing: -0.008em; color: #4A5563;">The hero is a symmetric two-column grid — <code style="font: 450 14px/1 'IBM Plex Mono', monospace;">lg:grid-cols-2 gap-16</code> — carrying a radial glow, two blurred orbs and a full-bleed grid behind a three-line headline, then a status badge, context line, bio, two CTAs and social links stacked at even intervals down the left. Nothing establishes which element is first, and the background works equally hard everywhere. The revision keeps every content type you named and changes three things: an asymmetric 7/5 split, the grid swapped for a star field that lights under the cursor, and a single directional wash behind the card in place of the centred glow and two orbs. The ground itself now comes from the theme — switch the preview below to see it. The client rail drawn here in the first pass is gone at your direction; the plate ends on the CTA row.</p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 16px; margin-bottom: 32px;">
+      <div style="border: 1px solid rgba(19,24,32,0.12); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">Now · 6/6 even</span>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: 108px;">
+          <div style="border: 1px dashed rgba(19,24,32,0.22); border-radius: 6px; display: flex; flex-direction: column; gap: 5px; padding: 8px;"><span style="height: 6px; width: 40%; background: rgba(19,24,32,0.14); border-radius: 2px;"></span><span style="height: 12px; width: 90%; background: rgba(19,24,32,0.14); border-radius: 2px;"></span><span style="height: 6px; width: 70%; background: rgba(19,24,32,0.1); border-radius: 2px;"></span><span style="height: 6px; width: 60%; background: rgba(19,24,32,0.1); border-radius: 2px;"></span><span style="height: 6px; width: 50%; background: rgba(19,24,32,0.1); border-radius: 2px;"></span></div>
+          <div style="border: 1px dashed rgba(19,24,32,0.22); border-radius: 6px;"></div>
+        </div>
+        <p style="margin: 0; font-size: 0.875rem; line-height: 1.6; color: #4A5563;">Equal columns read as a template. Five stacked blocks at equal gaps give no entry point.</p>
+      </div>
+      <div style="border: 1px solid rgba(19,24,32,0.12); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bp-accent-ink, #2A6A96);">Next · 7/5</span>
+        <div style="display: flex; flex-direction: column; gap: 8px; height: 108px;">
+          <div style="flex: 1; display: grid; grid-template-columns: 7fr 5fr; gap: 10px;">
+            <div style="border: 1px dashed rgba(42,106,150,0.4); border-radius: 6px; display: flex; flex-direction: column; gap: 6px; padding: 8px;"><span style="height: 6px; width: 30%; background: rgba(42,106,150,0.3); border-radius: 2px;"></span><span style="height: 20px; width: 100%; background: rgba(19,24,32,0.16); border-radius: 2px;"></span><span style="height: 6px; width: 80%; background: rgba(19,24,32,0.1); border-radius: 2px;"></span></div>
+            <div style="border: 1px dashed rgba(42,106,150,0.4); border-radius: 6px; background: rgba(140,192,232,0.1);"></div>
+          </div>
+          <div style="height: 20px; display: flex; align-items: center; gap: 8px;"><span style="height: 16px; width: 46px; background: rgba(42,106,150,0.32); border-radius: 4px;"></span><span style="height: 16px; width: 40px; border: 1px dashed rgba(19,24,32,0.22); border-radius: 4px;"></span></div>
+        </div>
+        <p style="margin: 0; font-size: 0.875rem; line-height: 1.6; color: #4A5563;">Headline gets the wide column. Card gets the wash. The plate ends on the CTA row — no rail, no marquee.</p>
+      </div>
+    </div>
+
+    <!-- Live hero -->
+    <div style="border-radius: 14px; overflow: hidden; border: 1px solid rgba(19,24,32,0.14); box-shadow: 0 2px 4px rgba(20,28,44,0.05), 0 12px 28px -8px rgba(20,28,44,0.12);">
+      <div style="padding: 10px 16px; background: #EEF1F5; border-bottom: 1px solid rgba(19,24,32,0.1); font: 450 12px/1.4 'IBM Plex Mono', monospace; color: #5C6675;">src/app/(public)/page.tsx — hero</div>
+      <div onMouseMove="{{ onHeroMove }}" onMouseLeave="{{ onHeroLeave }}" style="background: var(--hero-bg); position: relative; overflow: hidden;">
+        <div style="position: absolute; inset: 0; pointer-events: none;">
+          <sc-for list="{{ stars }}" as="s" hint-placeholder-count="0">
+            <span style="position: absolute; left: {{ s.x }}%; top: {{ s.y }}%; width: {{ s.d }}px; height: {{ s.d }}px; border-radius: 999px; background: var(--hero-star); animation: bpTwinkle {{ s.dur }}s ease-in-out {{ s.delay }}s infinite;"></span>
+          </sc-for>
+        </div>
+        <div style="position: absolute; inset: 0; pointer-events: none; opacity: {{ glowOpacity }}; -webkit-mask-image: {{ glowMask }}; mask-image: {{ glowMask }};">
+          <sc-for list="{{ stars }}" as="s" hint-placeholder-count="0">
+            <span style="position: absolute; left: {{ s.x }}%; top: {{ s.y }}%; width: {{ s.dl }}px; height: {{ s.dl }}px; border-radius: 999px; background: var(--hero-star-lit); box-shadow: 0 0 9px var(--hero-star-lit);"></span>
+          </sc-for>
+        </div>
+        <div style="position: absolute; top: -12%; right: -6%; width: 48%; height: 82%; background: radial-gradient(ellipse at center, var(--hero-glow) 0%, transparent 70%); filter: blur(46px); pointer-events: none;"></div>
+
+        <div style="position: relative; padding: clamp(28px, 4.5vw, 56px) clamp(20px, 4vw, 52px) 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: clamp(28px, 4vw, 56px); align-items: center;">
+          <div style="display: flex; flex-direction: column; gap: 22px; min-width: 0;">
+            <div style="display: inline-flex; align-self: flex-start; align-items: center; gap: 9px; padding: 6px 13px 6px 11px; border-radius: 999px; border: 1px solid var(--hero-accent-line); background: var(--hero-accent-soft); font: 450 12px/1 'IBM Plex Mono', monospace; letter-spacing: 0.02em; color: var(--hero-accent);">
+              <span style="width: 6px; height: 6px; border-radius: 999px; background: var(--hero-accent); animation: bpPulse 2.4s ease-in-out infinite;"></span>Available — Sept 2026
+            </div>
+            <h3 style="margin: 0; font-size: clamp(2.1rem, 4.6vw, 3.4rem); font-weight: 450; line-height: 0.99; letter-spacing: -0.042em; color: var(--hero-fg); max-width: 19ch; text-wrap: pretty;">Full stack engineer. Product-minded. Builder by default.</h3>
+            <p style="margin: 0; max-width: 54ch; font-size: 1.0625rem; line-height: 1.62; letter-spacing: -0.008em; color: var(--hero-muted); text-wrap: pretty;">I build production web applications end to end — React and Next.js on the front, Node and MongoDB behind, shipped on Docker and Vercel.</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; font: 450 12.5px/1.5 'IBM Plex Mono', monospace; color: var(--hero-faint);">
+              <span>Sajjadul Islam</span><span style="opacity: 0.45;">/</span><span>Full Stack Engineer</span><span style="opacity: 0.45;">/</span><span>Dhaka, BD</span>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 2px;">
+              <a href="#projects-ledger" style="display: inline-flex; align-items: center; gap: 9px; padding: 11px 20px; border-radius: 8px; background: var(--hero-cta-bg); color: var(--hero-cta-fg); font-size: 0.9375rem; font-weight: 520; letter-spacing: -0.006em; border: none; box-shadow: var(--hero-cta-shadow);">View projects <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 400;">→</span></a>
+              <span style="display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border-radius: 8px; background: var(--hero-soft); border: 1px solid var(--hero-line-1); color: var(--hero-muted); font-size: 0.9375rem; font-weight: 450;">Get in touch</span>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 18px; font: 450 12.5px/1.5 'IBM Plex Mono', monospace; color: var(--hero-faint); padding-top: 2px;">
+              <span>GitHub ↗</span><span>LinkedIn ↗</span><span>Résumé ↗</span>
+            </div>
+          </div>
+
+          <div style="min-width: 0; display: flex; justify-content: flex-end;">
+            <div style="width: 100%; max-width: 400px; border-radius: 14px; overflow: hidden; background: var(--hero-raised); border: 1px solid var(--hero-line-1); box-shadow: var(--hero-card-shadow);">
+              <div style="display: flex; align-items: center; gap: 8px; padding: 11px 14px; border-bottom: 1px solid var(--hero-line-2); background: var(--hero-soft);">
+                <span style="width: 9px; height: 9px; border-radius: 999px; background: var(--hero-line-1);"></span>
+                <span style="width: 9px; height: 9px; border-radius: 999px; background: var(--hero-line-1);"></span>
+                <span style="width: 9px; height: 9px; border-radius: 999px; background: var(--hero-line-1);"></span>
+                <span style="margin-left: 6px; font: 450 11.5px/1 'IBM Plex Mono', monospace; color: var(--hero-faint);">stack.ts</span>
+              </div>
+              <div style="padding: 18px 16px; font: 450 12.5px/1.85 'IBM Plex Mono', monospace; color: var(--hero-muted);">
+                <div><span style="color: var(--hero-faint);">const</span> <span style="color: var(--hero-fg);">stack</span> <span style="color: var(--hero-faint);">= {</span></div>
+                <div style="padding-left: 16px;"><span style="color: var(--hero-accent);">frontend</span><span style="color: var(--hero-faint);">: [</span>'React'<span style="color: var(--hero-faint);">, </span>'Next.js'<span style="color: var(--hero-faint);">],</span></div>
+                <div style="padding-left: 16px;"><span style="color: var(--hero-accent);">backend</span><span style="color: var(--hero-faint);">: [</span>'Node'<span style="color: var(--hero-faint);">, </span>'Express'<span style="color: var(--hero-faint);">],</span></div>
+                <div style="padding-left: 16px;"><span style="color: var(--hero-accent);">database</span><span style="color: var(--hero-faint);">: </span>'MongoDB'<span style="color: var(--hero-faint);">,</span></div>
+                <div style="padding-left: 16px;"><span style="color: var(--hero-accent);">deploy</span><span style="color: var(--hero-faint);">: [</span>'Docker'<span style="color: var(--hero-faint);">, </span>'Vercel'<span style="color: var(--hero-faint);">],</span></div>
+                <div><span style="color: var(--hero-faint);">}</span></div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--hero-line-2);">
+                <div style="padding: 14px 12px; display: flex; flex-direction: column; gap: 3px; border-right: 1px solid var(--hero-line-2);"><span style="font-size: 1.25rem; font-weight: 500; letter-spacing: -0.02em; color: var(--hero-fg);">2+</span><span style="font: 450 11px/1.3 'IBM Plex Mono', monospace; color: var(--hero-faint);">years</span></div>
+                <div style="padding: 14px 12px; display: flex; flex-direction: column; gap: 3px; border-right: 1px solid var(--hero-line-2);"><span style="font-size: 1.25rem; font-weight: 500; letter-spacing: -0.02em; color: var(--hero-fg);">21</span><span style="font: 450 11px/1.3 'IBM Plex Mono', monospace; color: var(--hero-faint);">projects</span></div>
+                <div style="padding: 14px 12px; display: flex; flex-direction: column; gap: 3px;"><span style="font-size: 1.25rem; font-weight: 500; letter-spacing: -0.02em; color: var(--hero-fg);">24</span><span style="font: 450 11px/1.3 'IBM Plex Mono', monospace; color: var(--hero-faint);">stack</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height: clamp(20px, 3vw, 40px);"></div>
+      </div>
+    </div>
+    <p style="margin: 14px 0 0; font: 450 12.5px/1.6 'IBM Plex Mono', monospace; color: #616B7A;">Move the cursor across the hero — the field brightens locally instead of animating everywhere at once. Ground, dots, card and accent all come from the theme, so the same markup renders both modes. <code style="background: rgba(19,24,32,0.06); padding: 2px 5px; border-radius: 4px;">TechMarquee</code> is dropped without replacement — a moving strip fights the headline for attention, and you did not want a client rail in its place.</p>
+  </div>
+
+  <!-- ── 06 Projects ── -->
+  <div id="projects-ledger" style="padding: clamp(32px, 5vw, 64px) clamp(20px, 4vw, 56px); border-bottom: 1px solid rgba(19,24,32,0.09); background: #F5F7FA;">
+    <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 12px;">
+      <span style="font: 500 13px/1 'IBM Plex Mono', monospace; color: var(--bp-accent-ink, #2A6A96);">06</span>
+      <h2 style="margin: 0; font-size: clamp(1.5rem, 2.6vw, 1.875rem); font-weight: 520; line-height: 1.1; letter-spacing: -0.026em;">Projects layout</h2>
+      <div style="flex: 1; height: 1px; background: rgba(19,24,32,0.12);"></div>
+    </div>
+    <p style="margin: 0 0 28px; max-width: 74ch; font-size: 1.0625rem; line-height: 1.62; letter-spacing: -0.008em; color: #4A5563;">The branch moves projects to a <code style="font: 450 14px/1 'IBM Plex Mono', monospace;">md:grid-cols-2</code> grid of <code style="font: 450 14px/1 'IBM Plex Mono', monospace;">ProjectCard</code>s — an improvement on the single column in <code style="font: 450 14px/1 'IBM Plex Mono', monospace;">main</code>, but six identical 16:9 cards in three identical rows still give the section no shape, and it forces the cover image to carry every project equally. Replace it with an indexed ledger — but not the four-column table drawn in the first pass of this document, which had problems of its own. The container below is the second pass: a lead row that carries the featured project, hanging indices in the gutter, a fixed meta rail on the right, and real link anchors instead of a 20px text target. Dense, scannable, and it reads the same on the home page at three rows as it does here at six.</p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 16px; margin-bottom: 32px;">
+      <div style="padding: 18px 20px; border-radius: 10px; background: #EEF1F5; display: flex; flex-direction: column; gap: 6px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">01 · Fixed columns on a fluid page</span>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;">The first pass set <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">44px · 1fr · 150px · 72px</code> with three 20px gaps — 326px of chrome committed before the content column begins. At this preview width the cover plate and the title then compete inside what is left, and the description wraps to four lines.</p>
+      </div>
+      <div style="padding: 18px 20px; border-radius: 10px; background: #EEF1F5; display: flex; flex-direction: column; gap: 6px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">02 · A header row the rows cannot keep</span>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;">Column labels promise a table, but rows are variable-height and the stack list wraps. Nothing after the index actually aligns, so the header adds a rule and a scan line for no gain. Meta belongs in the row, labelled by position and register rather than by a heading.</p>
+      </div>
+      <div style="padding: 18px 20px; border-radius: 10px; background: #EEF1F5; display: flex; flex-direction: column; gap: 6px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">03 · Six identical rows, again</span>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;">Turning six identical cards into six identical rows keeps the original problem: no project is first. One lead row fixes it without adding a second layout — the same fields, given twice the space.</p>
+      </div>
+      <div style="padding: 18px 20px; border-radius: 10px; background: #EEF1F5; display: flex; flex-direction: column; gap: 6px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">04 · <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">live · src</code> is a 20px target</span>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;">Two 12.5px mono words in a 72px column, inside a row that is itself a link. Nested anchors are invalid and the target is unreachable on touch. They become bordered chips at 32px, sitting beside the row link rather than inside it — <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">min-height: 44px</code> below the <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">md</code> breakpoint.</p>
+      </div>
+    </div>
+
+    <div style="border-top: 1px solid rgba(19,24,32,0.18);">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: clamp(20px, 3vw, 40px); padding: 26px 4px 30px; border-bottom: 1px solid rgba(19,24,32,0.08); align-items: start;" style-hover="background: #FFFFFF;">
+        <div style="display: flex; flex-direction: column; gap: 12px; min-width: 0;">
+          <div style="display: flex; align-items: baseline; gap: 12px; font: 450 12.5px/1.5 'IBM Plex Mono', monospace; color: #616B7A;">
+            <span>01</span>
+            <span style="padding: 3px 9px; border-radius: 999px; background: rgba(42,106,150,0.1); color: #2A6A96; font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase;">Featured</span>
+          </div>
+          <h3 style="margin: 0; font-size: clamp(1.5rem, 2.6vw, 1.875rem); font-weight: 520; line-height: 1.12; letter-spacing: -0.026em; color: #131820; max-width: 22ch;">Stripe-backed storefront</h3>
+          <p style="margin: 0; font-size: 1.0625rem; line-height: 1.6; letter-spacing: -0.008em; color: #4A5563; max-width: 52ch;">Multi-vendor commerce with hosted checkout, webhook reconciliation and an admin fulfilment queue. Handles 4k orders a month on a single Mongo cluster.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px;"><span style="padding: 3px 9px; border-radius: 999px; border: 1px solid rgba(19,24,32,0.13); font: 450 11.5px/1.5 'IBM Plex Mono', monospace; color: #5C6675;">Next.js</span><span style="padding: 3px 9px; border-radius: 999px; border: 1px solid rgba(19,24,32,0.13); font: 450 11.5px/1.5 'IBM Plex Mono', monospace; color: #5C6675;">Stripe</span><span style="padding: 3px 9px; border-radius: 999px; border: 1px solid rgba(19,24,32,0.13); font: 450 11.5px/1.5 'IBM Plex Mono', monospace; color: #5C6675;">MongoDB</span><span style="padding: 3px 9px; border-radius: 999px; border: 1px solid rgba(19,24,32,0.13); font: 450 11.5px/1.5 'IBM Plex Mono', monospace; color: #5C6675;">Docker</span></div>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px;"><a href="#projects-ledger" style="display: inline-flex; align-items: center; gap: 5px; padding: 7px 11px; border-radius: 7px; border: 1px solid rgba(19,24,32,0.14); background: #FFFFFF; font: 450 11.5px/1 'IBM Plex Mono', monospace; color: #2A6A96; text-decoration: none;" style-hover="border-color: #2A6A96; background: rgba(42,106,150,0.06);">Live ↗</a><a href="#projects-ledger" style="display: inline-flex; align-items: center; gap: 5px; padding: 7px 11px; border-radius: 7px; border: 1px solid rgba(19,24,32,0.14); background: #FFFFFF; font: 450 11.5px/1 'IBM Plex Mono', monospace; color: #2A6A96; text-decoration: none;" style-hover="border-color: #2A6A96; background: rgba(42,106,150,0.06);">Source ↗</a>
+            <span style="font: 450 12.5px/1.5 'IBM Plex Mono', monospace; color: #616B7A; margin-left: 4px;">2026 · Lead engineer</span>
+          </div>
+        </div>
+        <div style="min-width: 0; width: 100%; aspect-ratio: 16/9; border-radius: 10px; background: #E7EBF0; box-shadow: inset 0 0 0 1px rgba(19,24,32,0.11); display: flex; align-items: flex-end; padding: 12px;">
+          <span style="font: 450 11px/1 'IBM Plex Mono', monospace; color: #616B7A;">coverImage — 16:9</span>
+        </div>
+      </div>
+
+      <sc-for list="{{ projects }}" as="p" hint-placeholder-count="5">
+        <div style="display: grid; grid-template-columns: 26px minmax(0, 1fr) minmax(0, 150px); gap: clamp(12px, 2.2vw, 26px); padding: 20px 4px; border-bottom: 1px solid rgba(19,24,32,0.08); align-items: start;" style-hover="background: #FFFFFF;">
+          <span style="font: 450 12.5px/1.7 'IBM Plex Mono', monospace; color: #616B7A;">{{ p.n }}</span>
+          <div style="display: flex; gap: 16px; min-width: 0; flex-wrap: wrap;">
+            <sc-if value="{{ showCover }}" hint-placeholder-val="{{ true }}">
+              <div style="width: 96px; aspect-ratio: 3/2; border-radius: 7px; background: #E7EBF0; box-shadow: inset 0 0 0 1px rgba(19,24,32,0.11); flex-shrink: 0;"></div>
+            </sc-if>
+            <div style="flex: 1; min-width: 190px; display: flex; flex-direction: column; gap: 8px;">
+              <h3 style="margin: 0; font-size: 1.1875rem; font-weight: 560; line-height: 1.28; letter-spacing: -0.014em; color: #131820;">{{ p.title }}</h3>
+              <sc-if value="{{ showDesc }}" hint-placeholder-val="{{ true }}">
+                <p style="margin: 0; font-size: 0.9375rem; line-height: 1.55; color: #4A5563; max-width: 48ch;">{{ p.desc }}</p>
+              </sc-if>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px;">
+                <sc-for list="{{ p.stack }}" as="t" hint-placeholder-count="3">
+                  <span style="padding: 3px 9px; border-radius: 999px; border: 1px solid rgba(19,24,32,0.13); font: 450 11.5px/1.5 'IBM Plex Mono', monospace; color: #5C6675;">{{ t }}</span>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font: 450 12.5px/1.5 'IBM Plex Mono', monospace;">
+              <span style="color: #131820;">{{ p.year }}</span>
+              <span style="color: #616B7A;">{{ p.role }}</span>
+            </div>
+            <div style="display: flex; gap: 6px;"><a href="#projects-ledger" style="display: inline-flex; align-items: center; gap: 5px; padding: 7px 11px; border-radius: 7px; border: 1px solid rgba(19,24,32,0.14); background: #FFFFFF; font: 450 11.5px/1 'IBM Plex Mono', monospace; color: #2A6A96; text-decoration: none;" style-hover="border-color: #2A6A96; background: rgba(42,106,150,0.06);">Live ↗</a><a href="#projects-ledger" style="display: inline-flex; align-items: center; gap: 5px; padding: 7px 11px; border-radius: 7px; border: 1px solid rgba(19,24,32,0.14); background: #FFFFFF; font: 450 11.5px/1 'IBM Plex Mono', monospace; color: #2A6A96; text-decoration: none;" style-hover="border-color: #2A6A96; background: rgba(42,106,150,0.06);">Src ↗</a></div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 16px;">
+      <div style="padding: 18px 20px; border-radius: 10px; background: #EEF1F5; display: flex; flex-direction: column; gap: 6px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">The role field, as decided</span>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;"><code style="font: 450 13px/1 'IBM Plex Mono', monospace;">role: string</code> is now required on <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">IProject</code>, the Mongoose model, the Zod schema and the admin form, so the meta rail prints it verbatim with no fallback. One consequence to handle at sync time: a required field means every project saved before the change fails validation on its next write, so <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">handoff/model-changes.md</code> ends with a one-pass <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">updateMany</code> backfill. Set each project's real role in the admin afterwards.</p>
+      </div>
+      <div style="padding: 18px 20px; border-radius: 10px; background: #EEF1F5; display: flex; flex-direction: column; gap: 6px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">One component, two densities</span>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;"><code style="font: 450 13px/1 'IBM Plex Mono', monospace;">&lt;ProjectLedger density="compact" /&gt;</code> drops the cover plate and the description, giving the home page its three-row preview. <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">density="full"</code> is what you see above. The archive list becomes <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">compact</code> with muted foregrounds — deleting the third vocabulary.</p>
+      </div>
+      <div style="padding: 18px 20px; border-radius: 10px; background: #EEF1F5; display: flex; flex-direction: column; gap: 6px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">No container chrome</span>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;">The rows sit directly on the canvas between one <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">--line-strong</code> rule at the top and hairlines between, instead of inside a bordered card with a shadow. A card around a list of cards is two containers doing one job; the rules alone carry the ledger, and hover raises a row to <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">--zone-surface</code> so the lift belongs to the row rather than the wrapper.</p>
+      </div>
+      <div style="padding: 18px 20px; border-radius: 10px; background: #EEF1F5; display: flex; flex-direction: column; gap: 6px;">
+        <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #616B7A;">Links in the row</span>
+        <p style="margin: 0; font-size: 0.9375rem; line-height: 1.62; color: #4A5563;">You listed live and repo links as required. They belong in the row, not the detail page — but nest them as real anchors beside the row link rather than inside it, or the whole row becomes an invalid nested link.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 07 Migration ── -->
+  <div style="padding: clamp(32px, 5vw, 64px) clamp(20px, 4vw, 56px);">
+    <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px;">
+      <span style="font: 500 13px/1 'IBM Plex Mono', monospace; color: var(--bp-accent-ink, #2A6A96);">07</span>
+      <h2 style="margin: 0; font-size: clamp(1.5rem, 2.6vw, 1.875rem); font-weight: 520; line-height: 1.1; letter-spacing: -0.026em;">Migration order</h2>
+      <div style="flex: 1; height: 1px; background: rgba(19,24,32,0.12);"></div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 1px; background: rgba(19,24,32,0.1); border: 1px solid rgba(19,24,32,0.1); border-radius: 12px; overflow: hidden;">
+      <div style="background: #FAFBFC; padding: 18px 20px; display: grid; grid-template-columns: 32px minmax(0, 260px) minmax(0, 1fr); gap: 20px; align-items: baseline;">
+        <span style="font: 450 13px/1.5 'IBM Plex Mono', monospace; color: #616B7A;">1</span>
+        <span style="font: 450 13px/1.5 'IBM Plex Mono', monospace; color: #131820;">globals.css · :root / .dark</span>
+        <span style="font-size: 0.9375rem; line-height: 1.6; color: #4A5563;">This branch already replaced <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">lib/themes/tokens.ts</code> with two mode blocks and next-themes — keep that. Extend both blocks with the zone vars: <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">--zone-ink</code>, <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">--zone-canvas</code>, <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">--ink-grid-line</code>, the three-step foreground ramps and <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">--accent-on-canvas</code>.</span>
+      </div>
+      <div style="background: #FAFBFC; padding: 18px 20px; display: grid; grid-template-columns: 32px minmax(0, 260px) minmax(0, 1fr); gap: 20px; align-items: baseline;">
+        <span style="font: 450 13px/1.5 'IBM Plex Mono', monospace; color: #616B7A;">2</span>
+        <span style="font: 450 13px/1.5 'IBM Plex Mono', monospace; color: #131820;">layout.tsx · font loading</span>
+        <span style="font-size: 0.9375rem; line-height: 1.6; color: #4A5563;">Highest-value single change on the branch. Either add <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">800</code> to the Space Grotesk <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">weight</code> array or drop <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">font-extrabold</code> to <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">font-semibold</code> — §03 argues for the second. Then scope Dancing Script to the rotating word and correct it there: size it about <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">1.18×</code> the display line to answer its lower x-height, set <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">line-height: 1</code> on all three headline lines so the baselines settle, and swap <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">minWidth: 10ch</code> for a hidden sizer holding the longest word so the line stops reflowing every three seconds.</span>
+      </div>
+      <div style="background: #FAFBFC; padding: 18px 20px; display: grid; grid-template-columns: 32px minmax(0, 260px) minmax(0, 1fr); gap: 20px; align-items: baseline;">
+        <span style="font: 450 13px/1.5 'IBM Plex Mono', monospace; color: #616B7A;">3</span>
+        <span style="font: 450 13px/1.5 'IBM Plex Mono', monospace; color: #131820;">src/app/globals.css</span>
+        <span style="font-size: 0.9375rem; line-height: 1.6; color: #4A5563;">Rewrite <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">.bg-grid</code> against <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">--ink-grid-line</code> with the radial mask baked in, so no caller has to add <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">opacity</code>. Make <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">.section</code> symmetric, add <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">.zone-ink</code> / <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">.zone-canvas</code>, rebuild <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">.card</code> and <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">.pill</code> on the new elevation and line tokens. Drop <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">.gradient-text</code> — gradient headlines are the other strong amateur tell.</span>
+      </div>
+      <div style="background: #FAFBFC; padding: 18px 20px; display: grid; grid-template-columns: 32px minmax(0, 260px) minmax(0, 1fr); gap: 20px; align-items: baseline;">
+        <span style="font: 450 13px/1.5 'IBM Plex Mono', monospace; color: #616B7A;">4</span>
+        <span style="font: 450 13px/1.5 'IBM Plex Mono', monospace; color: #131820;">tailwind.config.ts</span>
+        <span style="font-size: 0.9375rem; line-height: 1.6; color: #4A5563;">Replace the <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">fontSize</code> block with §03, the <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">boxShadow</code> block with §04, and map the new colour vars. Swap <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">fontFamily.mono</code> to IBM Plex Mono and load it via <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">next/font/google</code> alongside GeistSans in <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">layout.tsx</code>.</span>
+      </div>
+      <div style="background: #FAFBFC; padding: 18px 20px; display: grid; grid-template-columns: 32px minmax(0, 260px) minmax(0, 1fr); gap: 20px; align-items: baseline;">
+        <span style="font: 450 13px/1.5 'IBM Plex Mono', monospace; color: #616B7A;">5</span>
+        <span style="font: 450 13px/1.5 'IBM Plex Mono', monospace; color: #131820;">page.tsx · ProjectLedger</span>
+        <span style="font-size: 0.9375rem; line-height: 1.6; color: #4A5563;">Evolve the existing <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">ProjectCard.tsx</code> into <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">ProjectLedger.tsx</code> with a <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">density</code> prop, then consume it from the <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">#projects</code> section and the archive list below it. Its live/repo anchors and cover-image fallback carry over as-is; the <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">card-shine</code> sweep does not.</span>
+      </div>
+      <div style="background: #FAFBFC; padding: 18px 20px; display: grid; grid-template-columns: 32px minmax(0, 260px) minmax(0, 1fr); gap: 20px; align-items: baseline;">
+        <span style="font: 450 13px/1.5 'IBM Plex Mono', monospace; color: #616B7A;">6</span>
+        <span style="font: 450 13px/1.5 'IBM Plex Mono', monospace; color: #131820;">Hardcoded colours</span>
+        <span style="font-size: 0.9375rem; line-height: 1.6; color: #4A5563;">Eleven <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">#fff</code> / <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">rgba(0,0,0,.55)</code> literals across <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">ProjectGallery</code>, <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">ProjectImagesManager</code>, <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">ConfirmDialog</code> and <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">SettingsForm</code> bypass the token layer. Also the <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">#C792EA</code> / <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">#82AAFF</code> / <code style="font: 450 13px/1 'IBM Plex Mono', monospace;">#C3E88D</code> syntax palette in the hero card — it is a fourth colour scheme competing with the accent. The revision above uses only accent, foreground and faint.</span>
+      </div>
+    </div>
+
+    <div style="margin-top: 28px; padding: 22px 24px; border-radius: 12px; background: #0E1218; color: #AEB7C2; display: flex; flex-direction: column; gap: 16px;">
+      <span style="font: 550 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bp-accent, #8CC0E8);">Decided — handoff is ready to sync</span>
+      <p style="margin: 0; max-width: 74ch; font-size: 0.9375rem; line-height: 1.65;">All three open questions are answered and applied. <code style="font: 450 13px/1 'IBM Plex Mono', monospace; color: #EEF2F7;">handoff/</code> now carries <code style="font: 450 13px/1 'IBM Plex Mono', monospace; color: #EEF2F7;">Hero.tsx</code>, <code style="font: 450 13px/1 'IBM Plex Mono', monospace; color: #EEF2F7;">HeroStars.tsx</code>, <code style="font: 450 13px/1 'IBM Plex Mono', monospace; color: #EEF2F7;">ProjectLedger.tsx</code>, the token block, and <code style="font: 450 13px/1 'IBM Plex Mono', monospace; color: #EEF2F7;">model-changes.md</code> — the exact edits for the types, the model, the Zod schema, the server actions and the admin form.</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 1px; background: rgba(255,255,255,0.09); border-radius: 10px; overflow: hidden;">
+        <div style="background: #151A21; padding: 16px 18px; display: flex; flex-direction: column; gap: 7px;">
+          <span style="font: 450 12.5px/1.5 'IBM Plex Mono', monospace; color: var(--bp-accent, #8CC0E8);">1 · role is required</span>
+          <p style="margin: 0; font-size: 0.9375rem; line-height: 1.6;"><code style="font: 450 13px/1 'IBM Plex Mono', monospace; color: #EEF2F7;">role: string</code> lands on <code style="font: 450 13px/1 'IBM Plex Mono', monospace; color: #EEF2F7;">IProject</code>, the schema, the validator and the admin form. The meta rail prints it verbatim beside the year — no fallback. Existing documents need the one-line backfill.</p>
+        </div>
+        <div style="background: #151A21; padding: 16px 18px; display: flex; flex-direction: column; gap: 7px;">
+          <span style="font: 450 12.5px/1.5 'IBM Plex Mono', monospace; color: var(--bp-accent, #8CC0E8);">2 · lead row picked by hand</span>
+          <p style="margin: 0; font-size: 0.9375rem; line-height: 1.6;"><code style="font: 450 13px/1 'IBM Plex Mono', monospace; color: #EEF2F7;">featured: boolean</code>, a checkbox in the project form. Setting it clears the flag on every other project, so there is always exactly one lead. <code style="font: 450 13px/1 'IBM Plex Mono', monospace; color: #EEF2F7;">order</code> no longer decides it.</p>
+        </div>
+        <div style="background: #151A21; padding: 16px 18px; display: flex; flex-direction: column; gap: 7px;">
+          <span style="font: 450 12.5px/1.5 'IBM Plex Mono', monospace; color: var(--bp-accent, #8CC0E8);">3 · client rail cut</span>
+          <p style="margin: 0; font-size: 0.9375rem; line-height: 1.6;">The rail and its <code style="font: 450 13px/1 'IBM Plex Mono', monospace; color: #EEF2F7;">clients</code> prop are gone from §05 and from <code style="font: 450 13px/1 'IBM Plex Mono', monospace; color: #EEF2F7;">Hero.tsx</code>. The plate ends on the CTA row, and nothing replaces <code style="font: 450 13px/1 'IBM Plex Mono', monospace; color: #EEF2F7;">TechMarquee</code>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>    </div>
+  </div>
+
+</div>  </div>
+
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accentInk&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8CC0E8&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#8CC0E8&quot;,&quot;#A6CBE7&quot;,&quot;#7FB2D9&quot;,&quot;#9FB9D6&quot;],&quot;section&quot;:&quot;Palette&quot;},&quot;accentPaper&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#2A6A96&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#2A6A96&quot;,&quot;#1F5C86&quot;,&quot;#3B6E9C&quot;,&quot;#41668F&quot;],&quot;section&quot;:&quot;Palette&quot;},&quot;heroTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Dark&quot;,&quot;options&quot;:[&quot;Dark&quot;,&quot;Light&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Hero preview&quot;},&quot;starField&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Hero preview&quot;},&quot;starDensity&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:56,&quot;min&quot;:16,&quot;max&quot;:120,&quot;step&quot;:4,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Hero preview&quot;},&quot;ledgerDensity&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Full&quot;,&quot;options&quot;:[&quot;Full&quot;,&quot;Compact&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Project ledger&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { mx: 76, my: 14, hover: false };
+    this.onHeroMove = (e) => {
+      const r = e.currentTarget.getBoundingClientRect();
+      this.setState({
+        mx: ((e.clientX - r.left) / r.width) * 100,
+        my: ((e.clientY - r.top) / r.height) * 100,
+        hover: true,
+      });
+    };
+    this.onHeroLeave = () => this.setState({ hover: false });
+    this.projects = [
+      { n: "02", title: "Multi-tenant admin console", desc: "Role-scoped CRUD over a shared Mongo cluster, with per-tenant theming and audit logs.", stack: ["TypeScript", "JWT", "TanStack Query"], year: "2025", role: "Full stack" },
+      { n: "03", title: "Realtime ops dashboard", desc: "Streaming metrics over websockets with a virtualised table holding 50k rows at 60fps.", stack: ["React", "Node.js", "Docker"], year: "2025", role: "Frontend" },
+      { n: "04", title: "Auth & session service", desc: "Refresh-token rotation, device sessions and rate limiting behind an Express gateway.", stack: ["Express.js", "JWT", "Redis"], year: "2024", role: "Backend" },
+      { n: "05", title: "Docs platform", desc: "MDX content pipeline with search, versioned routes and static export to the edge.", stack: ["Next.js", "TailwindCSS", "Vercel"], year: "2024", role: "Full stack" },
+      { n: "06", title: "Image processing pipeline", desc: "Queued transcode and variant generation with signed URLs and CDN invalidation.", stack: ["Node.js", "Docker", "S3"], year: "2024", role: "Backend" },
+    ];
+  }
+  field(n, seed) {
+    let s = seed;
+    const rnd = () => { s = (s * 1103515245 + 12345) % 2147483648; return s / 2147483648; };
+    return Array.from({ length: n }, (_, i) => {
+      const d = 1 + rnd() * 1.9;
+      return {
+        key: i,
+        x: +(rnd() * 100).toFixed(2),
+        y: +(rnd() * 100).toFixed(2),
+        d: +d.toFixed(2),
+        dl: +(d + 1.7).toFixed(2),
+        dur: +(2.9 + rnd() * 4.2).toFixed(2),
+        delay: +(rnd() * 6).toFixed(2),
+      };
+    });
+  }
+  renderVals() {
+    const accent = this.props.accentInk ?? "#8CC0E8";
+    const paper = this.props.accentPaper ?? "#2A6A96";
+    const light = this.props.heroTheme === "Light";
+    const on = this.props.starField !== false;
+    const zone = light ? paper : accent;
+    const { mx, my, hover } = this.state;
+    return {
+      stars: on ? this.field(Math.round(this.props.starDensity ?? 56), 20260907) : [],
+      mastStars: this.field(30, 8675309),
+      projects: this.projects,
+      showCover: (this.props.ledgerDensity ?? "Full") === "Full",
+      showDesc: (this.props.ledgerDensity ?? "Full") === "Full",
+      onHeroMove: this.onHeroMove,
+      onHeroLeave: this.onHeroLeave,
+      glowOpacity: on && hover ? 1 : 0,
+      glowMask: "radial-gradient(circle 200px at " + mx.toFixed(2) + "% " + my.toFixed(2) + "%, #000 0%, rgba(0,0,0,0.35) 55%, transparent 80%)",
+      rootStyle: {
+        "--bp-accent": accent,
+        "--bp-accent-ink": paper,
+        "--bp-accent-wash": accent + "2E",
+        "--hero-bg": light ? "#E7EDF5" : "#0E1218",
+        "--hero-raised": light ? "#FFFFFF" : "#151A21",
+        "--hero-glow": light ? paper + "1F" : accent + "2B",
+        "--hero-fg": light ? "#131820" : "#EEF2F7",
+        "--hero-muted": light ? "#4A5563" : "#AEB7C2",
+        "--hero-faint": light ? "#5C6675" : "#7F8996",
+        "--hero-accent": zone,
+        "--hero-accent-soft": zone + "16",
+        "--hero-accent-line": zone + "3D",
+        "--hero-line-1": light ? "rgba(19,24,32,0.13)" : "rgba(255,255,255,0.10)",
+        "--hero-line-2": light ? "rgba(19,24,32,0.09)" : "rgba(255,255,255,0.07)",
+        "--hero-soft": light ? "rgba(19,24,32,0.03)" : "rgba(255,255,255,0.04)",
+        "--hero-star": on ? (light ? "rgba(42,106,150,0.30)" : "rgba(190,212,238,0.42)") : "transparent",
+        "--hero-star-lit": zone,
+        "--hero-cta-bg": zone,
+        "--hero-cta-fg": light ? "#FFFFFF" : "#0E1218",
+        "--hero-cta-shadow": light
+          ? "0 1px 2px rgba(20,28,44,0.18), 0 8px 18px -8px rgba(31,92,134,0.45)"
+          : "0 1px 2px rgba(0,0,0,0.28), 0 8px 20px -8px " + accent + "80",
+        "--hero-card-shadow": light
+          ? "0 1px 2px rgba(20,28,44,0.06), 0 12px 26px -10px rgba(20,28,44,0.16), 0 32px 52px -30px rgba(20,28,44,0.2)"
+          : "inset 0 1px 0 rgba(255,255,255,0.06), 0 2px 4px rgba(0,0,0,0.3), 0 16px 32px -10px rgba(0,0,0,0.55), 0 44px 64px -32px rgba(0,0,0,0.62)",
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>
