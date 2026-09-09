@@ -1,4 +1,5 @@
 import { ScrollReveal } from "@/components/motion/ScrollReveal";
+import { AboutSection } from "@/components/sections/about/AboutSection";
 import { ContactForm } from "@/components/sections/contact/ContactForm";
 import { MagneticCTA } from "@/components/sections/contact/MagneticCTA";
 import { ExperienceTimeline } from "@/components/sections/experience/ExperienceTimeline";
@@ -174,6 +175,8 @@ export default async function HomePage() {
                 stackLabel={stackLabel}
                 groupedSkills={groupedSkills}
             />
+
+            <AboutSection settings={settings} />
 
             {/* ── Projects — the visual centerpiece ───────────────────────────────── */}
             <section id="projects" className="section zone-canvas relative overflow-hidden">
