@@ -4,7 +4,8 @@
 // so it reads as "expensive," not gimmicky. The only per-item motion in the
 // Contact section; everything else is a one-time entrance.
 
-import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
+import { useReducedMotionSafe } from "@/hooks/useReducedMotionSafe";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import type { ReactNode } from "react";
 import { useRef } from "react";
 
@@ -19,7 +20,7 @@ interface MagneticCTAProps {
 
 export function MagneticCTA({ href, className, children }: MagneticCTAProps) {
     const ref = useRef<HTMLAnchorElement>(null);
-    const shouldReduceMotion = useReducedMotion();
+    const shouldReduceMotion = useReducedMotionSafe();
     const x = useMotionValue(0);
     const y = useMotionValue(0);
     const springX = useSpring(x, { stiffness: 200, damping: 20 });

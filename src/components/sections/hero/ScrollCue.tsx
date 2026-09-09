@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotionSafe } from "@/hooks/useReducedMotionSafe";
+import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
 /**
@@ -10,7 +11,7 @@ import { ChevronDown } from "lucide-react";
  * HeroStars) so Hero itself stays a server component.
  */
 export function ScrollCue() {
-    const shouldReduceMotion = useReducedMotion();
+    const shouldReduceMotion = useReducedMotionSafe();
 
     return (
         <motion.a

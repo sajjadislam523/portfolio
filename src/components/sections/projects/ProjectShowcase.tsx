@@ -11,6 +11,7 @@
 // Hierarchy is the point: not every project should look the same size.
 
 import { ProjectPreview } from "@/components/sections/projects/ProjectPreview";
+import { GridFragment, GuideLine } from "@/components/shared/TechnicalMotifs";
 import { truncate } from "@/lib/utils";
 import type { IProject } from "@/types";
 import { ArrowUpRight } from "lucide-react";
@@ -49,11 +50,18 @@ export function ProjectShowcase({
 
     return (
         <div className="group grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-16">
-            {/* Text */}
+            {/* Text — order alternates at every breakpoint, not just lg:, so
+                mobile reads as a deliberate text/image sequence per project
+                rather than the same stacked composition repeated. */}
             <div
-                className={`flex flex-col gap-5 lg:col-span-5 ${reverse ? "lg:order-2" : "lg:order-1"}`}
+                className={`flex flex-col gap-5 lg:col-span-5 ${reverse ? "order-2" : "order-1"}`}
             >
-                <div className="flex items-baseline gap-3">
+                <div className="relative flex items-baseline gap-3">
+                    {/* A fine grid fragment + guide tick behind the numeral —
+                        a static engineering-diagram flourish, not a second
+                        focal point. */}
+                    <GridFragment className="-top-10 -left-5 -z-10" size={110} />
+                    <GuideLine orientation="vertical" length={36} className="-top-3 -left-7 -z-10" />
                     <span
                         className="index-mark font-display text-3xl"
                         style={{ color: "var(--text-tertiary)", opacity: 0.35 }}
@@ -149,13 +157,14 @@ export function ProjectShowcase({
             </div>
 
             {/* Visual */}
-            <div className={`lg:col-span-7 ${reverse ? "lg:order-1" : "lg:order-2"}`}>
+            <div className={`lg:col-span-7 ${reverse ? "order-1" : "order-2"}`}>
                 <Link href={`/projects/${project.slug}`} aria-label={`Open ${project.title} case study`}>
                     <ProjectPreview
                         src={project.coverImage}
                         alt={project.title}
                         chromeLabel={getHostname(live) ?? project.title}
                         aspect="4/3"
+                        frameLabel={`FIG.${displayIndex} — ${project.year}`}
                     />
                 </Link>
             </div>

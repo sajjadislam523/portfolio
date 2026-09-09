@@ -10,8 +10,11 @@ import { submitContactMessage } from '@/features/contact/actions'
 // component-library demo. Border color is set via a class (not inline
 // style) on both the resting and focus states so the `focus:` variant can
 // actually win the cascade instead of losing to an inline style.
+// pt-3/pb-3.5 (up from pt-1/pb-2.5) brings the tappable height to ~44px —
+// underline-only inputs have no visible box, so the padding has to do all
+// the work of a comfortable touch target.
 const fieldClass =
-  'w-full border-0 border-b border-[var(--line)] bg-transparent px-0 pb-2.5 pt-1 text-sm text-[var(--text-primary)] outline-none transition-colors placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)]'
+  'w-full border-0 border-b border-[var(--line)] bg-transparent px-0 pb-3.5 pt-3 text-base text-[var(--text-primary)] outline-none transition-colors placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)]'
 const labelClass = 'font-mono text-[11px] uppercase tracking-wide'
 
 export function ContactForm() {

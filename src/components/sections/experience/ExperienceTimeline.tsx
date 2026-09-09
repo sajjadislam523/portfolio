@@ -6,8 +6,9 @@
 // as the section scrolls into view — no client state needed, so this stays
 // a server component apart from the two small motion islands it composes.
 
-import { StaggerContainer, StaggerItem } from "@/components/motion/ScrollReveal";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { TimelineLine } from "@/components/sections/experience/TimelineLine";
+import { TimelineNode } from "@/components/sections/experience/TimelineNode";
 import type { IExperience } from "@/types";
 import { Fragment } from "react";
 
@@ -61,135 +62,152 @@ export function ExperienceTimeline({
                 half the 24px node column), 140px at lg (96px date + 32px gap). */}
             <TimelineLine className="absolute top-2 bottom-2 left-3 w-px sm:left-27 lg:left-35" />
 
-            <StaggerContainer className="flex flex-col">
+            <div className="flex flex-col">
                 {experiences.map((exp, index) => {
                     const isCurrent = !exp.endDate;
                     const contributions = exp.accomplishments.slice(0, 4);
+                    const entryTag = `${String(index + 1).padStart(2, "0")} · Role`;
 
                     return (
-                        <StaggerItem key={exp._id}>
-                            <div className="group grid grid-cols-[24px_minmax(0,1fr)] gap-x-6 pb-14 last:pb-0 sm:grid-cols-[72px_24px_minmax(0,1fr)] lg:grid-cols-[96px_24px_minmax(0,1fr)] lg:gap-x-8">
-                                {/* Date column — sm and up only */}
-                                <div className="hidden pt-1 sm:block">
+                        <div
+                            key={exp._id}
+                            className="group grid grid-cols-[24px_minmax(0,1fr)] gap-x-6 pb-14 last:pb-0 sm:grid-cols-[72px_24px_minmax(0,1fr)] lg:grid-cols-[96px_24px_minmax(0,1fr)] lg:gap-x-8"
+                        >
+                            {/* Date column — sm and up only */}
+                            <div className="hidden items-baseline gap-2 pt-1 sm:flex">
+                                <span
+                                    className="font-mono text-small"
+                                    style={{ color: "var(--text-tertiary)" }}
+                                >
+                                    {yearLabel(exp.startDate, exp.endDate)}
+                                </span>
+                                {isCurrent && (
                                     <span
-                                        className="font-mono text-small"
-                                        style={{ color: "var(--text-tertiary)" }}
+                                        className="font-mono text-[10px] uppercase tracking-wide"
+                                        style={{ color: "var(--accent)" }}
                                     >
-                                        {yearLabel(exp.startDate, exp.endDate)}
+                                        {"// current"}
                                     </span>
-                                </div>
+                                )}
+                            </div>
 
-                                {/* Node */}
-                                <div className="flex justify-center pt-1.5">
-                                    <span
-                                        className="block h-2.5 w-2.5 rounded-full border-2 transition-all duration-300"
-                                        style={
-                                            isCurrent
-                                                ? {
-                                                      background: "var(--accent)",
-                                                      borderColor: "var(--accent)",
-                                                      boxShadow:
-                                                          "0 0 6px var(--accent-glow)",
-                                                  }
-                                                : {
-                                                      background: "transparent",
-                                                      borderColor: "var(--line-strong)",
-                                                  }
-                                        }
+                            {/* Node — fades/scales in as it enters the viewport */}
+                            <div className="flex justify-center pt-1.5">
+                                <TimelineNode isCurrent={isCurrent} />
+                            </div>
+
+                            {/* Content — reveals a beat after the node above */}
+                            <ScrollReveal delay={0.12} className="flex flex-col gap-3">
+                                {index > 0 && (
+                                    <div
+                                        className="mb-2 h-px w-full"
+                                        style={{ background: "var(--line-hairline)" }}
+                                        aria-hidden
                                     />
+                                )}
+
+                                {/* Mobile-only date — sm and up rely on the column */}
+                                <span
+                                    className="flex items-baseline gap-2 font-mono text-small sm:hidden"
+                                    style={{ color: "var(--text-tertiary)" }}
+                                >
+                                    {yearLabel(exp.startDate, exp.endDate)}
+                                    {isCurrent && (
+                                        <span
+                                            className="font-mono text-[10px] uppercase tracking-wide"
+                                            style={{ color: "var(--accent)" }}
+                                        >
+                                            {"// current"}
+                                        </span>
+                                    )}
+                                </span>
+
+                                <div>
+                                    <span
+                                        className="font-mono text-[9px] uppercase tracking-widest"
+                                        style={{ color: "var(--text-tertiary)", opacity: 0.45 }}
+                                    >
+                                        {entryTag}
+                                    </span>
+                                    <h3
+                                        className="m-0 mt-1 text-h3 font-display transition-colors duration-200"
+                                        style={{ color: "var(--text-primary)" }}
+                                    >
+                                        <span className="group-hover:text-accent">
+                                            {exp.role}
+                                        </span>
+                                    </h3>
+                                    <p
+                                        className="mt-1 text-body"
+                                        style={{ color: "var(--text-secondary)" }}
+                                    >
+                                        {exp.company}
+                                        <span style={{ color: "var(--text-tertiary)" }}>
+                                            {" "}
+                                            · {exp.location}
+                                        </span>
+                                    </p>
                                 </div>
 
-                                {/* Content */}
-                                <div className="flex flex-col gap-3">
-                                    {index > 0 && (
-                                        <div
-                                            className="mb-2 h-px w-full"
-                                            style={{ background: "var(--line-hairline)" }}
-                                            aria-hidden
-                                        />
-                                    )}
-
-                                    {/* Mobile-only date — sm and up rely on the column */}
-                                    <span
-                                        className="font-mono text-small sm:hidden"
-                                        style={{ color: "var(--text-tertiary)" }}
+                                {exp.description && (
+                                    <p
+                                        className="max-w-[62ch] text-body-lg"
+                                        style={{ color: "var(--text-secondary)" }}
                                     >
-                                        {yearLabel(exp.startDate, exp.endDate)}
-                                    </span>
+                                        {exp.description}
+                                    </p>
+                                )}
 
-                                    <div>
-                                        <h3
-                                            className="m-0 text-h3 font-display transition-colors duration-200"
-                                            style={{ color: "var(--text-primary)" }}
+                                {contributions.length > 0 && (
+                                    <div className="flex flex-col gap-2">
+                                        <span
+                                            className="font-mono text-eyebrow uppercase"
+                                            style={{ color: "var(--text-tertiary)" }}
                                         >
-                                            <span className="group-hover:text-accent">
-                                                {exp.role}
-                                            </span>
-                                        </h3>
-                                        <p
-                                            className="mt-1 text-body"
-                                            style={{ color: "var(--text-secondary)" }}
-                                        >
-                                            {exp.company}
-                                            <span style={{ color: "var(--text-tertiary)" }}>
-                                                {" "}
-                                                · {exp.location}
-                                            </span>
-                                        </p>
-                                    </div>
-
-                                    {exp.description && (
-                                        <p
-                                            className="max-w-[62ch] text-body-lg"
-                                            style={{ color: "var(--text-secondary)" }}
-                                        >
-                                            {exp.description}
-                                        </p>
-                                    )}
-
-                                    {contributions.length > 0 && (
-                                        <div className="flex flex-col gap-2">
-                                            <span
-                                                className="font-mono text-eyebrow uppercase"
-                                                style={{ color: "var(--text-tertiary)" }}
-                                            >
-                                                Selected contributions
-                                            </span>
-                                            <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
-                                                {contributions.map((item, i) => (
-                                                    <li
-                                                        key={i}
-                                                        className="flex gap-2.5 text-body-lg"
-                                                        style={{ color: "var(--text-secondary)" }}
+                                            Selected contributions
+                                        </span>
+                                        <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
+                                            {contributions.map((item, i) => (
+                                                <li
+                                                    key={i}
+                                                    className="flex gap-2.5 text-body-lg"
+                                                    style={{ color: "var(--text-secondary)" }}
+                                                >
+                                                    <span
+                                                        className="mt-0.75 shrink-0"
+                                                        style={{ color: "var(--text-tertiary)" }}
+                                                        aria-hidden
                                                     >
-                                                        <span
-                                                            className="mt-0.75 shrink-0"
-                                                            style={{ color: "var(--text-tertiary)" }}
-                                                            aria-hidden
-                                                        >
-                                                            ·
-                                                        </span>
-                                                        <span>{highlightMetrics(item)}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    )}
+                                                        ·
+                                                    </span>
+                                                    <span>{highlightMetrics(item)}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
 
-                                    {exp.technologies.length > 0 && (
+                                {exp.technologies.length > 0 && (
+                                    <div className="flex flex-col gap-1 pt-1">
+                                        <span
+                                            className="font-mono text-[9px] uppercase tracking-widest"
+                                            style={{ color: "var(--text-tertiary)", opacity: 0.4 }}
+                                        >
+                                            Stack
+                                        </span>
                                         <div
-                                            className="pt-1 font-mono text-small uppercase tracking-wide transition-transform duration-300 group-hover:-translate-y-0.5"
+                                            className="font-mono text-small uppercase tracking-wide transition-transform duration-300 group-hover:-translate-y-0.5"
                                             style={{ color: "var(--text-tertiary)" }}
                                         >
                                             {exp.technologies.join(" / ")}
                                         </div>
-                                    )}
-                                </div>
-                            </div>
-                        </StaggerItem>
+                                    </div>
+                                )}
+                            </ScrollReveal>
+                        </div>
                     );
                 })}
-            </StaggerContainer>
+            </div>
         </div>
     );
 }

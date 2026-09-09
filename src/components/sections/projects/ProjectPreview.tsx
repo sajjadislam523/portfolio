@@ -7,10 +7,11 @@
 // tilt + spotlight. All three hover effects are capped deliberately small —
 // this should feel expensive, not like a tilt-card demo.
 
+import { CoordTag, CornerMarks } from "@/components/shared/TechnicalMotifs";
+import { useReducedMotionSafe } from "@/hooks/useReducedMotionSafe";
 import {
     motion,
     useMotionValue,
-    useReducedMotion,
     useSpring,
     useTransform,
 } from "framer-motion";
@@ -25,6 +26,8 @@ interface ProjectPreviewProps {
     aspect?: string;
     priority?: boolean;
     sizes?: string;
+    /** A small caption-plate annotation below the frame, e.g. "FIG.01 — 4:3". Reserved for the two major showcases. */
+    frameLabel?: string;
 }
 
 const TILT = 2.5; // degrees — deliberately small, never "aggressive 3D"
@@ -36,9 +39,10 @@ export function ProjectPreview({
     aspect = "4/3",
     priority = false,
     sizes = "(max-width: 1024px) 100vw, 56vw",
+    frameLabel,
 }: ProjectPreviewProps) {
     const ref = useRef<HTMLDivElement>(null);
-    const shouldReduceMotion = useReducedMotion();
+    const shouldReduceMotion = useReducedMotionSafe();
     const px = useMotionValue(0.5);
     const py = useMotionValue(0.5);
     // Tilt is a transform-based effect, exactly what prefers-reduced-motion
@@ -72,7 +76,7 @@ export function ProjectPreview({
     }
 
     return (
-        <div className="relative">
+        <div className="group/preview relative">
             {/* Contained atmospheric wash — not a giant glow, doesn't leak
                 past the preview's own footprint. */}
             <div
@@ -85,6 +89,16 @@ export function ProjectPreview({
                 aria-hidden
             />
 
+            {/* Blueprint-plate corner marks — unclipped, so they float just
+                outside the frame rather than being cropped by it. Static by
+                default; illuminate to the accent on the same hover the
+                image/spotlight already react to. */}
+            <CornerMarks illuminate />
+
+            {frameLabel && (
+                <CoordTag className="-bottom-6 left-0">{frameLabel}</CoordTag>
+            )}
+
             <motion.div
                 ref={ref}
                 onPointerMove={onPointerMove}
@@ -92,7 +106,7 @@ export function ProjectPreview({
                 whileHover={{ scale: 1.015 }}
                 style={{ rotateX, rotateY, transformPerspective: 1200 }}
                 transition={{ type: "spring", stiffness: 240, damping: 26 }}
-                className="group/preview relative overflow-hidden rounded-xl"
+                className="relative overflow-hidden rounded-xl"
             >
                 <div
                     style={{
@@ -162,6 +176,14 @@ export function ProjectPreview({
                         />
                     </div>
                 </div>
+
+                {/* Border illumination — the frame's edge picks up the accent
+                    on hover, echoing the corner marks outside it. */}
+                <div
+                    className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 transition-opacity duration-500 group-hover/preview:opacity-100"
+                    style={{ boxShadow: "inset 0 0 0 1px var(--accent-strong)" }}
+                    aria-hidden
+                />
             </motion.div>
         </div>
     );

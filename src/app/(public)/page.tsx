@@ -2,6 +2,7 @@ import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { ContactForm } from "@/components/sections/contact/ContactForm";
 import { MagneticCTA } from "@/components/sections/contact/MagneticCTA";
 import { ExperienceTimeline } from "@/components/sections/experience/ExperienceTimeline";
+import { CurrentlyExploring } from "@/components/sections/exploring/CurrentlyExploring";
 import { Hero } from "@/components/sections/hero/Hero";
 import { ProjectIndexList } from "@/components/sections/projects/ProjectIndexList";
 import {
@@ -10,7 +11,9 @@ import {
 } from "@/components/sections/projects/ProjectShowcase";
 import { CATEGORY_ORDER } from "@/components/sections/stack/constants";
 import { SkillGroups } from "@/components/sections/stack/SkillGroups";
+import { TechConstellation } from "@/components/sections/stack/TechConstellation";
 import { JsonLdPerson } from "@/components/shared/JsonLd";
+import { SectionAtmosphere } from "@/components/shared/SectionAtmosphere";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { connectDB, Experience, Project, SiteSettings, Skill } from "@/lib/db";
 import { ArrowUpRight } from "lucide-react";
@@ -173,8 +176,10 @@ export default async function HomePage() {
             />
 
             {/* ── Projects — the visual centerpiece ───────────────────────────────── */}
-            <section id="projects" className="section zone-canvas">
-                <div className="container">
+            <section id="projects" className="section zone-canvas relative overflow-hidden">
+                <SectionAtmosphere variant="blueprint" />
+
+                <div className="container relative z-10">
                     {/* Bespoke header — deliberately not the shared SectionHeading;
                         this section is meant to be a bigger visual moment than
                         Experience/Stack/Contact, so it earns its own composition
@@ -234,12 +239,21 @@ export default async function HomePage() {
                     {/* ── Archive — a project index, not a second row of cards ───────── */}
                     {archivedProjects.length > 0 && (
                         <div className="mt-28 lg:mt-36">
-                            <span
-                                className="mb-8 block font-mono text-eyebrow uppercase"
-                                style={{ color: "var(--text-tertiary)" }}
-                            >
-                                Archive
-                            </span>
+                            <div className="mb-8 flex items-baseline justify-between">
+                                <span
+                                    className="font-mono text-eyebrow uppercase"
+                                    style={{ color: "var(--text-tertiary)" }}
+                                >
+                                    Archive
+                                </span>
+                                <span
+                                    className="font-mono text-[11px]"
+                                    style={{ color: "var(--text-tertiary)", opacity: 0.6 }}
+                                >
+                                    {archivedProjects.length} project
+                                    {archivedProjects.length === 1 ? "" : "s"}
+                                </span>
+                            </div>
                             <ScrollReveal>
                                 <ProjectIndexList
                                     projects={archivedProjects}
@@ -254,10 +268,12 @@ export default async function HomePage() {
             {/* ── Experience ───────────────────────────────────────────────────────── */}
             <section
                 id="experience"
-                className="section"
+                className="section relative overflow-hidden"
                 style={{ background: "var(--bg-secondary)" }}
             >
-                <div className="container">
+                <SectionAtmosphere variant="signal" label={"// career_log"} />
+
+                <div className="container relative z-10">
                     <ScrollReveal>
                         <SectionHeading
                             index="02"
@@ -275,7 +291,13 @@ export default async function HomePage() {
 
             {/* ── Stack — quieter than Projects; supporting evidence, not the
                 main attraction ──────────────────────────────────────────────── */}
-            <section id="stack" className="section">
+            <section id="stack" className="section relative overflow-hidden">
+                {/* The quietest variant — TechConstellation already carries
+                    its own grid fragment and orbital lines as part of the
+                    visualization itself, so the section-level backdrop
+                    stays out of its way rather than doubling up. */}
+                <SectionAtmosphere variant="grain" />
+
                 <div className="container">
                     <ScrollReveal>
                         <SectionHeading
@@ -288,7 +310,12 @@ export default async function HomePage() {
 
                     {skills.length > 0 ? (
                         <ScrollReveal>
-                            <SkillGroups skills={skills} />
+                            {/* Desktop — the spatial constellation. Mobile — a
+                                clean stacked list that keeps the same node +
+                                tier-numbering motif without any horizontal
+                                layout to break. */}
+                            <TechConstellation skills={skills} className="hidden lg:block" />
+                            <SkillGroups skills={skills} className="lg:hidden" />
                         </ScrollReveal>
                     ) : (
                         <p
@@ -300,6 +327,8 @@ export default async function HomePage() {
                     )}
                 </div>
             </section>
+
+            <CurrentlyExploring />
 
             {/* ── Contact — the emotional and visual conclusion of the site ──────── */}
             <section
@@ -351,8 +380,14 @@ export default async function HomePage() {
                                 04 / Contact
                             </span>
 
+                            {/* text-display's clamp floor (60px) is sized for
+                                two-word Hero lines — "interesting." as one
+                                unbreakable word at that size overflows a
+                                320–375px viewport and gets clipped by the
+                                section's overflow-hidden. Step down to text-h1
+                                below sm, where there's no room to spare. */}
                             <h2
-                                className="m-0 mt-4 text-display font-display uppercase"
+                                className="m-0 mt-4 text-h1 font-display uppercase sm:text-display"
                                 style={{
                                     color: "var(--text-primary)",
                                     letterSpacing: "-0.02em",

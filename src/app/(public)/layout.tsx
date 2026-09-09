@@ -28,6 +28,9 @@ export default async function PublicLayout({
             <NavClient
                 availableForWork={settings?.availableForWork ?? false}
                 resumeUrl={settings?.resumeUrl ?? ""}
+                name={settings?.name}
+                email={settings?.email}
+                socialLinks={settings?.socialLinks ?? []}
             />
             <CommandPalette resumeUrl={settings?.resumeUrl ?? ""} />
             <main>{children}</main>

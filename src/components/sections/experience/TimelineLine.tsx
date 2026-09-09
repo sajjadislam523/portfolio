@@ -4,10 +4,11 @@
 // draws downward once as the section enters the viewport. Kept as its own
 // "use client" island so ExperienceTimeline itself stays a server component.
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotionSafe } from "@/hooks/useReducedMotionSafe";
+import { motion } from "framer-motion";
 
 export function TimelineLine({ className }: { className?: string }) {
-    const shouldReduceMotion = useReducedMotion();
+    const shouldReduceMotion = useReducedMotionSafe();
 
     return (
         <motion.div

@@ -14,8 +14,10 @@ interface HeroVisualProps {
     groupedSkills?: Partial<Record<SkillCategory, ISkill[]>>;
 }
 
-// The conceptual, curated framing — always shown, not CMS-driven.
-const FOCUS = ["Digital Products", "Interactive Web", "Product Engineering"];
+// The conceptual, curated framing — always shown, not CMS-driven. Also
+// reused by the "Currently exploring" section so that section states real,
+// already-authored interests rather than inventing new copy.
+export const FOCUS = ["Digital Products", "Interactive Web", "Product Engineering"];
 
 // Real skills win when present; this is only the fallback for an empty CMS.
 // Trimmed to frontend/backend only — the panel got smaller and more

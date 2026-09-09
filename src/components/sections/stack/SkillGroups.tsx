@@ -6,36 +6,20 @@
 // (an accent tick + a quiet category label) is pure CSS `group-hover`, so
 // this stays a server component.
 
-import { CATEGORY_LABELS } from "@/components/sections/stack/constants";
+import {
+    CATEGORY_LABELS,
+    TIER_LABEL,
+    TIER_LABEL_COLOR,
+    TIER_NAME_CLASS,
+    TIER_NAME_COLOR,
+    TIER_ORDER,
+} from "@/components/sections/stack/constants";
 import type { ISkill } from "@/types";
 
-type Tier = ISkill["proficiency"];
-
-const TIER_ORDER: Tier[] = ["expert", "proficient", "familiar"];
-
-const TIER_LABEL: Record<Tier, string> = {
-    expert: "Core",
-    proficient: "Working knowledge",
-    familiar: "Exploring",
-};
-
-// Substance steps down with each tier — display weight and the largest
-// size for what I use daily, down to quiet body text for what I'm still
-// learning. The typography itself is the "skill level" signal.
-const TIER_NAME_CLASS: Record<Tier, string> = {
-    expert: "text-h3 font-display",
-    proficient: "text-body-lg",
-    familiar: "text-body",
-};
-const TIER_NAME_COLOR: Record<Tier, string> = {
-    expert: "var(--text-primary)",
-    proficient: "var(--text-secondary)",
-    familiar: "var(--text-tertiary)",
-};
-const TIER_LABEL_COLOR: Record<Tier, string> = {
-    expert: "var(--accent)",
-    proficient: "var(--text-tertiary)",
-    familiar: "var(--text-tertiary)",
+const TIER_DOT_SIZE: Record<ISkill["proficiency"], number> = {
+    expert: 7,
+    proficient: 5,
+    familiar: 3.5,
 };
 
 const GRID_COLS: Record<number, string> = {
@@ -44,9 +28,16 @@ const GRID_COLS: Record<number, string> = {
     3: "lg:grid-cols-3",
 };
 
-export function SkillGroups({ skills }: { skills: ISkill[] }) {
-    const groups = TIER_ORDER.map((tier) => ({
+export function SkillGroups({
+    skills,
+    className = "",
+}: {
+    skills: ISkill[];
+    className?: string;
+}) {
+    const groups = TIER_ORDER.map((tier, i) => ({
         tier,
+        index: i,
         items: skills.filter((s) => s.proficiency === tier),
     })).filter((g) => g.items.length > 0);
 
@@ -54,15 +45,15 @@ export function SkillGroups({ skills }: { skills: ISkill[] }) {
 
     return (
         <div
-            className={`grid grid-cols-1 gap-x-12 gap-y-14 ${GRID_COLS[groups.length] ?? "lg:grid-cols-3"}`}
+            className={`grid grid-cols-1 gap-x-12 gap-y-14 ${GRID_COLS[groups.length] ?? "lg:grid-cols-3"} ${className}`}
         >
-            {groups.map(({ tier, items }) => (
+            {groups.map(({ tier, index, items }) => (
                 <div key={tier} className="flex flex-col">
                     <span
                         className="mb-6 font-mono text-eyebrow uppercase"
                         style={{ color: TIER_LABEL_COLOR[tier] }}
                     >
-                        {TIER_LABEL[tier]}
+                        {String(index + 1).padStart(2, "0")} — {TIER_LABEL[tier]}
                     </span>
 
                     <ul className="m-0 flex list-none flex-col p-0">
@@ -77,6 +68,22 @@ export function SkillGroups({ skills }: { skills: ISkill[] }) {
                                     <span
                                         className="absolute top-1/2 left-0 h-4 w-0.5 origin-center -translate-y-1/2 scale-y-0 transition-transform duration-200 group-hover:scale-y-100"
                                         style={{ background: "var(--accent)" }}
+                                        aria-hidden
+                                    />
+                                    {/* Small node marker — the constellation's dot motif, carried
+                                        into the stacked mobile layout. */}
+                                    <span
+                                        className="block shrink-0 rounded-full border-2"
+                                        style={{
+                                            width: TIER_DOT_SIZE[tier],
+                                            height: TIER_DOT_SIZE[tier],
+                                            background:
+                                                tier === "expert" ? "var(--accent)" : "transparent",
+                                            borderColor:
+                                                tier === "expert"
+                                                    ? "var(--accent)"
+                                                    : "var(--line-strong)",
+                                        }}
                                         aria-hidden
                                     />
                                     <span

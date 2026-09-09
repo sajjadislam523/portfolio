@@ -1,7 +1,8 @@
 'use client'
 
+import { useReducedMotionSafe } from '@/hooks/useReducedMotionSafe'
 import { useRef } from 'react'
-import { motion, useInView, useReducedMotion } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
 
 // ─── ScrollReveal ─────────────────────────────────────────────────────────────
 // For elements BELOW the fold — uses Intersection Observer which is reliable
@@ -19,7 +20,7 @@ export function ScrollReveal({ children, delay = 0, className }: ScrollRevealPro
   // amount:0 = trigger the moment any pixel is visible
   // No negative margin — negative margins prevent above-fold items firing
   const isInView = useInView(ref, { once: true, amount: 0 })
-  const shouldReduceMotion = useReducedMotion()
+  const shouldReduceMotion = useReducedMotionSafe()
   const rise = shouldReduceMotion ? 0 : 16
 
   return (
@@ -66,7 +67,7 @@ export function StaggerContainer({
 }
 
 export function StaggerItem({ children, className }: { children: React.ReactNode; className?: string }) {
-  const shouldReduceMotion = useReducedMotion()
+  const shouldReduceMotion = useReducedMotionSafe()
   const rise = shouldReduceMotion ? 0 : 14
 
   return (

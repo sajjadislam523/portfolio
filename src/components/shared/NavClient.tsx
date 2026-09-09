@@ -1,12 +1,16 @@
 "use client";
 
 import { StaggerContainer, StaggerItem } from "@/components/motion/ScrollReveal";
+import { GridFragment } from "@/components/shared/TechnicalMotifs";
+import { useReducedMotionSafe } from "@/hooks/useReducedMotionSafe";
 import { AnimatePresence, motion } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+
+const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 // Resolves to false during SSR and the first client render (matching the
 // server), then true after hydration — avoids the theme-icon mismatching
@@ -20,25 +24,48 @@ function useHasMounted() {
     );
 }
 
+// `mobileLabel` lets the full-screen mobile menu say "Work" (language the
+// Projects section's own eyebrow already uses — "Selected work") while the
+// desktop bar keeps "Projects", without a second parallel data source.
 const NAV_LINKS = [
-    { href: "/#projects", label: "Projects", number: "01" },
+    { href: "/#projects", label: "Projects", mobileLabel: "Work", number: "01" },
     { href: "/#experience", label: "Experience", number: "02" },
     { href: "/#stack", label: "Stack", number: "03" },
     { href: "/#contact", label: "Contact", number: "04" },
 ];
 
+interface SocialLink {
+    platform: string;
+    url: string;
+}
+
 interface NavClientProps {
     availableForWork: boolean;
     resumeUrl: string;
+    name?: string;
+    email?: string;
+    socialLinks?: SocialLink[];
 }
 
-export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
+export function NavClient({
+    availableForWork,
+    resumeUrl,
+    name = "Sajjadul Islam",
+    email,
+    socialLinks = [],
+}: NavClientProps) {
     const pathname = usePathname();
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState<string | null>(null);
     const { resolvedTheme, setTheme } = useTheme();
     const isLight = useHasMounted() && resolvedTheme === "light";
+    const shouldReduceMotion = useReducedMotionSafe();
+    const menuPanelRef = useRef<HTMLDivElement>(null);
+    const menuButtonRef = useRef<HTMLButtonElement>(null);
+    const menuLinks = email
+        ? [...socialLinks, { platform: "Email", url: `mailto:${email}` }]
+        : socialLinks;
 
     useEffect(() => {
         const handler = () => setScrolled(window.scrollY > 20);
@@ -84,6 +111,53 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
         document.body.style.overflow = menuOpen ? "hidden" : "";
         return () => {
             document.body.style.overflow = "";
+        };
+    }, [menuOpen]);
+
+    // Focus trap + Escape-to-close while the full-screen menu is open, and
+    // restore focus to the trigger button on close — the panel unmounts via
+    // AnimatePresence, so this effect's own cleanup (which fires on close)
+    // is what returns focus, not a separate "was it open" branch.
+    useEffect(() => {
+        if (!menuOpen) return;
+
+        const panel = menuPanelRef.current;
+        if (!panel) return;
+
+        const getFocusable = () =>
+            Array.from(
+                panel.querySelectorAll<HTMLElement>(
+                    'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+                ),
+            ).filter((el) => el.offsetParent !== null);
+
+        getFocusable()[0]?.focus();
+
+        function onKeyDown(e: KeyboardEvent) {
+            if (e.key === "Escape") {
+                e.preventDefault();
+                setMenuOpen(false);
+                return;
+            }
+            if (e.key !== "Tab") return;
+            const items = getFocusable();
+            if (items.length === 0) return;
+            const first = items[0];
+            const last = items[items.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        }
+
+        document.addEventListener("keydown", onKeyDown);
+        const triggerButton = menuButtonRef.current;
+        return () => {
+            document.removeEventListener("keydown", onKeyDown);
+            triggerButton?.focus();
         };
     }, [menuOpen]);
 
@@ -233,6 +307,7 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
 
                     {/* Hamburger — mobile only, 44×44 minimum tap target */}
                     <button
+                        ref={menuButtonRef}
                         type="button"
                         className="md:hidden relative z-10 flex items-center justify-center rounded-md"
                         style={{
@@ -286,97 +361,123 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                 </nav>
             </header>
 
-            {/* ── Mobile menu — mounted only while open, animated via framer-motion ── */}
+            {/* ── Mobile menu — a full-screen cinematic overlay, not a side
+                drawer. Fade/slide entrance, staggered items, a manual focus
+                trap (Escape closes, Tab wraps within the panel, focus
+                returns to the trigger button on close — see the effect
+                above), restrained easing throughout, no spring. ── */}
             <AnimatePresence>
                 {menuOpen && (
-                    <>
-                        {/* Backdrop */}
-                        <motion.div
-                            className="fixed inset-0 z-40 md:hidden"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                            style={{
-                                background:
-                                    "color-mix(in srgb, var(--bg-primary) 50%, transparent)",
-                                backdropFilter: "blur(4px)",
-                            }}
-                            onClick={() => setMenuOpen(false)}
-                        />
+                    <motion.div
+                        ref={menuPanelRef}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label="Site navigation"
+                        className="fixed inset-0 z-50 flex flex-col overflow-hidden md:hidden"
+                        style={{ background: "var(--bg-primary)" }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3, ease: EASE_OUT }}
+                    >
+                        <GridFragment className="-top-12 -right-12 -z-10" size={280} />
 
-                        {/* Slide-in panel */}
-                        <motion.div
-                            className="fixed top-0 right-0 bottom-0 z-50 md:hidden flex flex-col w-70"
-                            initial={{ x: "100%" }}
-                            animate={{ x: 0 }}
-                            exit={{ x: "100%" }}
-                            transition={{ type: "spring", stiffness: 320, damping: 32 }}
-                            style={{
-                                background: "var(--bg-secondary)",
-                                borderLeft: "1px solid var(--border)",
-                            }}
+                        {/* Panel header */}
+                        <div
+                            className="flex items-center justify-between px-6 h-16 shrink-0 border-b"
+                            style={{ borderColor: "var(--line)" }}
                         >
-                            {/* Panel header */}
-                            <div
-                                className="flex items-center justify-between px-6 h-14 shrink-0 border-b"
-                                style={{ borderColor: "var(--border)" }}
+                            <span
+                                className="font-mono text-eyebrow uppercase"
+                                style={{ color: "var(--text-tertiary)" }}
                             >
-                                <span
-                                    className="text-sm font-medium"
-                                    style={{ color: "var(--text-tertiary)" }}
-                                >
-                                    Menu
-                                </span>
+                                {"// menu"}
+                            </span>
+                            <div className="flex items-center gap-2">
                                 <button
-                                    onClick={() => setMenuOpen(false)}
-                                    className="w-7 h-7 flex items-center justify-center rounded-lg transition-colors"
+                                    type="button"
+                                    onClick={() =>
+                                        setTheme(
+                                            resolvedTheme === "dark" ? "light" : "dark",
+                                        )
+                                    }
+                                    className="flex items-center justify-center rounded-md"
                                     style={{
-                                        background: "var(--bg-subtle)",
-                                        color: "var(--text-tertiary)",
+                                        width: "44px",
+                                        height: "44px",
+                                        color: "var(--text-secondary)",
+                                    }}
+                                    aria-label={
+                                        isLight
+                                            ? "Switch to dark theme"
+                                            : "Switch to light theme"
+                                    }
+                                >
+                                    {isLight ? (
+                                        <Moon className="h-4 w-4" />
+                                    ) : (
+                                        <Sun className="h-4 w-4" />
+                                    )}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setMenuOpen(false)}
+                                    className="flex items-center justify-center rounded-md"
+                                    style={{
+                                        width: "44px",
+                                        height: "44px",
+                                        color: "var(--text-primary)",
                                     }}
                                     aria-label="Close menu"
                                 >
-                                    ✕
+                                    <span className="relative block h-4 w-4">
+                                        <span
+                                            className="absolute top-1/2 left-1/2 h-[1.5px] w-4 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                                            style={{
+                                                background: "currentColor",
+                                                transform: "translate(-50%, -50%) rotate(45deg)",
+                                            }}
+                                        />
+                                        <span
+                                            className="absolute top-1/2 left-1/2 h-[1.5px] w-4 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                                            style={{
+                                                background: "currentColor",
+                                                transform: "translate(-50%, -50%) rotate(-45deg)",
+                                            }}
+                                        />
+                                    </span>
                                 </button>
                             </div>
+                        </div>
 
-                            {/* Nav links */}
-                            <StaggerContainer
-                                className="flex flex-col px-4 pt-6 flex-1 gap-1"
-                                staggerDelay={0.05}
+                        <div className="flex flex-1 flex-col overflow-y-auto px-6 pt-10 pb-8">
+                            {/* Wordmark */}
+                            <motion.span
+                                className="font-display text-h2 uppercase"
+                                style={{ color: "var(--text-primary)", letterSpacing: "-0.02em" }}
+                                initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.4, ease: EASE_OUT, delay: 0.05 }}
                             >
-                                {NAV_LINKS.map(({ href, label, number }) => {
+                                {name}
+                            </motion.span>
+
+                            {/* Nav links — large, monospace-numbered, one per row */}
+                            <StaggerContainer className="mt-10 flex flex-col" staggerDelay={0.06}>
+                                {NAV_LINKS.map(({ href, label, mobileLabel, number }) => {
                                     const active =
                                         pathname === "/" &&
                                         activeSection === href.split("#")[1];
                                     return (
                                         <StaggerItem key={href}>
-                                            {/* Left accent tick — the same restrained active
-                                                indicator as the desktop underline, not a
-                                                filled highlight box. */}
                                             <Link
                                                 href={href}
-                                                className="flex items-center justify-between px-4 py-3.5 transition-colors"
-                                                style={{
-                                                    borderLeft: `2px solid ${active ? "var(--accent)" : "transparent"}`,
-                                                    background: active
-                                                        ? "var(--bg-subtle)"
-                                                        : "transparent",
-                                                }}
+                                                onClick={() => setMenuOpen(false)}
+                                                className="group flex items-baseline gap-5 border-b py-4 transition-colors"
+                                                style={{ borderColor: "var(--line-hairline)" }}
                                             >
                                                 <span
-                                                    className="text-base font-medium"
-                                                    style={{
-                                                        color: active
-                                                            ? "var(--text-primary)"
-                                                            : "var(--text-secondary)",
-                                                    }}
-                                                >
-                                                    {label}
-                                                </span>
-                                                <span
-                                                    className="index-mark text-xs"
+                                                    className="index-mark text-sm"
                                                     style={{
                                                         color: active
                                                             ? "var(--accent)"
@@ -385,77 +486,87 @@ export function NavClient({ availableForWork, resumeUrl }: NavClientProps) {
                                                 >
                                                     {number}
                                                 </span>
+                                                <span
+                                                    className="text-h2 font-display uppercase transition-colors duration-200"
+                                                    style={{
+                                                        letterSpacing: "-0.02em",
+                                                        color: active
+                                                            ? "var(--text-primary)"
+                                                            : "var(--text-secondary)",
+                                                    }}
+                                                >
+                                                    {mobileLabel ?? label}
+                                                </span>
                                             </Link>
                                         </StaggerItem>
                                     );
                                 })}
                             </StaggerContainer>
 
-                            {/* Panel footer */}
+                            {/* Divider, then status + real social links (not
+                                every route, just what's actually configured) */}
                             <motion.div
-                                className="px-6 pb-8 pt-4 flex flex-col gap-3 border-t"
+                                className="mt-auto flex flex-col pt-10"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
-                                transition={{ delay: 0.2, duration: 0.2 }}
-                                style={{ borderColor: "var(--border)" }}
+                                transition={{ delay: 0.25, duration: 0.3, ease: EASE_OUT }}
                             >
+                                <div
+                                    className="mb-6 h-px w-full"
+                                    style={{ background: "var(--line)" }}
+                                    aria-hidden
+                                />
+
                                 {availableForWork && (
                                     <div
-                                        className="flex items-center gap-2 font-mono text-xs w-fit"
+                                        className="mb-5 flex items-center gap-2 font-mono text-eyebrow uppercase"
                                         style={{ color: "var(--text-tertiary)" }}
                                     >
                                         <span
-                                            className="w-1.5 h-1.5 rounded-full animate-pulse"
+                                            className="h-1.5 w-1.5 rounded-full animate-pulse"
                                             style={{
                                                 background: "var(--accent)",
                                                 boxShadow: "0 0 6px var(--accent-glow)",
                                             }}
                                         />
-                                        Open to opportunities
+                                        Available
                                     </div>
                                 )}
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setTheme(
-                                            resolvedTheme === "dark"
-                                                ? "light"
-                                                : "dark",
-                                        )
-                                    }
-                                    className="flex items-center gap-2 px-4 py-3 rounded-md text-sm transition-colors w-fit"
-                                    style={{
-                                        border: "1px solid var(--border)",
-                                        color: "var(--text-secondary)",
-                                    }}
-                                >
-                                    {isLight ? (
-                                        <Moon className="w-3.5 h-3.5" />
-                                    ) : (
-                                        <Sun className="w-3.5 h-3.5" />
+
+                                <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                                    {menuLinks.map((link) => (
+                                        <a
+                                            key={link.platform}
+                                            href={link.url}
+                                            target={
+                                                link.platform === "Email" ? undefined : "_blank"
+                                            }
+                                            rel={
+                                                link.platform === "Email"
+                                                    ? undefined
+                                                    : "noopener noreferrer"
+                                            }
+                                            className="font-mono text-body uppercase tracking-wide transition-colors hover:text-[var(--accent-on-canvas)]"
+                                            style={{ color: "var(--text-secondary)" }}
+                                        >
+                                            {link.platform}
+                                        </a>
+                                    ))}
+                                    {resumeUrl && (
+                                        <a
+                                            href={resumeUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="font-mono text-body uppercase tracking-wide transition-colors hover:text-[var(--accent-on-canvas)]"
+                                            style={{ color: "var(--text-secondary)" }}
+                                        >
+                                            Resume ↗
+                                        </a>
                                     )}
-                                    {isLight ? "Dark theme" : "Light theme"}
-                                </button>
-                                {resumeUrl && (
-                                    <a
-                                        href={resumeUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center justify-between px-4 py-3 rounded-md text-sm transition-colors"
-                                        style={{
-                                            border: "1px solid var(--border)",
-                                            color: "var(--text-secondary)",
-                                        }}
-                                    >
-                                        Download Resume
-                                        <span style={{ color: "var(--accent)" }}>
-                                            ↗
-                                        </span>
-                                    </a>
-                                )}
+                                </div>
                             </motion.div>
-                        </motion.div>
-                    </>
+                        </div>
+                    </motion.div>
                 )}
             </AnimatePresence>
         </>
