@@ -27,7 +27,7 @@ import {
 import { useReducedMotionSafe } from "@/hooks/useReducedMotionSafe";
 import { motion } from "framer-motion";
 
-export type AtmosphereVariant = "blueprint" | "signal" | "orbital" | "grain";
+export type AtmosphereVariant = "blueprint" | "signal" | "orbital" | "grain" | "measurement";
 
 interface SectionAtmosphereProps {
     /** The one primary motif this section gets — pick a different one per
@@ -51,6 +51,7 @@ export function SectionAtmosphere({ variant, label, className = "" }: SectionAtm
             {variant === "signal" && <Signal label={label} />}
             {variant === "orbital" && <Orbital label={label} shouldReduceMotion={shouldReduceMotion} />}
             {variant === "grain" && <Grain />}
+            {variant === "measurement" && <Measurement label={label} />}
         </div>
     );
 }
@@ -63,6 +64,7 @@ const GLOW_POSITION: Record<AtmosphereVariant, string> = {
     signal: "ellipse 55% 65% at 88% 35%",
     orbital: "ellipse 55% 65% at 88% 35%",
     grain: "ellipse 60% 50% at 50% 15%",
+    measurement: "ellipse 50% 55% at 80% 40%",
 };
 
 function Glow({ variant }: { variant: AtmosphereVariant }) {
@@ -166,4 +168,35 @@ function Orbital({
 // with a technical diagram.
 function Grain() {
     return <div className="bg-noise absolute inset-0" />;
+}
+
+// Measurement marks — a ruler-like scale of tick marks and tiny numeric
+// labels down one edge, the quietest and most "discovered rather than
+// noticed" of the set. No grid, no lines crossing the content — just a
+// technical margin note.
+const MEASUREMENT_TICKS = [8, 30, 52, 74, 96];
+
+function Measurement({ label }: { label?: string }) {
+    return (
+        <>
+            {MEASUREMENT_TICKS.map((pos) => (
+                <div
+                    key={pos}
+                    className="absolute right-12 hidden -translate-y-1/2 items-center gap-2 lg:flex"
+                    style={{ top: `${pos}%` }}
+                >
+                    <span className="h-px w-3" style={{ background: "var(--line)" }} />
+                    <span
+                        className="font-mono text-[9px] tabular-nums"
+                        style={{ color: "var(--text-tertiary)", opacity: 0.45 }}
+                    >
+                        {String(pos).padStart(2, "0")}
+                    </span>
+                </div>
+            ))}
+            {label && (
+                <CoordTag className="right-12 bottom-8 hidden lg:block">{label}</CoordTag>
+            )}
+        </>
+    );
 }
