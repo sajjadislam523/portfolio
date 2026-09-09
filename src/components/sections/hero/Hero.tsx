@@ -101,7 +101,7 @@ export function Hero({
                                     style={{ color: "var(--hero-fg-faint)" }}
                                 >
                                     <span
-                                        className="h-1.5 w-1.5 animate-pulse rounded-full"
+                                        className="h-1.5 w-1.5 rounded-full"
                                         style={{
                                             background: "var(--accent)",
                                             boxShadow: "0 0 6px var(--accent-glow)",

@@ -190,7 +190,11 @@ function Measurement({ label }: { label?: string }) {
                         className="font-mono text-[9px] tabular-nums"
                         style={{ color: "var(--text-tertiary)", opacity: 0.45 }}
                     >
-                        {String(pos).padStart(2, "0")}
+                        {/* A "Y·" axis prefix — not a bare zero-padded number
+                            like the site's real section/item numbering
+                            (nav, SectionHeading, project index), so a ruler
+                            tick never reads as a step in a sequence. */}
+                        Y·{String(pos).padStart(2, "0")}
                     </span>
                 </div>
             ))}

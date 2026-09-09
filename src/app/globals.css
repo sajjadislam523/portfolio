@@ -49,10 +49,14 @@
   --hero-line-soft: rgba(19, 24, 32, 0.09);
   --hero-surface-soft: rgba(19, 24, 32, 0.03);
 
-  /* Star field — a quiet resting state and a lit copy the cursor spotlight reveals. */
-  --hero-star: rgba(42, 106, 150, 0.3);
+  /* Star field — light mode is paper, not inverted-black, so the same
+     absolute opacity that reads as "a light in the dark" on the dark side
+     reads as dust on a pale ground here. Held far fainter (and the lit
+     "spotlight" pop barely brighter than resting) so the motif survives as
+     a whisper of texture instead of visible specks over body copy. */
+  --hero-star: rgba(42, 106, 150, 0.1);
   --hero-star-lit: #2a6a96;
-  --hero-star-glow: rgba(42, 106, 150, 0.55);
+  --hero-star-glow: rgba(42, 106, 150, 0.22);
 
   --hero-cta-bg: #2a6a96;
   --hero-cta-fg: #ffffff;

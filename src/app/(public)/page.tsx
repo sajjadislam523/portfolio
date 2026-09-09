@@ -3,7 +3,6 @@ import { AboutSection } from "@/components/sections/about/AboutSection";
 import { ContactForm } from "@/components/sections/contact/ContactForm";
 import { MagneticCTA } from "@/components/sections/contact/MagneticCTA";
 import { ExperienceTimeline } from "@/components/sections/experience/ExperienceTimeline";
-import { CurrentlyExploring } from "@/components/sections/exploring/CurrentlyExploring";
 import { Hero } from "@/components/sections/hero/Hero";
 import { ProjectIndexList } from "@/components/sections/projects/ProjectIndexList";
 import {
@@ -286,7 +285,7 @@ export default async function HomePage() {
                         />
                     </ScrollReveal>
 
-                    <div className="max-w-2xl">
+                    <div className="max-w-4xl">
                         <ExperienceTimeline experiences={experiences} />
                     </div>
                 </div>
@@ -330,8 +329,6 @@ export default async function HomePage() {
                     )}
                 </div>
             </section>
-
-            <CurrentlyExploring />
 
             {/* ── Contact — the emotional and visual conclusion of the site ──────── */}
             <section
@@ -434,7 +431,7 @@ export default async function HomePage() {
                                     style={{ color: "var(--text-tertiary)" }}
                                 >
                                     <span
-                                        className={`h-1.5 w-1.5 rounded-full ${availableForWork ? "animate-pulse" : ""}`}
+                                        className="h-1.5 w-1.5 rounded-full"
                                         style={{
                                             background: availableForWork
                                                 ? "var(--accent)"

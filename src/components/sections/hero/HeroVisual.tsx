@@ -81,15 +81,15 @@ export const HeroVisual: React.FC<HeroVisualProps> = ({
                         a decorative accent, so it's muted rather than saturated. */}
                     <span
                         className="w-3 h-3 rounded-full"
-                        style={{ background: "#EF4444", opacity: 0.55 }}
+                        style={{ background: "#EF4444", opacity: 0.4 }}
                     />
                     <span
                         className="w-3 h-3 rounded-full"
-                        style={{ background: "#F59E0B", opacity: 0.55 }}
+                        style={{ background: "#F59E0B", opacity: 0.4 }}
                     />
                     <span
                         className="w-3 h-3 rounded-full"
-                        style={{ background: "#22C55E", opacity: 0.55 }}
+                        style={{ background: "#22C55E", opacity: 0.4 }}
                     />
                     <span
                         className="ml-2 text-xs font-mono"

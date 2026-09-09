@@ -35,14 +35,26 @@ export function SiteFooter({
             <div className="container flex flex-col gap-10 py-12 sm:py-14">
                 {/* Identity + links */}
                 <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-start">
-                    <div className="flex flex-col gap-1 font-mono text-small uppercase tracking-wide">
-                        <span style={{ color: "var(--text-primary)" }}>{name}</span>
-                        <span style={{ color: "var(--text-tertiary)" }}>
-                            {tagline || "Full Stack Engineer"}
+                    <div className="flex items-start gap-3">
+                        {/* Echoes the nav's own wordmark badge — the same mark
+                            bookends the page rather than the footer inventing
+                            a separate "closing" treatment. */}
+                        <span
+                            className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded font-mono text-[11px]"
+                            style={{ border: "1px solid var(--border-strong)", color: "var(--accent)" }}
+                            aria-hidden
+                        >
+                            {name.charAt(0)}
                         </span>
-                        {location && (
-                            <span style={{ color: "var(--text-tertiary)" }}>{location}</span>
-                        )}
+                        <div className="flex flex-col gap-1 font-mono text-small uppercase tracking-wide">
+                            <span style={{ color: "var(--text-primary)" }}>{name}</span>
+                            <span style={{ color: "var(--text-tertiary)" }}>
+                                {tagline || "Full Stack Engineer"}
+                            </span>
+                            {location && (
+                                <span style={{ color: "var(--text-tertiary)" }}>{location}</span>
+                            )}
+                        </div>
                     </div>
 
                     {links.length > 0 && (
