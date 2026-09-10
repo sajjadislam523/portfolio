@@ -15,7 +15,7 @@ export function ScrollCue() {
 
     return (
         <motion.a
-            href="#projects"
+            href="#about"
             className="absolute inset-x-0 bottom-6 z-10 hidden flex-col items-center gap-2 transition-opacity hover:opacity-70 sm:flex"
             style={{ color: "var(--hero-fg-faint)" }}
             initial={{ opacity: 0 }}
