@@ -90,7 +90,7 @@ export function AboutSection({ settings }: { settings: ISiteSettings | null }) {
                                 {"// about"}
                             </span>
                             <p
-                                className="m-0 mt-5 max-w-[30ch] text-h1 font-display"
+                                className="m-0 mt-5 max-w-[30ch] text-h2 sm:text-h1 font-display"
                                 style={{ color: "var(--text-primary)", textWrap: "pretty" }}
                             >
                                 {statement}
