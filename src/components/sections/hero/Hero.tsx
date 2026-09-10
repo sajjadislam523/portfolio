@@ -69,7 +69,7 @@ export function Hero({
     const availableForWork = settings?.availableForWork ?? false;
 
     return (
-        <section className="zone-hero relative flex min-h-screen items-center pt-20">
+        <section className="zone-hero relative flex lg:min-h-screen items-center pt-20">
             {/* The star field carries the ground — toned down to an atmospheric
                 resting state so it never competes with the headline. */}
             <HeroStars />
@@ -229,12 +229,15 @@ export function Hero({
                     {/* ── Right — 5 of 12 — 8. floating system panel. Smaller, and
                         nudged toward the upper edge of its row rather than
                         vertically centred, so it doesn't anchor the composition's
-                        weight as heavily as it did in pass 1. Visible (not hidden)
-                        below `lg` now too — centred beneath the text on mobile
-                        instead of disappearing. ── */}
+                        weight as heavily as it did in pass 1. Hidden below `lg` —
+                        below the two-column breakpoint the grid stacks to a single
+                        column, which would put the terminal in its own full-width
+                        row below the text (the tall, empty-feeling mobile hero this
+                        was fixed to avoid). Reappears unchanged at `lg`+, matching
+                        ScrollCue's identical `lg` cutoff for the same reason. ── */}
                     <FadeIn
                         delay={0.15}
-                        className="flex min-w-0 justify-center lg:col-span-5 lg:mt-6 lg:justify-end lg:self-start"
+                        className="hidden min-w-0 justify-center lg:col-span-5 lg:mt-6 lg:flex lg:justify-end lg:self-start"
                     >
                         <HeroVisual
                             experienceLabel={experienceLabel}
