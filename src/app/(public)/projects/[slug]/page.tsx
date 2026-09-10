@@ -1,16 +1,26 @@
 import { FadeIn } from "@/components/motion/ScrollReveal";
-import { ProjectGallery } from "@/components/sections/projects/ProjectGallery";
+import { CaseStudySection } from "@/components/sections/projects/detail/CaseStudySection";
+import { ProjectAtmosphere } from "@/components/sections/projects/detail/ProjectAtmosphere";
+import { ProjectHeader } from "@/components/sections/projects/detail/ProjectHeader";
+import {
+    ProjectNavigation,
+    type NavProject,
+} from "@/components/sections/projects/detail/ProjectNavigation";
+import { ProjectVisual } from "@/components/sections/projects/detail/ProjectVisual";
+import { TechnologyList } from "@/components/sections/projects/detail/TechnologyList";
 import { connectDB, Project, SiteSettings } from "@/lib/db";
 import type { IProject } from "@/types";
-import { ArrowLeft, ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
-import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 
 export const revalidate = 300;
 
-async function getProject(slug: string): Promise<IProject | null> {
+// Cached per-request — generateMetadata and the page body both need the
+// project document, and Mongoose calls aren't deduped by Next's fetch cache
+// the way `fetch()` is, so without this it's two DB round trips instead of
+// one (the same fix already applied to the homepage's data loader).
+const getProject = cache(async (slug: string): Promise<IProject | null> => {
     try {
         await connectDB();
         // Same `{ $ne: false }` gate the listing queries use — an
@@ -24,7 +34,23 @@ async function getProject(slug: string): Promise<IProject | null> {
     } catch {
         return null;
     }
-}
+});
+
+// Same published/order query the homepage uses to render the project index,
+// trimmed to the fields the case-study index/prev/next controls need — no
+// new CMS field, no extra project-level configuration.
+const getOrderedProjects = cache(async (): Promise<NavProject[]> => {
+    try {
+        await connectDB();
+        const docs = await Project.find({ published: { $ne: false } })
+            .sort({ order: 1 })
+            .select("slug title coverImage")
+            .lean();
+        return JSON.parse(JSON.stringify(docs));
+    } catch {
+        return [];
+    }
+});
 
 export async function generateStaticParams() {
     try {
@@ -91,190 +117,90 @@ export default async function ProjectDetailPage({
     params: Promise<{ slug: string }>;
 }) {
     const { slug } = await params;
-    const project = await getProject(slug);
+    const [project, orderedProjects] = await Promise.all([
+        getProject(slug),
+        getOrderedProjects(),
+    ]);
     if (!project) notFound();
 
-    const hasGallery = (project.images?.length ?? 0) > 0;
+    const idx = orderedProjects.findIndex((p) => p.slug === slug);
+    const total = orderedProjects.length;
+    const indexLabel =
+        idx >= 0
+            ? `${String(idx + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`
+            : "SELECTED WORK";
 
-    return (
-        <div className="pt-28 pb-24">
-            <div className="container max-w-2xl">
-                {/* Back link */}
-                <Link
-                    href="/#projects"
-                    className="inline-flex items-center gap-1.5 text-sm mb-10 transition-colors hover:opacity-80"
-                    style={{ color: "var(--text-tertiary)" }}
-                >
-                    <ArrowLeft className="w-3.5 h-3.5" /> All projects
-                </Link>
+    // Wraps around at either end so the bottom nav is always fully
+    // populated rather than leaving a single dangling button on the first
+    // or last project — never shown at all when there's nothing to link to.
+    const prevProject =
+        idx >= 0 && total > 1 ? orderedProjects[(idx - 1 + total) % total] : null;
+    const nextProject =
+        idx >= 0 && total > 1 ? orderedProjects[(idx + 1) % total] : null;
 
-                <FadeIn>
-                    {/* Cover image — full-width hero at top of detail page */}
-                    {project.coverImage && !hasGallery && (
-                        <div
-                            className="relative rounded-xl overflow-hidden mb-8"
-                            style={{
-                                aspectRatio: "16/9",
-                                border: "1px solid var(--border)",
-                            }}
-                        >
-                            <Image
-                                src={project.coverImage}
-                                alt={project.title}
-                                fill
-                                className="object-cover"
-                                priority
-                                sizes="(max-width: 768px) 100vw, 672px"
-                            />
-                        </div>
-                    )}
-
-                    {/* Header */}
-                    <div className="mb-8">
-                        <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4 mb-3">
-                            <h1
-                                className="text-h1 sm:text-display font-display leading-tight wrap-break-word"
-                                style={{ color: "var(--text-primary)" }}
-                            >
-                                {project.title}
-                            </h1>
-                            <span
-                                className="text-sm font-mono sm:mt-3 shrink-0"
-                                style={{ color: "var(--text-tertiary)" }}
-                            >
-                                {project.year}
-                            </span>
-                        </div>
-                        <p
-                            className="text-base mb-5"
-                            style={{ color: "var(--text-secondary)" }}
-                        >
-                            {project.tagline}
-                        </p>
-
-                        {/* Links */}
-                        <div className="flex items-center gap-3">
-                            {project.links.live && (
-                                <a
-                                    href={project.links.live}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-80"
-                                    style={{
-                                        background: "var(--accent)",
-                                        color: "var(--accent-foreground)",
-                                    }}
-                                >
-                                    <ExternalLink className="w-3.5 h-3.5" />{" "}
-                                    Live site
-                                </a>
-                            )}
-                            {project.links.github && (
-                                <a
-                                    href={project.links.github}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm transition-colors"
-                                    style={{
-                                        background: "var(--bg-elevated)",
-                                        border: "1px solid var(--border)",
-                                        color: "var(--text-secondary)",
-                                    }}
-                                >
-                                    <svg
-                                        className="w-3.5 h-3.5"
-                                        viewBox="0 0 24 24"
-                                        fill="currentColor"
-                                    >
-                                        <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
-                                    </svg>
-                                    GitHub
-                                </a>
-                            )}
-                        </div>
-                    </div>
-
-                    <hr style={{ borderColor: "var(--border)" }} />
-                </FadeIn>
-
-                {/* Gallery slider — shown when project has gallery images */}
-                {hasGallery && (
-                    <div className="mt-8">
-                        <ProjectGallery
-                            images={project.images!}
-                            title={project.title}
-                        />
-                    </div>
-                )}
-
-                {/* Content sections — no animation, always visible */}
-                {project.overview && (
-                    <div className="my-10">
-                        <Section title="Overview" content={project.overview} />
-                    </div>
-                )}
-
-                {project.challenges && (
-                    <div className="my-10">
-                        <Section
-                            title="Challenges"
-                            content={project.challenges}
-                        />
-                    </div>
-                )}
-
-                {project.solutions && (
-                    <div className="my-10">
-                        <Section
-                            title="Solutions"
-                            content={project.solutions}
-                        />
-                    </div>
-                )}
-
-                <div className="my-10">
-                    <h2
-                        className="text-xs font-semibold uppercase tracking-widest mb-4"
-                        style={{ color: "var(--text-tertiary)" }}
-                    >
-                        Tech stack
-                    </h2>
-                    <div className="flex flex-wrap gap-2">
-                        {project.technologies.map((tech) => (
-                            <span
-                                key={tech}
-                                className="px-3 py-1.5 rounded-lg text-sm font-mono"
-                                style={{
-                                    background: "var(--bg-elevated)",
-                                    border: "1px solid var(--border)",
-                                    color: "var(--text-secondary)",
-                                }}
-                            >
-                                {tech}
-                            </span>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </div>
+    const caseStudySections = (
+        [
+            project.overview && {
+                label: "Overview",
+                content: project.overview,
+                variant: "open" as const,
+            },
+            project.challenges && {
+                label: "Challenge",
+                content: project.challenges,
+                variant: "compact" as const,
+            },
+            project.solutions && {
+                label: "Solution",
+                content: project.solutions,
+                variant: "emphasized" as const,
+            },
+        ] as const
+    ).filter(
+        (s): s is { label: string; content: string; variant: "open" | "compact" | "emphasized" } =>
+            Boolean(s),
     );
-}
 
-function Section({ title, content }: { title: string; content: string }) {
     return (
-        <div>
-            <h2
-                className="text-xs font-semibold uppercase tracking-widest mb-4"
-                style={{ color: "var(--text-tertiary)" }}
-            >
-                {title}
-            </h2>
-            <p
-                className="text-sm leading-relaxed"
-                style={{ color: "var(--text-secondary)" }}
-            >
-                {content}
-            </p>
+        <div className="relative pt-28 pb-32">
+            <ProjectAtmosphere />
+
+            <div className="container max-w-330">
+                <ProjectHeader project={project} indexLabel={indexLabel} />
+            </div>
+
+            <div className="container mt-14 max-w-330 sm:mt-20">
+                <FadeIn delay={0.1}>
+                    <ProjectVisual project={project} />
+                </FadeIn>
+            </div>
+
+            {caseStudySections.length > 0 && (
+                <div className="container mt-20 max-w-190 sm:mt-28">
+                    {caseStudySections.map((section, i) => (
+                        <CaseStudySection
+                            key={section.label}
+                            index={String(i + 1).padStart(2, "0")}
+                            label={section.label}
+                            content={section.content}
+                            variant={section.variant}
+                            withTopBorder={i > 0}
+                        />
+                    ))}
+                </div>
+            )}
+
+            {project.technologies.length > 0 && (
+                <div className="container mt-20 max-w-330 sm:mt-28">
+                    <TechnologyList technologies={project.technologies} />
+                </div>
+            )}
+
+            {(prevProject || nextProject) && (
+                <div className="container mt-24 max-w-330 sm:mt-32">
+                    <ProjectNavigation prev={prevProject} next={nextProject} />
+                </div>
+            )}
         </div>
     );
 }
