@@ -35,25 +35,37 @@ This isn't a template — it's a custom-built portfolio platform: a public site,
 ### Public site
 
 - Editorial hero with a terminal-style code card and live stats
+- Editorial About/Capabilities section
 - Project pages with overview, challenges, solutions, and tech stack per project
 - Interactive experience timeline
-- Categorized tech stack with proficiency levels (Expert / Proficient / Familiar)
+- Categorized tech stack with proficiency levels (Expert / Proficient / Familiar), rendered as a technology constellation
+- "Currently Exploring" section — what's actively being learned right now
 - Contact form that writes straight to a MongoDB inbox
 - Command palette (`⌘K` / `Ctrl+K`) for navigation and theme switching
 - Light/dark theme toggle — visitor-controlled, remembered per browser, no flash of the wrong theme on load
 
 ### Admin CMS
 
-Everything under `/admin`, protected by JWT auth:
+Everything under `/admin`, protected by JWT auth, organized into four groups
+(Content / Media / Site / System) plus a standalone dashboard:
 
-| Section | What it manages |
-| --- | --- |
-| **Projects** | Full CRUD — slug, tagline, overview, challenges, solutions, stack, links |
-| **Experience** | Inline expandable work-history manager |
-| **Skills** | Category-grouped, with proficiency levels |
-| **Certifications** | Simple list manager |
-| **Messages** | Inbox with read / archive / delete |
-| **Settings** | Identity, social links, SEO metadata, availability toggle |
+| Group | Section | What it manages |
+| --- | --- | --- |
+| — | **Dashboard** | Stats overview + recent messages |
+| Content | **Profile** | Name, title, bio, avatar |
+| Content | **Hero** | Landing headline, subheading, terminal-card copy |
+| Content | **Projects** | Full CRUD — slug, tagline, overview, challenges, solutions, stack, links, gallery images |
+| Content | **Experience** | Inline expandable work-history manager |
+| Content | **Stack** (Skills) | Category-grouped, with proficiency levels |
+| Content | **Currently Exploring** | What's being learned right now — reorderable, with an active/primary/completed state |
+| Content | **Certifications** | Simple list manager |
+| Media | **Files** | Shared media library (Vercel Blob-backed) used by project galleries, avatar, OG image |
+| Media | **Resume** | Upload new resume versions, pick the active one, delete old versions |
+| Site | **Navigation** | Public nav links |
+| Site | **Social Links** | GitHub, LinkedIn, etc. |
+| Site | **SEO** | Metadata, OG image, structured data inputs |
+| System | **Messages** | Contact-form inbox — read / archive / delete, with toast feedback on each action |
+| System | **Settings** | Site-wide system settings (availability toggle, etc.) |
 
 Changes go live on the public site within 5 minutes via ISR — no redeploy needed.
 
@@ -156,12 +168,20 @@ Log in at `/admin/login` with the credentials from `.env.local`.
 | Page | Purpose |
 | --- | --- |
 | `/admin/dashboard` | Stats overview + recent messages |
+| `/admin/profile` | Name, title, bio, avatar |
+| `/admin/hero` | Landing hero content |
 | `/admin/projects` | CRUD for portfolio projects |
 | `/admin/experience` | Work history management |
 | `/admin/skills` | Tech stack by category |
+| `/admin/exploring` | Currently-exploring list |
 | `/admin/certifications` | Courses and certifications |
+| `/admin/media` | Shared file/media library |
+| `/admin/resume` | Resume version management |
+| `/admin/navigation` | Public nav links |
+| `/admin/social-links` | Social profile links |
+| `/admin/seo` | SEO metadata and OG image |
 | `/admin/messages` | Contact form inbox |
-| `/admin/settings` | Identity, SEO, social links |
+| `/admin/settings` | System settings (availability toggle, etc.) |
 
 ## Command palette
 
@@ -179,33 +199,32 @@ Open it with **⌘K** (Mac) or **Ctrl+K** (Windows/Linux) from any public page.
 src/
 ├── app/
 │   ├── (public)/            # Public portfolio pages
-│   │   ├── page.tsx         # Landing page
-│   │   ├── projects/        # Projects list + detail
+│   │   ├── page.tsx         # Landing page (hero, about, stack, projects, exploring, contact)
+│   │   ├── projects/        # Projects list + detail ([slug])
 │   │   ├── experience/      # Career timeline
 │   │   ├── stack/           # Tech ecosystem
 │   │   └── contact/         # Contact form
 │   ├── (admin)/admin/       # Admin CMS (JWT protected)
 │   │   ├── login/
 │   │   └── (protected)/
-│   │       ├── dashboard/
-│   │       ├── projects/
-│   │       ├── experience/
-│   │       ├── skills/
-│   │       ├── certifications/
-│   │       ├── messages/
-│   │       └── settings/
+│   │       ├── dashboard/            # standalone
+│   │       ├── profile/  hero/  projects/  experience/
+│   │       ├── skills/  exploring/  certifications/    # ── Content group
+│   │       ├── media/  resume/                          # ── Media group
+│   │       ├── navigation/  social-links/  seo/          # ── Site group
+│   │       └── messages/  settings/                      # ── System group
 │   ├── api/
 │   │   ├── auth/            # Login / logout routes
 │   │   └── upload/          # File uploads (resume, images) via Vercel Blob
 │   ├── sitemap.ts
 │   └── robots.ts
 ├── components/
-│   ├── admin/                 # Admin UI components
-│   ├── sections/               # Public page sections (hero, experience, contact, ...)
-│   ├── shared/                 # NavClient, CommandPalette, JsonLd
-│   └── motion/                 # ScrollReveal, StaggerContainer, FadeIn
+│   ├── admin/                 # Admin UI components (AdminSidebar, FormField, Modal, MediaPicker, ...)
+│   ├── sections/               # Public page sections (hero, about, experience, projects, stack, exploring, contact)
+│   ├── shared/                 # NavClient, CommandPalette, JsonLd, SectionAtmosphere, TechnicalMotifs, SiteFooter
+│   └── motion/                 # ScrollReveal
 ├── features/                   # Server Actions, grouped by domain
-│   ├── projects/  experience/  skills/  certifications/  settings/  contact/  auth/
+│   ├── projects/  experience/  skills/  certifications/  exploring/  media/  settings/  contact/  auth/
 ├── lib/
 │   ├── db/                     # MongoDB connection + Mongoose models
 │   ├── auth/                   # JWT sign/verify
