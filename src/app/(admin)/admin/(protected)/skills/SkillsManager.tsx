@@ -21,11 +21,16 @@ const CATEGORY_LABELS: Record<SkillCategory, string> = {
   tooling:  'Tooling',
 }
 
-const TIER_COLORS = {
+const TIER_COLORS: Record<string, { bg: string; color: string; border: string }> = {
   core:               { bg: 'rgba(124,106,247,0.12)', color: '#7C6AF7', border: 'rgba(124,106,247,0.3)' },
   'working-knowledge': { bg: 'rgba(56,189,248,0.12)',  color: '#38BDF8', border: 'rgba(56,189,248,0.3)' },
   exploring:          { bg: 'var(--bg-subtle)',        color: 'var(--text-tertiary)', border: 'var(--border)' },
 }
+// Fallback for any skill still missing/mismatched on `tier` — e.g. a
+// production doc from before the Skill.proficiency -> Skill.tier migration
+// (see scripts/migrate-skill-tiers.ts) that hasn't been migrated yet. Without
+// this, an unrecognised tier crashes the whole page instead of just that pill.
+const FALLBACK_TIER_COLOR = { bg: 'var(--bg-subtle)', color: 'var(--text-tertiary)', border: 'var(--border)' }
 
 export function SkillsManager({ skills }: { skills: ISkill[] }) {
   const [showForm, setShowForm] = useState(false)
@@ -104,7 +109,7 @@ export function SkillsManager({ skills }: { skills: ISkill[] }) {
 
 function SkillPill({ skill, onEdit }: { skill: ISkill; onEdit: () => void }) {
   const [isPending, startTransition] = useTransition()
-  const colors = TIER_COLORS[skill.tier]
+  const colors = TIER_COLORS[skill.tier] ?? FALLBACK_TIER_COLOR
 
   return (
     <div
