@@ -1,3 +1,4 @@
+import { recordMedia } from "@/features/media/actions";
 import { getSession } from "@/features/auth/session";
 import { apiError } from "@/lib/utils";
 import { put } from "@vercel/blob";
@@ -9,6 +10,8 @@ const ALLOWED_TYPES = {
     og: ["image/jpeg", "image/png", "image/webp"],
     "project-cover": ["image/jpeg", "image/png", "image/webp"],
     "project-gallery": ["image/jpeg", "image/png", "image/webp"],
+    "exploration-cover": ["image/jpeg", "image/png", "image/webp"],
+    avatar: ["image/jpeg", "image/png", "image/webp"],
 } as const;
 
 type UploadPurpose = keyof typeof ALLOWED_TYPES;
@@ -39,7 +42,7 @@ export async function POST(request: NextRequest) {
 
     if (!purpose || !(purpose in ALLOWED_TYPES)) {
         return apiError(
-            'Invalid upload purpose. Must be "resume", "og", "project-cover", or "project-gallery"',
+            `Invalid upload purpose. Must be one of: ${Object.keys(ALLOWED_TYPES).join(", ")}`,
             400,
         );
     }
@@ -69,6 +72,16 @@ export async function POST(request: NextRequest) {
         const blob = await put(safeName, file, {
             access: "public",
             addRandomSuffix: false,
+        });
+
+        // Best-effort — never blocks or fails the upload response itself.
+        await recordMedia({
+            url: blob.url,
+            pathname: blob.pathname,
+            filename: file.name,
+            type: file.type,
+            size: file.size,
+            purpose,
         });
 
         return Response.json({

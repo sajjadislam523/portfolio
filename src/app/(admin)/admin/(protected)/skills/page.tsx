@@ -3,7 +3,7 @@ import { getSkills } from '@/features/skills/actions'
 import { PageHeader } from '@/components/admin/PageHeader'
 import { SkillsManager } from './SkillsManager'
 
-export const metadata = { title: 'Skills' }
+export const metadata = { title: 'Stack' }
 
 export default async function AdminSkillsPage() {
   await requireSession()
@@ -11,7 +11,7 @@ export default async function AdminSkillsPage() {
 
   return (
     <div className="max-w-3xl">
-      <PageHeader title="Skills" description="Manage your technology stack" />
+      <PageHeader title="Stack" description="Manage the technologies shown on the public site" />
       <SkillsManager skills={skills} />
     </div>
   )

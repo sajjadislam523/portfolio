@@ -27,9 +27,10 @@ export default async function AdminLayout({
             <AdminSidebar />
 
             <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-                {/* Top bar */}
+                {/* Top bar — left padding on mobile clears the sidebar's
+                    fixed hamburger trigger */}
                 <header
-                    className="flex items-center justify-between px-6 h-14 border-b shrink-0"
+                    className="flex items-center justify-between h-14 border-b shrink-0 pl-16 pr-4 lg:px-6"
                     style={{
                         background: "var(--bg-secondary)",
                         borderColor: "var(--border)",
@@ -51,7 +52,7 @@ export default async function AdminLayout({
                 </header>
 
                 {/* Page content — only this area scrolls */}
-                <main className="flex-1 p-6 overflow-y-auto">{children}</main>
+                <main className="flex-1 p-4 lg:p-6 overflow-y-auto">{children}</main>
             </div>
         </div>
     );

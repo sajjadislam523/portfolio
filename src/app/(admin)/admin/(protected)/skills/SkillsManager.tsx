@@ -7,6 +7,8 @@ import { createSkill, updateSkill, deleteSkill } from '@/features/skills/actions
 import { FormField, inputClass, selectClass } from '@/components/admin/FormField'
 import { AdminButton } from '@/components/admin/AdminButton'
 import { ConfirmDialog } from '@/components/admin/ConfirmDialog'
+import { Switch } from '@/components/admin/Switch'
+import type { ActionResult } from '@/lib/utils'
 import type { ISkill, SkillCategory } from '@/types'
 
 const CATEGORIES: SkillCategory[] = ['frontend', 'backend', 'database', 'devops', 'tooling']
@@ -19,10 +21,10 @@ const CATEGORY_LABELS: Record<SkillCategory, string> = {
   tooling:  'Tooling',
 }
 
-const PROFICIENCY_COLORS = {
-  expert:     { bg: 'rgba(124,106,247,0.12)', color: '#7C6AF7', border: 'rgba(124,106,247,0.3)' },
-  proficient: { bg: 'rgba(56,189,248,0.12)',  color: '#38BDF8', border: 'rgba(56,189,248,0.3)' },
-  familiar:   { bg: 'var(--bg-subtle)',        color: 'var(--text-tertiary)', border: 'var(--border)' },
+const TIER_COLORS = {
+  core:               { bg: 'rgba(124,106,247,0.12)', color: '#7C6AF7', border: 'rgba(124,106,247,0.3)' },
+  'working-knowledge': { bg: 'rgba(56,189,248,0.12)',  color: '#38BDF8', border: 'rgba(56,189,248,0.3)' },
+  exploring:          { bg: 'var(--bg-subtle)',        color: 'var(--text-tertiary)', border: 'var(--border)' },
 }
 
 export function SkillsManager({ skills }: { skills: ISkill[] }) {
@@ -36,6 +38,16 @@ export function SkillsManager({ skills }: { skills: ISkill[] }) {
 
   return (
     <div className="flex flex-col gap-6">
+      <p
+        className="rounded-lg px-3 py-2 text-xs"
+        style={{ background: 'var(--bg-subtle)', color: 'var(--text-tertiary)', border: '1px solid var(--border)' }}
+      >
+        The <strong style={{ color: 'var(--text-secondary)' }}>Exploring</strong> tier below describes a
+        technology&apos;s adoption stage — it&apos;s not the same as the separate{' '}
+        <strong style={{ color: 'var(--text-secondary)' }}>Currently Exploring</strong> content type
+        (an activity/project you&apos;re working on), managed on its own page.
+      </p>
+
       {CATEGORIES.map((cat) => (
         <div key={cat}>
           <h3
@@ -92,12 +104,18 @@ export function SkillsManager({ skills }: { skills: ISkill[] }) {
 
 function SkillPill({ skill, onEdit }: { skill: ISkill; onEdit: () => void }) {
   const [isPending, startTransition] = useTransition()
-  const colors = PROFICIENCY_COLORS[skill.proficiency]
+  const colors = TIER_COLORS[skill.tier]
 
   return (
     <div
       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
-      style={{ background: colors.bg, color: colors.color, border: `1px solid ${colors.border}` }}
+      style={{
+        background: colors.bg,
+        color: colors.color,
+        border: `1px solid ${colors.border}`,
+        opacity: skill.visible ? 1 : 0.45,
+      }}
+      title={skill.visible ? undefined : 'Hidden from the public site'}
     >
       {skill.name}
       <button onClick={onEdit} className="opacity-60 hover:opacity-100 transition-opacity ml-0.5">
@@ -136,14 +154,16 @@ function SkillForm({
 }: {
   skill?: ISkill
   onClose: () => void
-  action: (fd: FormData) => Promise<{ success?: boolean; error?: string }>
+  action: (fd: FormData) => Promise<ActionResult>
   submitLabel: string
 }) {
   const [isPending, startTransition] = useTransition()
+  const [visible, setVisible] = useState(skill?.visible ?? true)
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
+    formData.set('visible', visible ? 'true' : 'false')
     startTransition(async () => {
       const result = await action(formData)
       if (result.error) {
@@ -178,28 +198,42 @@ function SkillForm({
           </select>
         </FormField>
 
-        <FormField label="Proficiency" name="proficiency" required>
-          <select name="proficiency" defaultValue={skill?.proficiency ?? 'proficient'} className={selectClass}>
-            <option value="expert">Expert</option>
-            <option value="proficient">Proficient</option>
-            <option value="familiar">Familiar</option>
+        <FormField label="Tier" name="tier" required>
+          <select name="tier" defaultValue={skill?.tier ?? 'working-knowledge'} className={selectClass}>
+            <option value="core">Core</option>
+            <option value="working-knowledge">Working knowledge</option>
+            <option value="exploring">Exploring</option>
           </select>
         </FormField>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <FormField label="Projects" name="projects" hint="Comma-separated slugs">
-          <input
-            name="projects"
-            defaultValue={skill?.projects.join(', ')}
-            placeholder="newssphere, traceback"
-            className={inputClass}
-          />
+        <FormField label="Icon" name="icon" hint="Optional — an icon key/slug, if configured">
+          <input name="icon" defaultValue={skill?.icon} placeholder="react" className={inputClass} />
         </FormField>
         <FormField label="Order" name="order" hint="Lower = appears first">
           <input name="order" type="number" defaultValue={skill?.order ?? 0} min={0} className={inputClass} />
         </FormField>
       </div>
+
+      <FormField label="Description" name="description" hint="Optional — a short note about how you use it">
+        <input name="description" defaultValue={skill?.description} className={inputClass} maxLength={200} />
+      </FormField>
+
+      <FormField label="Projects" name="projects" hint="Comma-separated slugs">
+        <input
+          name="projects"
+          defaultValue={skill?.projects.join(', ')}
+          placeholder="newssphere, traceback"
+          className={inputClass}
+        />
+      </FormField>
+
+      <Switch
+        checked={visible}
+        onChange={setVisible}
+        label={visible ? 'Visible on the public site' : 'Hidden from the public site'}
+      />
 
       <div className="flex gap-2">
         <AdminButton type="submit" loading={isPending}>{submitLabel}</AdminButton>

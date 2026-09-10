@@ -50,6 +50,7 @@ export const projectSchema = z.object({
         .min(2, "Add a role — it shows in the projects ledger")
         .max(60),
     featured: z.boolean().default(false),
+    published: z.boolean().default(true),
     order: z.number().int().min(0).default(0),
     year: z.number().int().min(2000).max(2100),
 });
@@ -67,6 +68,7 @@ export const experienceSchema = z.object({
     description: z.string().default(""),
     accomplishments: z.array(z.string()).default([]),
     technologies: z.array(z.string()).default([]),
+    published: z.boolean().default(true),
     order: z.number().int().min(0).default(0),
 });
 
@@ -77,12 +79,39 @@ export type ExperienceFormData = z.infer<typeof experienceSchema>;
 export const skillSchema = z.object({
     name: z.string().min(1).max(60),
     category: z.enum(["frontend", "backend", "database", "devops", "tooling"]),
-    proficiency: z.enum(["expert", "proficient", "familiar"]),
+    tier: z.enum(["core", "working-knowledge", "exploring"]),
+    icon: z.string().max(60).optional().or(z.literal("")),
+    description: z.string().max(200).optional().or(z.literal("")),
+    visible: z.boolean().default(true),
     projects: z.array(z.string()).default([]),
     order: z.number().int().min(0).default(0),
 });
 
 export type SkillFormData = z.infer<typeof skillSchema>;
+
+// ─── Exploration ──────────────────────────────────────────────────────────────
+
+export const explorationSchema = z
+    .object({
+        title: z.string().min(2).max(100),
+        description: z.string().min(10).max(400),
+        topics: z.array(z.string()).default([]),
+        status: z.enum(["active", "experimenting", "completed"]).default("active"),
+        startDate: z.string().date(),
+        link: z.string().url().optional().or(z.literal("")),
+        image: z.string().url().optional().or(z.literal("")),
+        ctaLabel: z.string().max(40).optional().or(z.literal("")),
+        ctaUrl: z.string().url().optional().or(z.literal("")),
+        isPrimary: z.boolean().default(false),
+        published: z.boolean().default(true),
+        order: z.number().int().min(0).default(0),
+    })
+    .refine((data) => Boolean(data.ctaLabel) === Boolean(data.ctaUrl), {
+        message: "A CTA needs both a label and a URL",
+        path: ["ctaUrl"],
+    });
+
+export type ExplorationFormData = z.infer<typeof explorationSchema>;
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 
@@ -93,30 +122,8 @@ export const loginSchema = z.object({
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 
-// ─── Site Settings ────────────────────────────────────────────────────────────
-
-export const siteSettingsSchema = z.object({
-    name: z.string().min(2).max(80),
-    tagline: z.string().max(160),
-    bio: z.string().max(1000),
-    email: z.string().email(),
-    phone: z.string().max(20).optional(),
-    location: z.string().max(80),
-    resumeUrl: z.string().url().optional().or(z.literal("")),
-    availableForWork: z.boolean(),
-    socialLinks: z.array(
-        z.object({
-            platform: z.string(),
-            url: z.string().url(),
-            icon: z.string().optional(),
-        }),
-    ),
-    seo: z.object({
-        title: z.string().max(70),
-        description: z.string().max(160),
-        ogImage: z.string().url().optional().or(z.literal("")),
-        keywords: z.array(z.string()),
-    }),
-});
-
-export type SiteSettingsFormData = z.infer<typeof siteSettingsSchema>;
+// Site settings validation is scoped per-page (profile/hero/social
+// links/SEO), each with its own small schema, directly in
+// src/features/settings/actions.ts — there's no single monolithic
+// site-settings schema/action anymore now that the CMS settings form is
+// split across dedicated pages.

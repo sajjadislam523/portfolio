@@ -72,10 +72,14 @@ export function ResumeManager({ versions: initial }: ResumeManagerProps) {
             }
 
             const label = labelInput.trim() || file.name.replace(/\.pdf$/i, "");
+            const nextVersionNumber =
+                versions.reduce((max, v) => Math.max(max, v.version ?? 0), 0) + 1;
             const newVersion: IResumeVersion = {
                 url: data.url,
                 label,
                 filename: file.name,
+                pathname: data.pathname,
+                version: nextVersionNumber,
                 size: file.size,
                 uploadedAt: new Date().toISOString(),
                 isActive: true,
@@ -90,7 +94,7 @@ export function ResumeManager({ versions: initial }: ResumeManagerProps) {
 
             // Persist to DB
             startTransition(async () => {
-                await recordResumeUpload(data.url, label, file.name, file.size);
+                await recordResumeUpload(data.url, data.pathname, label, file.name, file.size);
             });
 
             toast.success("Resume uploaded and set as active");
@@ -297,6 +301,14 @@ export function ResumeManager({ versions: initial }: ResumeManagerProps) {
                                     >
                                         {version.label || version.filename}
                                     </p>
+                                    {typeof version.version === "number" && (
+                                        <span
+                                            className="text-xs shrink-0"
+                                            style={{ color: "var(--text-tertiary)" }}
+                                        >
+                                            v{version.version}
+                                        </span>
+                                    )}
                                     {version.isActive && (
                                         <span
                                             className="text-xs px-1.5 py-0.5 rounded-full shrink-0"

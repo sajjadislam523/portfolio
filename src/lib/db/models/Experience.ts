@@ -12,6 +12,7 @@ export interface ExperienceDocument extends Document {
   description: string
   accomplishments: string[]
   technologies: string[]
+  published: boolean
   order: number
 }
 
@@ -25,6 +26,7 @@ const ExperienceSchema = new Schema<ExperienceDocument>(
     description: { type: String, default: '' },
     accomplishments: { type: [String], default: [] },
     technologies: { type: [String], default: [] },
+    published: { type: Boolean, default: true, index: true },
     order: { type: Number, default: 0, index: true },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }

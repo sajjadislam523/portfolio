@@ -23,16 +23,15 @@ const SEOSchema = new Schema(
     { _id: false },
 );
 
-const ResumeVersionSchema = new Schema(
-    {
-        url: { type: String, required: true },
-        label: { type: String, default: "" },
-        fileName: { type: String, default: "" },
-        size: { type: Number, default: 0 },
-        uploadedAt: { type: Date, default: Date.now },
-    },
-    { _id: false },
-);
+const ResumeVersionSchema = new Schema({
+    url: { type: String, required: true },
+    label: { type: String, default: "" },
+    filename: { type: String, default: "" },
+    pathname: { type: String, default: "" },
+    version: { type: Number, default: 1 },
+    size: { type: Number, default: 0 },
+    uploadedAt: { type: Date, default: Date.now },
+});
 
 const SiteSettingsSchema = new Schema<SiteSettingsDocument>(
     {
@@ -44,6 +43,7 @@ const SiteSettingsSchema = new Schema<SiteSettingsDocument>(
         location: { type: String, default: "Dhaka, Bangladesh" },
         resumeUrl: { type: String, default: "" },
         resumeVersions: { type: [ResumeVersionSchema], default: [] },
+        avatarUrl: { type: String, default: "" },
         availableForWork: { type: Boolean, default: true },
         socialLinks: { type: [SocialLinkSchema], default: [] },
         seo: { type: SEOSchema, default: () => ({}) },

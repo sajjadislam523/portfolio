@@ -2,6 +2,7 @@ import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { AboutSection } from "@/components/sections/about/AboutSection";
 import { ContactForm } from "@/components/sections/contact/ContactForm";
 import { MagneticCTA } from "@/components/sections/contact/MagneticCTA";
+import { CurrentlyExploring } from "@/components/sections/exploring/CurrentlyExploring";
 import { ExperienceTimeline } from "@/components/sections/experience/ExperienceTimeline";
 import { Hero } from "@/components/sections/hero/Hero";
 import { ProjectIndexList } from "@/components/sections/projects/ProjectIndexList";
@@ -15,10 +16,18 @@ import { TechConstellation } from "@/components/sections/stack/TechConstellation
 import { JsonLdPerson } from "@/components/shared/JsonLd";
 import { SectionAtmosphere } from "@/components/shared/SectionAtmosphere";
 import { SectionHeading } from "@/components/shared/SectionHeading";
-import { connectDB, Experience, Project, SiteSettings, Skill } from "@/lib/db";
+import {
+    connectDB,
+    Experience,
+    Exploration,
+    Project,
+    SiteSettings,
+    Skill,
+} from "@/lib/db";
 import { ArrowUpRight } from "lucide-react";
 import type {
     IExperience,
+    IExploration,
     IProject,
     ISiteSettings,
     ISkill,
@@ -35,12 +44,18 @@ export const revalidate = 300;
 async function getData() {
     try {
         await connectDB();
-        const [settingsDoc, projectDocs, experienceDocs, skillDocs] =
+        // `{ $ne: false }` (not `{ $eq: true }`) so documents saved before
+        // these gates existed — which have no `published`/`visible` key at
+        // all — stay visible by default rather than silently disappearing.
+        const [settingsDoc, projectDocs, experienceDocs, skillDocs, explorationDocs] =
             await Promise.all([
                 SiteSettings.findOne({}).lean(),
-                Project.find().sort({ order: 1 }).lean(),
-                Experience.find().sort({ order: 1 }).lean(),
-                Skill.find().sort({ category: 1, order: 1 }).lean(),
+                Project.find({ published: { $ne: false } }).sort({ order: 1 }).lean(),
+                Experience.find({ published: { $ne: false } }).sort({ order: 1 }).lean(),
+                Skill.find({ visible: { $ne: false } }).sort({ order: 1 }).lean(),
+                Exploration.find({ status: "active", published: { $ne: false } })
+                    .sort({ order: 1 })
+                    .lean(),
             ]);
 
         const allProjects = JSON.parse(
@@ -50,6 +65,15 @@ async function getData() {
             JSON.stringify(experienceDocs),
         ) as IExperience[];
         const skills = JSON.parse(JSON.stringify(skillDocs)) as ISkill[];
+        const activeExplorations = JSON.parse(
+            JSON.stringify(explorationDocs),
+        ) as IExploration[];
+
+        const primaryExploration =
+            activeExplorations.find((e) => e.isPrimary) ?? activeExplorations[0] ?? null;
+        const secondaryExplorations = activeExplorations
+            .filter((e) => e._id !== primaryExploration?._id)
+            .slice(0, 3);
 
         const earliestStart = experiences.reduce<Date | null>((min, e) => {
             const start = new Date(e.startDate);
@@ -81,6 +105,8 @@ async function getData() {
             experienceYears,
             projectCount: allProjects.length,
             skillCount: skills.length,
+            primaryExploration,
+            secondaryExplorations,
         };
     } catch {
         return {
@@ -93,6 +119,8 @@ async function getData() {
             experienceYears: null,
             projectCount: 0,
             skillCount: 0,
+            primaryExploration: null as IExploration | null,
+            secondaryExplorations: [] as IExploration[],
         };
     }
 }
@@ -136,6 +164,8 @@ export default async function HomePage() {
         experienceYears,
         projectCount,
         skillCount,
+        primaryExploration,
+        secondaryExplorations,
     } = await getData();
 
     const experienceLabel = experienceYears ? `${experienceYears}+ yr` : "1+ yr";
@@ -330,6 +360,35 @@ export default async function HomePage() {
                 </div>
             </section>
 
+            {/* ── Currently exploring — activity, not another technology
+                category; distinct from Stack's "what I use". Omitted
+                entirely when nothing is marked active, rather than showing
+                an empty header — this is bonus content, not a core section
+                every visit is guaranteed to have something to show. ─────── */}
+            {primaryExploration && (
+                <section id="exploring" className="section relative overflow-hidden">
+                    <SectionAtmosphere variant="orbital" label="// exploration_log" />
+
+                    <div className="container relative z-10">
+                        <ScrollReveal>
+                            <span
+                                className="mb-14 block font-mono text-eyebrow uppercase"
+                                style={{ color: "var(--accent)" }}
+                            >
+                                04 / Currently exploring
+                            </span>
+                        </ScrollReveal>
+
+                        <ScrollReveal>
+                            <CurrentlyExploring
+                                primary={primaryExploration}
+                                secondary={secondaryExplorations}
+                            />
+                        </ScrollReveal>
+                    </div>
+                </section>
+            )}
+
             {/* ── Contact — the emotional and visual conclusion of the site ──────── */}
             <section
                 id="contact"
@@ -377,7 +436,7 @@ export default async function HomePage() {
                                 className="font-mono text-eyebrow uppercase"
                                 style={{ color: "var(--accent)" }}
                             >
-                                04 / Contact
+                                05 / Contact
                             </span>
 
                             {/* text-display's clamp floor (60px) is sized for

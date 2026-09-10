@@ -31,7 +31,8 @@ const NAV_LINKS = [
     { href: "/#projects", label: "Projects", mobileLabel: "Work", number: "01" },
     { href: "/#experience", label: "Experience", number: "02" },
     { href: "/#stack", label: "Stack", number: "03" },
-    { href: "/#contact", label: "Contact", number: "04" },
+    { href: "/#exploring", label: "Exploring", number: "04" },
+    { href: "/#contact", label: "Contact", number: "05" },
 ];
 
 interface SocialLink {

@@ -1,9 +1,9 @@
 "use client";
 
 // The desktop "technical constellation" — a spatial map, not a dashboard.
-// Typography carries the hierarchy (no progress bars, no pills): core
-// technologies anchor the top band in display type, working-knowledge and
-// exploring technologies sit in progressively quieter bands beneath. Thin
+// Typography carries the hierarchy (no progress bars, no pills): Core
+// technologies anchor the top band in display type, Working knowledge and
+// Exploring technologies sit in progressively quieter bands beneath. Thin
 // SVG lines connect real relationships (shared projects, see
 // constellation.ts) radiating outward from the core anchors only, so the
 // graph stays sparse. Hovering a node highlights its neighborhood — the
@@ -30,10 +30,10 @@ import { GridFragment } from "@/components/shared/TechnicalMotifs";
 import type { ISkill } from "@/types";
 import { useMemo, useState } from "react";
 
-const TIER_DOT_SIZE: Record<ISkill["proficiency"], number> = {
-    expert: 7,
-    proficient: 5,
-    familiar: 3.5,
+const TIER_DOT_SIZE: Record<ISkill["tier"], number> = {
+    core: 7,
+    "working-knowledge": 5,
+    exploring: 3.5,
 };
 
 export function TechConstellation({
@@ -66,11 +66,11 @@ export function TechConstellation({
                     className="pointer-events-none absolute left-0 font-mono text-[10px] uppercase tracking-widest"
                     style={{
                         top: `${
-                            tier === "expert" ? 20 : tier === "proficient" ? 53 : 86
+                            tier === "core" ? 20 : tier === "working-knowledge" ? 53 : 86
                         }%`,
                         transform: "translateY(-2.4rem)",
-                        color: tier === "expert" ? "var(--accent)" : "var(--text-tertiary)",
-                        opacity: tier === "expert" ? 0.8 : 0.5,
+                        color: tier === "core" ? "var(--accent)" : "var(--text-tertiary)",
+                        opacity: tier === "core" ? 0.8 : 0.5,
                     }}
                 >
                     {String(i + 1).padStart(2, "0")} — {TIER_LABEL[tier]}
@@ -130,10 +130,10 @@ export function TechConstellation({
                         <span
                             className="block rounded-full border-2 transition-transform duration-300"
                             style={{
-                                width: TIER_DOT_SIZE[skill.proficiency],
-                                height: TIER_DOT_SIZE[skill.proficiency],
+                                width: TIER_DOT_SIZE[skill.tier],
+                                height: TIER_DOT_SIZE[skill.tier],
                                 background:
-                                    skill.proficiency === "expert" || isConnected
+                                    skill.tier === "core" || isConnected
                                         ? "var(--accent)"
                                         : "transparent",
                                 borderColor:
@@ -144,12 +144,12 @@ export function TechConstellation({
                             }}
                         />
                         <span
-                            className={`${TIER_NAME_CLASS[skill.proficiency]} leading-none transition-transform duration-300`}
+                            className={`${TIER_NAME_CLASS[skill.tier]} leading-none transition-transform duration-300`}
                             style={{
                                 color:
                                     isConnected || isSelf
                                         ? "var(--text-primary)"
-                                        : TIER_NAME_COLOR[skill.proficiency],
+                                        : TIER_NAME_COLOR[skill.tier],
                                 transform: isSelf ? "scale(1.06) translateY(-1px)" : "scale(1)",
                             }}
                         >

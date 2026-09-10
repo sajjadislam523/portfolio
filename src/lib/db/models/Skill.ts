@@ -1,5 +1,5 @@
 import mongoose, { Schema, type Document } from 'mongoose'
-import type { ISkill, SkillCategory, SkillProficiency } from '@/types'
+import type { ISkill, SkillCategory, SkillTier } from '@/types'
 
 export interface SkillDocument extends Omit<ISkill, '_id'>, Document {}
 
@@ -12,18 +12,22 @@ const SkillSchema = new Schema<SkillDocument>(
       required: true,
       index: true,
     },
-    proficiency: {
+    tier: {
       type: String,
-      enum: ['expert', 'proficient', 'familiar'] satisfies SkillProficiency[],
+      enum: ['core', 'working-knowledge', 'exploring'] satisfies SkillTier[],
       required: true,
+      index: true,
     },
+    icon: { type: String, default: "" },
+    description: { type: String, default: "" },
+    visible: { type: Boolean, default: true, index: true },
     projects: { type: [String], default: [] },
     order: { type: Number, default: 0, index: true },
   },
   { timestamps: true }
 )
 
-SkillSchema.index({ category: 1, order: 1 })
+SkillSchema.index({ tier: 1, order: 1 })
 
 export const Skill =
   mongoose.models.Skill ??

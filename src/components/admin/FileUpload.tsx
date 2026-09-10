@@ -11,7 +11,13 @@ import {
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
-type UploadPurpose = "resume" | "og" | "project-cover" | "project-gallery";
+export type UploadPurpose =
+    | "resume"
+    | "og"
+    | "project-cover"
+    | "project-gallery"
+    | "exploration-cover"
+    | "avatar";
 
 type UploadState = "idle" | "uploading" | "done" | "error";
 
@@ -45,6 +51,18 @@ const PURPOSE_CONFIG = {
     "project-gallery": {
         accept: ".jpg,.jpeg,.png,.webp",
         maxLabel: "5MB per image",
+        icon: ImageIcon,
+        previewType: "image" as const,
+    },
+    "exploration-cover": {
+        accept: ".jpg,.jpeg,.png,.webp",
+        maxLabel: "5MB · optional",
+        icon: ImageIcon,
+        previewType: "image" as const,
+    },
+    avatar: {
+        accept: ".jpg,.jpeg,.png,.webp",
+        maxLabel: "5MB · square recommended",
         icon: ImageIcon,
         previewType: "image" as const,
     },

@@ -64,8 +64,25 @@ const SkillSchema = new mongoose.Schema(
     {
         name: String,
         category: String,
-        proficiency: String,
+        tier: String,
         projects: [String],
+        order: Number,
+    },
+    { timestamps: true },
+);
+
+const ExplorationSchema = new mongoose.Schema(
+    {
+        title: String,
+        description: String,
+        topics: [String],
+        status: String,
+        startDate: Date,
+        link: String,
+        image: String,
+        ctaLabel: String,
+        ctaUrl: String,
+        isPrimary: Boolean,
         order: Number,
     },
     { timestamps: true },
@@ -124,6 +141,9 @@ async function seed() {
         mongoose.models.Experience ??
         mongoose.model("Experience", ExperienceSchema);
     const Skill = mongoose.models.Skill ?? mongoose.model("Skill", SkillSchema);
+    const Exploration =
+        mongoose.models.Exploration ??
+        mongoose.model("Exploration", ExplorationSchema);
     const Cert =
         mongoose.models.Certification ??
         mongoose.model("Certification", CertSchema);
@@ -137,6 +157,7 @@ async function seed() {
         Project.deleteMany({}),
         Experience.deleteMany({}),
         Skill.deleteMany({}),
+        Exploration.deleteMany({}),
         Cert.deleteMany({}),
         Settings.deleteMany({}),
     ]);
@@ -288,49 +309,49 @@ async function seed() {
         {
             name: "React.js",
             category: "frontend",
-            proficiency: "expert",
+            tier: "core",
             projects: ["newssphere", "traceback"],
             order: 0,
         },
         {
             name: "Next.js",
             category: "frontend",
-            proficiency: "expert",
+            tier: "core",
             projects: ["newssphere"],
             order: 1,
         },
         {
             name: "TypeScript",
             category: "frontend",
-            proficiency: "expert",
+            tier: "core",
             projects: ["newssphere", "traceback"],
             order: 2,
         },
         {
             name: "TailwindCSS",
             category: "frontend",
-            proficiency: "expert",
+            tier: "core",
             projects: ["newssphere", "traceback"],
             order: 3,
         },
         {
             name: "shadcn/ui",
             category: "frontend",
-            proficiency: "expert",
+            tier: "core",
             projects: ["newssphere"],
             order: 4,
         },
         {
             name: "Framer Motion",
             category: "frontend",
-            proficiency: "proficient",
+            tier: "working-knowledge",
             projects: [],
             order: 5,
         },
         {
             name: "TanStack Query",
             category: "frontend",
-            proficiency: "proficient",
+            tier: "working-knowledge",
             projects: ["newssphere"],
             order: 6,
         },
@@ -338,28 +359,28 @@ async function seed() {
         {
             name: "Node.js",
             category: "backend",
-            proficiency: "proficient",
+            tier: "working-knowledge",
             projects: ["newssphere", "traceback"],
             order: 0,
         },
         {
             name: "Express.js",
             category: "backend",
-            proficiency: "proficient",
+            tier: "working-knowledge",
             projects: ["newssphere", "traceback"],
             order: 1,
         },
         {
             name: "JWT",
             category: "backend",
-            proficiency: "proficient",
+            tier: "working-knowledge",
             projects: ["newssphere", "traceback"],
             order: 2,
         },
         {
             name: "Stripe",
             category: "backend",
-            proficiency: "proficient",
+            tier: "working-knowledge",
             projects: ["traceback"],
             order: 3,
         },
@@ -367,21 +388,21 @@ async function seed() {
         {
             name: "MongoDB",
             category: "database",
-            proficiency: "proficient",
+            tier: "working-knowledge",
             projects: ["newssphere", "traceback"],
             order: 0,
         },
         {
             name: "Mongoose",
             category: "database",
-            proficiency: "proficient",
+            tier: "working-knowledge",
             projects: ["newssphere", "traceback"],
             order: 1,
         },
         {
             name: "Firebase",
             category: "database",
-            proficiency: "familiar",
+            tier: "working-knowledge",
             projects: [],
             order: 2,
         },
@@ -389,28 +410,28 @@ async function seed() {
         {
             name: "Docker",
             category: "devops",
-            proficiency: "familiar",
+            tier: "working-knowledge",
             projects: [],
             order: 0,
         },
         {
             name: "Vercel",
             category: "devops",
-            proficiency: "proficient",
+            tier: "working-knowledge",
             projects: ["newssphere"],
             order: 1,
         },
         {
             name: "Netlify",
             category: "devops",
-            proficiency: "proficient",
+            tier: "working-knowledge",
             projects: [],
             order: 2,
         },
         {
             name: "Hostinger",
             category: "devops",
-            proficiency: "familiar",
+            tier: "working-knowledge",
             projects: [],
             order: 3,
         },
@@ -418,34 +439,69 @@ async function seed() {
         {
             name: "Git & GitHub",
             category: "tooling",
-            proficiency: "expert",
+            tier: "core",
             projects: [],
             order: 0,
         },
         {
             name: "Figma",
             category: "tooling",
-            proficiency: "proficient",
+            tier: "working-knowledge",
             projects: [],
             order: 1,
         },
         {
             name: "Postman",
             category: "tooling",
-            proficiency: "proficient",
+            tier: "working-knowledge",
             projects: [],
             order: 2,
         },
         {
             name: "Vite",
             category: "tooling",
-            proficiency: "proficient",
+            tier: "working-knowledge",
             projects: [],
             order: 3,
         },
     ];
     await Skill.insertMany(skills);
     console.log("✓ Skills seeded");
+
+    // ── Currently exploring ───────────────────────────────────────────────────
+    // Real activity, not technology tags — replaces the old hardcoded "focus"
+    // list that used to live on the hero visual.
+    await Exploration.insertMany([
+        {
+            title: "AI-powered product interfaces",
+            description:
+                "Exploring how AI workflows can improve modern web products and developer experiences.",
+            topics: ["AI", "Product Engineering", "Interactive Web"],
+            status: "active",
+            startDate: new Date("2026-06-01"),
+            link: "",
+            image: "",
+            ctaLabel: "",
+            ctaUrl: "",
+            isPrimary: true,
+            order: 0,
+        },
+        {
+            title: "Digital product craft",
+            description:
+                "Refining how digital products get designed and built end-to-end — interface details, system architecture, and everything between.",
+            topics: ["Digital Products"],
+            status: "active",
+            startDate: new Date("2026-03-01"),
+            link: "",
+            image: "",
+            ctaLabel: "",
+            ctaUrl: "",
+            isPrimary: false,
+            order: 1,
+        },
+    ]);
+    console.log("✓ Explorations seeded");
 
     // ── Certifications ────────────────────────────────────────────────────────
     await Cert.create({

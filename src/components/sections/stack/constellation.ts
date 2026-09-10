@@ -25,7 +25,7 @@ export function buildAdjacency(skills: ISkill[]): Record<string, string[]> {
         (adjacency[b] ??= new Set()).add(a);
     };
 
-    const cores = skills.filter((s) => s.proficiency === "expert");
+    const cores = skills.filter((s) => s.tier === "core");
 
     for (const core of cores) {
         let found = 0;
@@ -77,10 +77,10 @@ function seededOffset(seed: string, range: number): number {
     return (normalized - 0.5) * 2 * range;
 }
 
-const TIER_BAND: Record<ISkill["proficiency"], { yCenter: number; yJitter: number }> = {
-    expert: { yCenter: 20, yJitter: 8 },
-    proficient: { yCenter: 53, yJitter: 9 },
-    familiar: { yCenter: 86, yJitter: 8 },
+const TIER_BAND: Record<ISkill["tier"], { yCenter: number; yJitter: number }> = {
+    core: { yCenter: 20, yJitter: 8 },
+    "working-knowledge": { yCenter: 53, yJitter: 9 },
+    exploring: { yCenter: 86, yJitter: 8 },
 };
 
 export interface Point {
@@ -94,7 +94,7 @@ export function layoutSkills(skills: ISkill[]): Map<string, Point> {
     const marginX = 11;
 
     for (const tier of TIER_ORDER) {
-        const items = skills.filter((s) => s.proficiency === tier);
+        const items = skills.filter((s) => s.tier === tier);
         const band = TIER_BAND[tier];
         items.forEach((skill, i) => {
             const slot = items.length === 1 ? 0.5 : (i + 0.5) / items.length;

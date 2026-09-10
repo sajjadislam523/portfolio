@@ -8,10 +8,16 @@ import { revalidatePath } from "next/cache";
 
 // Shape of a resumeVersions subdocument as returned by .lean() — dates are
 // still Date instances here, not yet serialised to ISO strings like IResumeVersion.
+// `fileName`/no-pathname/no-version cover legacy rows saved before the
+// resume-versioning fix; every field below is read defensively for that reason.
 interface RawResumeVersion {
+    _id?: { toString(): string };
     url: string;
     label?: string;
     filename?: string;
+    fileName?: string;
+    pathname?: string;
+    version?: number;
     size?: number;
     uploadedAt: Date | string;
 }
@@ -21,6 +27,7 @@ interface RawResumeVersion {
 // Stores full metadata, sets this version as active, deactivates all others.
 export async function recordResumeUpload(
     url: string,
+    pathname: string,
     label: string,
     filename: string,
     size: number,
@@ -28,10 +35,20 @@ export async function recordResumeUpload(
     await requireSession();
     await connectDB();
 
+    const existing = (await SiteSettings.findOne({})
+        .select("resumeVersions")
+        .lean()) as { resumeVersions?: RawResumeVersion[] } | null;
+    const maxVersion = (existing?.resumeVersions ?? []).reduce(
+        (max, v) => Math.max(max, v.version ?? 0),
+        0,
+    );
+
     const newVersion = {
         url,
         label,
         filename,
+        pathname,
+        version: maxVersion + 1,
         size,
         uploadedAt: new Date(),
     };
@@ -45,7 +62,7 @@ export async function recordResumeUpload(
         { upsert: true },
     );
 
-    revalidatePath("/admin/settings");
+    revalidatePath("/admin/resume");
     revalidatePath("/");
     return { success: true };
 }
@@ -63,7 +80,7 @@ export async function setActiveResumeUrl(url: string) {
         { upsert: true },
     );
 
-    revalidatePath("/admin/settings");
+    revalidatePath("/admin/resume");
     revalidatePath("/");
     return { success: true };
 }
@@ -98,7 +115,7 @@ export async function deleteResumeVersion(url: string) {
         { $pull: { resumeVersions: { url } } },
     );
 
-    revalidatePath("/admin/settings");
+    revalidatePath("/admin/resume");
     return { success: true };
 }
 
@@ -122,9 +139,14 @@ export async function getResumeVersions(): Promise<{
 
     const versions: IResumeVersion[] = (settings?.resumeVersions ?? [])
         .map((v: RawResumeVersion) => ({
+            _id: v._id?.toString(),
             url: v.url,
             label: v.label ?? "",
-            filename: v.filename ?? v.label ?? "",
+            // `filename` is the current field; `fileName` covers rows saved
+            // before that rename (see the SiteSettings model change).
+            filename: v.filename ?? v.fileName ?? v.label ?? "",
+            pathname: v.pathname,
+            version: v.version,
             size: v.size ?? 0,
             uploadedAt:
                 v.uploadedAt instanceof Date

@@ -1,6 +1,6 @@
-// A technical capability map, not a dashboard — three proficiency tiers
-// (Core / Working knowledge / Exploring, mapped straight from ISkill's
-// existing `proficiency` field) rendered as an editorial list. Hierarchy
+// A technical capability map, not a dashboard — three stack tiers (Core /
+// Working knowledge / Exploring, from ISkill's `tier` field) rendered as an
+// editorial list. Hierarchy
 // comes from typography — size, weight, color — never from a percentage,
 // a progress bar, or a colored pill. No client state: the one hover effect
 // (an accent tick + a quiet category label) is pure CSS `group-hover`, so
@@ -16,10 +16,10 @@ import {
 } from "@/components/sections/stack/constants";
 import type { ISkill } from "@/types";
 
-const TIER_DOT_SIZE: Record<ISkill["proficiency"], number> = {
-    expert: 7,
-    proficient: 5,
-    familiar: 3.5,
+const TIER_DOT_SIZE: Record<ISkill["tier"], number> = {
+    core: 7,
+    "working-knowledge": 5,
+    exploring: 3.5,
 };
 
 const GRID_COLS: Record<number, string> = {
@@ -38,7 +38,7 @@ export function SkillGroups({
     const groups = TIER_ORDER.map((tier, i) => ({
         tier,
         index: i,
-        items: skills.filter((s) => s.proficiency === tier),
+        items: skills.filter((s) => s.tier === tier),
     })).filter((g) => g.items.length > 0);
 
     if (groups.length === 0) return null;
@@ -78,9 +78,9 @@ export function SkillGroups({
                                             width: TIER_DOT_SIZE[tier],
                                             height: TIER_DOT_SIZE[tier],
                                             background:
-                                                tier === "expert" ? "var(--accent)" : "transparent",
+                                                tier === "core" ? "var(--accent)" : "transparent",
                                             borderColor:
-                                                tier === "expert"
+                                                tier === "core"
                                                     ? "var(--accent)"
                                                     : "var(--line-strong)",
                                         }}
