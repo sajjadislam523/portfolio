@@ -10,6 +10,7 @@
         "lint": "eslint",
         "seed": "tsx scripts/seed.ts",
         "seed:check": "tsx -e \"import { connectDB } from ./src/lib/db/connect.ts; connectDB().then(() => { console.log(\"DB OK\"); process.exit(0); })\"",
+        "backup:db": "tsx scripts/backup-collections.ts",
         "migrate:skill-tier": "tsx scripts/migrate-skill-tiers.ts",
         "migrate:exploration-status": "tsx scripts/migrate-exploration-status.ts",
         "migrate:resume-filename": "tsx scripts/migrate-resume-filename.ts",
