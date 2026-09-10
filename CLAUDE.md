@@ -61,6 +61,71 @@ through every redesign pass so far, and a 2026-09-09 QA pass already used it
 to delete a marquee component and an unused shadcn `Card` that had drifted
 from this direction.
 
+## 2026-09-11 session — navigation, responsive QA, production audit, favicon
+
+Five passes in one session, each building on the last:
+
+- **Global navigation redesign** — replaced the previous navbar with a
+  minimal HUD command bar (`NavClient.tsx`): a three-zone grid (monogram /
+  centered index-numbered links / instrument cluster), a `layoutId`-animated
+  active-link indicator, scroll-aware translucency, and a full-screen mobile
+  overlay with its own reveal choreography. A follow-up polish pass trimmed
+  redundant chrome (a section counter, a boxed theme toggle) and tightened
+  the mobile menu's animation from three beats to two. Introduced
+  `Logo.tsx` — the reusable monogram component the favicon (below) now
+  derives from.
+- **Responsive/mobile QA pass** — audited 320–1440px and fixed real
+  breakpoint bugs: the nav logo's touch target was under 44px; the hero
+  scroll-cue overlapped `HeroVisual`'s stats row across the entire
+  640–1023px band (it's `hidden` below `lg` now, matching where the hero
+  stops being two-column); the About section's paragraph-length statement
+  used the hero's display type scale and filled most of one mobile screen
+  on its own (now `text-h2` below `sm`); the project detail page's title +
+  year badge didn't wrap, overflowing at 320–390px for single-word titles.
+- **Production-readiness audit** — found and fixed: unpublished projects
+  were reachable via direct `/projects/[slug]` URL despite being correctly
+  filtered from the listing; the admin's "Lead row on the homepage" toggle
+  (`project.featured`) did nothing on the public site (now wired to sort
+  that project first and render it at 16:9, matching what the admin copy
+  already promised — no live project currently has the flag set, so this
+  changed nothing about today's rendered output); the homepage `<title>`
+  was duplicated because its own complete title still got the root
+  layout's `%s | Sajjadul Islam` template applied (fixed with
+  `title.absolute`); `settings?.seo.title` was missing a `?.` before
+  `.title` in both the homepage and the admin SEO form itself — the second
+  one would have locked the owner out of the one page that fixes it;
+  `generateMetadata` and the page body were independently calling the same
+  5-query data loader (10 DB queries per homepage request, now wrapped in
+  `cache()`); no `error.tsx` existed anywhere; removed 15 confirmed-unused
+  dependencies (all `@radix-ui/*`, `class-variance-authority`, `cmdk`,
+  `react-dropzone` — zero imports anywhere in `src/`, consistent with the
+  "shadcn is for functional primitives only" rule below).
+- **Hero terminal responsive fix** — `HeroVisual` (the floating code panel)
+  was visible at every width, but the grid only puts it beside the text at
+  `lg` (1024px); below that it stacked in its own full-width row under all
+  the text content, and with an unconditional `min-h-screen` this made the
+  hero ~1235px tall on a 375px phone before the next section even started.
+  Now hidden below `lg` (matching `ScrollCue`'s existing cutoff, for the
+  same reason) with `min-h-screen` restricted to `lg:` too, so mobile
+  height is content-driven. Desktop is pixel-identical to before.
+- **Favicon** — `app/icon.svg`, `app/apple-icon.png`, `app/favicon.ico` now
+  derive from `Logo.tsx`'s actual monogram (bordered box, "S", opposing
+  corner-tick brackets) instead of a generic unrelated placeholder. The "S"
+  itself was extracted from JetBrains Mono Bold's real glyph outline via
+  `opentype.js` rather than hand-approximated. `icon.svg` adapts dark/light
+  via an embedded `prefers-color-scheme` media query — one file, not a
+  parallel light/dark asset system. Added the `viewport` export
+  (`themeColor` light/dark pair) to `layout.tsx` — `metadata.themeColor` is
+  deprecated as of Next 14; this project's own
+  `node_modules/next/dist/docs` was the source for the current API, not
+  training-data memory (see the NOT-the-Next.js-you-know block below).
+
+Every pass was verified against real production data (this dev environment
+connects to the live MongoDB Atlas cluster, not a local database — no test
+data was ever written to it) and a local production build (`next build` +
+`next start`), not just `next dev`. `tsc --noEmit`, `eslint`, and
+`npm audit` are all clean as of this entry.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know
