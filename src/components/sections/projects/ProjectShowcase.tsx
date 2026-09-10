@@ -163,7 +163,7 @@ export function ProjectShowcase({
                         src={project.coverImage}
                         alt={project.title}
                         chromeLabel={getHostname(live) ?? project.title}
-                        aspect="4/3"
+                        aspect={project.featured ? "16/9" : "4/3"}
                         frameLabel={`FIG.${displayIndex} — ${project.year}`}
                     />
                 </Link>

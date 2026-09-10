@@ -13,7 +13,13 @@ export const revalidate = 300;
 async function getProject(slug: string): Promise<IProject | null> {
     try {
         await connectDB();
-        const doc = await Project.findOne({ slug }).lean();
+        // Same `{ $ne: false }` gate the listing queries use — an
+        // unpublished project must 404 on its direct URL too, not just be
+        // absent from the index list.
+        const doc = await Project.findOne({
+            slug,
+            published: { $ne: false },
+        }).lean();
         return doc ? JSON.parse(JSON.stringify(doc)) : null;
     } catch {
         return null;

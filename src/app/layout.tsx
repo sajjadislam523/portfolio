@@ -24,7 +24,6 @@ async function getSettings() {
         const doc = (await SiteSettings.findOne(
             {},
         ).lean()) as ISiteSettings | null;
-        console.log("Fetched settings:", doc);
         return doc;
     } catch {
         return null;

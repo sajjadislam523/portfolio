@@ -57,10 +57,11 @@ export function ContactForm() {
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div className="flex flex-col gap-2">
-          <label className={labelClass} style={{ color: 'var(--text-tertiary)' }}>
+          <label htmlFor="contact-name" className={labelClass} style={{ color: 'var(--text-tertiary)' }}>
             Name <span style={{ color: 'var(--accent)' }}>*</span>
           </label>
           <input
+            id="contact-name"
             name="name"
             placeholder="Your name"
             required
@@ -68,10 +69,11 @@ export function ContactForm() {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label className={labelClass} style={{ color: 'var(--text-tertiary)' }}>
+          <label htmlFor="contact-email" className={labelClass} style={{ color: 'var(--text-tertiary)' }}>
             Email <span style={{ color: 'var(--accent)' }}>*</span>
           </label>
           <input
+            id="contact-email"
             name="email"
             type="email"
             placeholder="you@example.com"
@@ -82,10 +84,11 @@ export function ContactForm() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className={labelClass} style={{ color: 'var(--text-tertiary)' }}>
+        <label htmlFor="contact-subject" className={labelClass} style={{ color: 'var(--text-tertiary)' }}>
           Subject <span style={{ color: 'var(--accent)' }}>*</span>
         </label>
         <input
+          id="contact-subject"
           name="subject"
           placeholder="What's this about?"
           required
@@ -94,10 +97,11 @@ export function ContactForm() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className={labelClass} style={{ color: 'var(--text-tertiary)' }}>
+        <label htmlFor="contact-message" className={labelClass} style={{ color: 'var(--text-tertiary)' }}>
           Message <span style={{ color: 'var(--accent)' }}>*</span>
         </label>
         <textarea
+          id="contact-message"
           name="message"
           placeholder="Tell me about your project or question..."
           required
