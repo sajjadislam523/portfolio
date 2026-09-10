@@ -26,7 +26,6 @@ export default async function PublicLayout({
         <div className="min-h-screen flex flex-col">
             <ScrollProgress />
             <NavClient
-                availableForWork={settings?.availableForWork ?? false}
                 resumeUrl={settings?.resumeUrl ?? ""}
                 name={settings?.name}
                 email={settings?.email}

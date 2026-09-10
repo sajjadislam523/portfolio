@@ -41,7 +41,6 @@ interface SocialLink {
 }
 
 interface NavClientProps {
-    availableForWork: boolean;
     resumeUrl: string;
     name?: string;
     email?: string;
@@ -49,7 +48,6 @@ interface NavClientProps {
 }
 
 export function NavClient({
-    availableForWork,
     resumeUrl,
     name = "Sajjadul Islam",
     email,
@@ -249,7 +247,7 @@ export function NavClient({
                     </div>
 
                     {/* Desktop right side — thin-bordered ghost controls, no filled
-                        backgrounds; "Available" is a status dot, not a badge. */}
+                        backgrounds. */}
                     <div className="hidden md:flex items-center gap-4">
                         <button
                             type="button"
@@ -275,21 +273,6 @@ export function NavClient({
                                 <Sun className="w-3.5 h-3.5" />
                             )}
                         </button>
-                        {availableForWork && (
-                            <div
-                                className="flex items-center gap-1.5 font-mono text-xs"
-                                style={{ color: "var(--text-secondary)" }}
-                            >
-                                <span
-                                    className="w-1.5 h-1.5 rounded-full animate-pulse"
-                                    style={{
-                                        background: "var(--accent)",
-                                        boxShadow: "0 0 6px var(--accent-glow)",
-                                    }}
-                                />
-                                Available
-                            </div>
-                        )}
                         {resumeUrl && (
                             <a
                                 href={resumeUrl}
@@ -504,8 +487,8 @@ export function NavClient({
                                 })}
                             </StaggerContainer>
 
-                            {/* Divider, then status + real social links (not
-                                every route, just what's actually configured) */}
+                            {/* Divider, then real social links (not every
+                                route, just what's actually configured) */}
                             <motion.div
                                 className="mt-auto flex flex-col pt-10"
                                 initial={{ opacity: 0 }}
@@ -517,22 +500,6 @@ export function NavClient({
                                     style={{ background: "var(--line)" }}
                                     aria-hidden
                                 />
-
-                                {availableForWork && (
-                                    <div
-                                        className="mb-5 flex items-center gap-2 font-mono text-eyebrow uppercase"
-                                        style={{ color: "var(--text-tertiary)" }}
-                                    >
-                                        <span
-                                            className="h-1.5 w-1.5 rounded-full animate-pulse"
-                                            style={{
-                                                background: "var(--accent)",
-                                                boxShadow: "0 0 6px var(--accent-glow)",
-                                            }}
-                                        />
-                                        Available
-                                    </div>
-                                )}
 
                                 <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
                                     {menuLinks.map((link) => (
