@@ -2,11 +2,25 @@ import { connectDB, SiteSettings } from "@/lib/db";
 import { ISiteSettings } from "@/types";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Space_Grotesk } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
 import "./globals.css";
+
+// `metadata.themeColor` is deprecated as of Next 14 — the `viewport` export
+// is the current API. Same --bg-primary values as globals.css's light/dark
+// blocks, so the browser chrome (mobile status bar, address bar) matches
+// whichever theme the OS/browser prefers. Static, not tied to the in-page
+// theme toggle — no site sets that dynamically, since `viewport` renders
+// once per request and there's no supported way to patch it from client JS.
+export const viewport: Viewport = {
+    themeColor: [
+        { media: "(prefers-color-scheme: light)", color: "#fafaf9" },
+        { media: "(prefers-color-scheme: dark)", color: "#10141b" },
+    ],
+    colorScheme: "dark light",
+};
 
 // Two voices, site-wide: Geist (sans + mono, reading copy and technical
 // labels) and Space Grotesk (display, headings and the hero). No third
@@ -24,7 +38,6 @@ async function getSettings() {
         const doc = (await SiteSettings.findOne(
             {},
         ).lean()) as ISiteSettings | null;
-        console.log("Fetched settings:", doc);
         return doc;
     } catch {
         return null;

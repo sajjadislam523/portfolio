@@ -9,6 +9,13 @@ import { ChevronDown } from "lucide-react";
  * motion in this pass, restrained to a slow, small vertical bob so it reads
  * as a cue, not a distraction. Kept as its own "use client" island (like
  * HeroStars) so Hero itself stays a server component.
+ *
+ * `bottom-6` is relative to the hero `<section>`, not the viewport. That
+ * only lines up with the true screen edge once the two-column `lg:`
+ * layout keeps the section close to `min-h-screen`; below that, Hero's
+ * content stacks into a single column taller than one screen, and the cue
+ * lands on top of HeroVisual's stats row instead of below it. Shown only
+ * from `lg` up so it never overlaps real content.
  */
 export function ScrollCue() {
     const shouldReduceMotion = useReducedMotionSafe();
@@ -16,7 +23,7 @@ export function ScrollCue() {
     return (
         <motion.a
             href="#about"
-            className="absolute inset-x-0 bottom-6 z-10 hidden flex-col items-center gap-2 transition-opacity hover:opacity-70 sm:flex"
+            className="absolute inset-x-0 bottom-6 z-10 hidden flex-col items-center gap-2 transition-opacity hover:opacity-70 lg:flex"
             style={{ color: "var(--hero-fg-faint)" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

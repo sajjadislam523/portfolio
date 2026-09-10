@@ -217,10 +217,11 @@ export function NavClient({
                         }}
                     />
 
-                    {/* Mark */}
+                    {/* Mark — py-2.5 only pads the tap target to ~44px; the
+                        visible logo/wordmark stays centered at the same spot. */}
                     <Link
                         href="/"
-                        className="relative z-10 col-start-1 flex items-center gap-2.5 justify-self-start"
+                        className="relative z-10 col-start-1 flex items-center gap-2.5 py-2.5 justify-self-start"
                     >
                         <Logo size={26} />
                         <span

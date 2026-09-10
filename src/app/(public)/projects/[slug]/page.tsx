@@ -13,7 +13,13 @@ export const revalidate = 300;
 async function getProject(slug: string): Promise<IProject | null> {
     try {
         await connectDB();
-        const doc = await Project.findOne({ slug }).lean();
+        // Same `{ $ne: false }` gate the listing queries use — an
+        // unpublished project must 404 on its direct URL too, not just be
+        // absent from the index list.
+        const doc = await Project.findOne({
+            slug,
+            published: { $ne: false },
+        }).lean();
         return doc ? JSON.parse(JSON.stringify(doc)) : null;
     } catch {
         return null;
@@ -125,15 +131,15 @@ export default async function ProjectDetailPage({
 
                     {/* Header */}
                     <div className="mb-8">
-                        <div className="flex items-start justify-between gap-4 mb-3">
+                        <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4 mb-3">
                             <h1
-                                className="text-display font-display leading-tight"
+                                className="text-h1 sm:text-display font-display leading-tight wrap-break-word"
                                 style={{ color: "var(--text-primary)" }}
                             >
                                 {project.title}
                             </h1>
                             <span
-                                className="text-sm font-mono mt-3 shrink-0"
+                                className="text-sm font-mono sm:mt-3 shrink-0"
                                 style={{ color: "var(--text-tertiary)" }}
                             >
                                 {project.year}

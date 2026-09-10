@@ -34,14 +34,18 @@ import type {
     SkillCategory,
 } from "@/types";
 import type { Metadata } from "next";
-import type { CSSProperties } from "react";
+import { cache, type CSSProperties } from "react";
 
 // Cache the homepage at the edge for 5 minutes.
 // This means Vercel serves it from CDN on cold starts instead of
 // hitting the serverless function + MongoDB every time.
 export const revalidate = 300;
 
-async function getData() {
+// `generateMetadata` and the page component both call this — without
+// `cache()` that's 5 Mongoose queries twice (10 total) per render, since
+// Mongoose calls aren't deduped by Next's fetch cache the way `fetch()`
+// calls are. `cache()` memoizes per request instead.
+const getData = cache(async () => {
     try {
         await connectDB();
         // `{ $ne: false }` (not `{ $eq: true }`) so documents saved before
@@ -105,9 +109,14 @@ async function getData() {
             settings: settingsDoc
                 ? (JSON.parse(JSON.stringify(settingsDoc)) as ISiteSettings)
                 : null,
-            featuredProjects: allProjects.filter(
-                (p) => p.status === "featured",
-            ),
+            // The admin "Lead row on the homepage" toggle (project.featured)
+            // promises this project renders first — stable-sort it to the
+            // front rather than just filtering, so `.order` still decides
+            // everything else. `clearOtherFeatured()` (features/projects/
+            // actions.ts) keeps this true for at most one project at a time.
+            featuredProjects: allProjects
+                .filter((p) => p.status === "featured")
+                .sort((a, b) => Number(b.featured) - Number(a.featured)),
             archivedProjects: allProjects.filter(
                 (p) => p.status === "archived",
             ),
@@ -135,15 +144,28 @@ async function getData() {
             secondaryExplorations: [] as IExploration[],
         };
     }
-}
+});
+
+const DEFAULT_DESCRIPTION =
+    "I build production-grade digital products and web experiences where engineering meets thoughtful product design.";
 
 export async function generateMetadata(): Promise<Metadata> {
     const { settings } = await getData();
+    // `||`, not `??` — an SEO field an admin has cleared back to its schema
+    // default ("") should fall back too, not render an empty <title>/description.
+    const seo = settings?.seo;
+    const title = seo?.title || "Sajjadul Islam — Full Stack Engineer";
     return {
-        title: settings?.seo.title ?? "Sajjadul Islam — Full Stack Engineer",
-        description: settings?.seo.description,
+        // `absolute` bypasses the root layout's "%s | Sajjadul Islam"
+        // template — without it the homepage's own already-complete title
+        // gets the site name appended a second time ("… Engineer | Sajjadul
+        // Islam"). Every other page (already just a plain string) is
+        // supposed to get that suffix; the homepage IS the site, so it
+        // shouldn't.
+        title: { absolute: title },
+        description: seo?.description || DEFAULT_DESCRIPTION,
         openGraph: {
-            images: settings?.seo.ogImage ? [settings.seo.ogImage] : [],
+            images: seo?.ogImage ? [seo.ogImage] : [],
         },
     };
 }

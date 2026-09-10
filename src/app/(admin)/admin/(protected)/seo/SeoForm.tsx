@@ -11,12 +11,12 @@ import { toast } from "sonner";
 
 export function SeoForm({ settings }: { settings: ISiteSettings | null }) {
     const [isPending, startTransition] = useTransition();
-    const [title, setTitle] = useState(settings?.seo.title ?? "");
-    const [description, setDescription] = useState(settings?.seo.description ?? "");
-    const [keywords, setKeywords] = useState(settings?.seo.keywords.join(", ") ?? "");
+    const [title, setTitle] = useState(settings?.seo?.title ?? "");
+    const [description, setDescription] = useState(settings?.seo?.description ?? "");
+    const [keywords, setKeywords] = useState(settings?.seo?.keywords?.join(", ") ?? "");
     // ogImage is persisted immediately on upload (see handleOgImageUpload) —
     // not part of the main submit, same reasoning as the old SettingsForm.
-    const [ogImageUrl, setOgImageUrl] = useState(settings?.seo.ogImage ?? "");
+    const [ogImageUrl, setOgImageUrl] = useState(settings?.seo?.ogImage ?? "");
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
