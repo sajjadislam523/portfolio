@@ -6,16 +6,27 @@ import { skillSchema } from '@/lib/validations'
 import { requireSession } from '@/features/auth/session'
 import type { ActionResult } from '@/lib/utils'
 import { serialiseDoc } from '@/lib/utils'
+import { deriveSkillTier } from '@/components/sections/stack/constants'
 import type { ISkill } from '@/types'
 
 function withVisibleDefault(doc: ISkill): ISkill {
   return { ...doc, visible: doc.visible ?? true }
 }
 
+// Derives the correct tier for a skill document that predates the
+// Skill.proficiency -> Skill.tier rename and hasn't been migrated yet (see
+// scripts/migrate-skill-tiers.ts), so the admin panel shows an accurate tier
+// pill instead of just avoiding a crash on a missing one.
+function withTierDefault(doc: ISkill & { proficiency?: string }): ISkill {
+  return { ...doc, tier: deriveSkillTier(doc) }
+}
+
 export async function getSkills(): Promise<ISkill[]> {
   await connectDB()
   const docs = await Skill.find().sort({ order: 1 }).lean()
-  return serialiseDoc<ISkill[]>(docs).map(withVisibleDefault)
+  return serialiseDoc<(ISkill & { proficiency?: string })[]>(docs)
+    .map(withVisibleDefault)
+    .map(withTierDefault)
 }
 
 export async function createSkill(formData: FormData): Promise<ActionResult> {

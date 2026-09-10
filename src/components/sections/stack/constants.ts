@@ -47,3 +47,32 @@ export const TIER_LABEL_COLOR: Record<Tier, string> = {
     "working-knowledge": "var(--text-tertiary)",
     exploring: "var(--text-tertiary)",
 };
+
+// Mirrors scripts/migrate-skill-tiers.ts's mapping exactly. Kept here (not
+// just in the migration script) so a skill document that predates the
+// Skill.proficiency -> Skill.tier rename and hasn't been migrated in the
+// database yet still gets the *correct* tier at read time — not just a
+// safe-but-wrong fallback — everywhere ISkill data is read (public site,
+// admin panel), with no dependency on the migration having been run.
+const PROFICIENCY_TO_TIER: Record<string, Tier> = {
+    expert: "core",
+    proficient: "working-knowledge",
+    familiar: "working-knowledge",
+};
+
+/** A skill shape wide enough to read either the current `tier` field or the
+ *  legacy `proficiency` field a pre-migration document might still have. */
+interface SkillTierSource {
+    tier?: string;
+    proficiency?: string;
+}
+
+export function deriveSkillTier(skill: SkillTierSource): Tier {
+    if (skill.tier && (TIER_ORDER as string[]).includes(skill.tier)) {
+        return skill.tier as Tier;
+    }
+    if (skill.proficiency && skill.proficiency in PROFICIENCY_TO_TIER) {
+        return PROFICIENCY_TO_TIER[skill.proficiency];
+    }
+    return "working-knowledge";
+}

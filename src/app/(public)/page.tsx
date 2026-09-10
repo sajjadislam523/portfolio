@@ -10,7 +10,7 @@ import {
     ProjectFeatureRow,
     ProjectShowcase,
 } from "@/components/sections/projects/ProjectShowcase";
-import { CATEGORY_ORDER, TIER_ORDER } from "@/components/sections/stack/constants";
+import { CATEGORY_ORDER, deriveSkillTier } from "@/components/sections/stack/constants";
 import { SkillGroups } from "@/components/sections/stack/SkillGroups";
 import { TechConstellation } from "@/components/sections/stack/TechConstellation";
 import { JsonLdPerson } from "@/components/shared/JsonLd";
@@ -64,17 +64,18 @@ async function getData() {
         const experiences = JSON.parse(
             JSON.stringify(experienceDocs),
         ) as IExperience[];
-        const skills = JSON.parse(JSON.stringify(skillDocs)) as ISkill[];
-        // Safety net for any future non-additive schema change on Skill.tier
-        // (see scripts/migrate-skill-tiers.ts for the historical incident this
-        // guards against — a prior field rename left legacy production docs
-        // with no `tier` at all, and they silently failed to render anywhere
-        // instead of falling back to the "no skills" empty state). A skill
-        // with a missing/invalid tier defaults to "working-knowledge" rather
-        // than disappearing.
-        const validTiers = new Set<string>(TIER_ORDER);
+        const skills = JSON.parse(JSON.stringify(skillDocs)) as (ISkill & {
+            proficiency?: string;
+        })[];
+        // Derives the correct tier even for a skill document that predates
+        // the Skill.proficiency -> Skill.tier rename and hasn't been migrated
+        // in the database yet (see scripts/migrate-skill-tiers.ts) — reads
+        // the legacy `proficiency` field, still present on the raw Mongo
+        // document even though it's no longer in the ISkill type, instead of
+        // just falling back to a generic tier and losing the constellation's
+        // "core" anchors/connections for every unmigrated skill.
         for (const s of skills) {
-            if (!validTiers.has(s.tier)) s.tier = "working-knowledge";
+            s.tier = deriveSkillTier(s);
         }
         const activeExplorations = JSON.parse(
             JSON.stringify(explorationDocs),
