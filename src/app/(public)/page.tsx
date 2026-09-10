@@ -10,7 +10,7 @@ import {
     ProjectFeatureRow,
     ProjectShowcase,
 } from "@/components/sections/projects/ProjectShowcase";
-import { CATEGORY_ORDER } from "@/components/sections/stack/constants";
+import { CATEGORY_ORDER, TIER_ORDER } from "@/components/sections/stack/constants";
 import { SkillGroups } from "@/components/sections/stack/SkillGroups";
 import { TechConstellation } from "@/components/sections/stack/TechConstellation";
 import { JsonLdPerson } from "@/components/shared/JsonLd";
@@ -65,6 +65,17 @@ async function getData() {
             JSON.stringify(experienceDocs),
         ) as IExperience[];
         const skills = JSON.parse(JSON.stringify(skillDocs)) as ISkill[];
+        // Safety net for any future non-additive schema change on Skill.tier
+        // (see scripts/migrate-skill-tiers.ts for the historical incident this
+        // guards against — a prior field rename left legacy production docs
+        // with no `tier` at all, and they silently failed to render anywhere
+        // instead of falling back to the "no skills" empty state). A skill
+        // with a missing/invalid tier defaults to "working-knowledge" rather
+        // than disappearing.
+        const validTiers = new Set<string>(TIER_ORDER);
+        for (const s of skills) {
+            if (!validTiers.has(s.tier)) s.tier = "working-knowledge";
+        }
         const activeExplorations = JSON.parse(
             JSON.stringify(explorationDocs),
         ) as IExploration[];
@@ -361,33 +372,43 @@ export default async function HomePage() {
             </section>
 
             {/* ── Currently exploring — activity, not another technology
-                category; distinct from Stack's "what I use". Omitted
-                entirely when nothing is marked active, rather than showing
-                an empty header — this is bonus content, not a core section
-                every visit is guaranteed to have something to show. ─────── */}
-            {primaryExploration && (
-                <section id="exploring" className="section relative overflow-hidden">
-                    <SectionAtmosphere variant="orbital" label="// exploration_log" />
+                category; distinct from Stack's "what I use". The section
+                wrapper (and its #exploring anchor, which NavClient's
+                "Exploring" nav link points at) always renders, even with no
+                active entry, so the nav link is never dead — only the
+                content inside is conditional; this is bonus content, not
+                a core section every visit is guaranteed to have something
+                to show. ──────────────────────────────────────────────── */}
+            <section id="exploring" className="section relative overflow-hidden">
+                <SectionAtmosphere variant="orbital" label="// exploration_log" />
 
-                    <div className="container relative z-10">
-                        <ScrollReveal>
-                            <span
-                                className="mb-14 block font-mono text-eyebrow uppercase"
-                                style={{ color: "var(--accent)" }}
-                            >
-                                04 / Currently exploring
-                            </span>
-                        </ScrollReveal>
+                <div className="container relative z-10">
+                    <ScrollReveal>
+                        <span
+                            className="mb-14 block font-mono text-eyebrow uppercase"
+                            style={{ color: "var(--accent)" }}
+                        >
+                            04 / Currently exploring
+                        </span>
+                    </ScrollReveal>
 
+                    {primaryExploration ? (
                         <ScrollReveal>
                             <CurrentlyExploring
                                 primary={primaryExploration}
                                 secondary={secondaryExplorations}
                             />
                         </ScrollReveal>
-                    </div>
-                </section>
-            )}
+                    ) : (
+                        <p
+                            className="text-sm py-16 text-center"
+                            style={{ color: "var(--text-tertiary)" }}
+                        >
+                            Nothing marked as currently exploring — check back soon.
+                        </p>
+                    )}
+                </div>
+            </section>
 
             {/* ── Contact — the emotional and visual conclusion of the site ──────── */}
             <section

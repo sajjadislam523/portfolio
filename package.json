@@ -9,7 +9,11 @@
         "start": "next start",
         "lint": "eslint",
         "seed": "tsx scripts/seed.ts",
-        "seed:check": "tsx -e \"import { connectDB } from ./src/lib/db/connect.ts; connectDB().then(() => { console.log(\"DB OK\"); process.exit(0); })\""
+        "seed:check": "tsx -e \"import { connectDB } from ./src/lib/db/connect.ts; connectDB().then(() => { console.log(\"DB OK\"); process.exit(0); })\"",
+        "migrate:skill-tier": "tsx scripts/migrate-skill-tiers.ts",
+        "migrate:exploration-status": "tsx scripts/migrate-exploration-status.ts",
+        "migrate:resume-filename": "tsx scripts/migrate-resume-filename.ts",
+        "backfill:cms-defaults": "tsx scripts/backfill-cms-defaults.ts"
     },
     "dependencies": {
         "@hookform/resolvers": "^5.4.0",

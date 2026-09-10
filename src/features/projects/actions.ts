@@ -206,6 +206,8 @@ export async function duplicateProject(id: string): Promise<ActionResult> {
     });
 
     revalidatePath("/admin/projects");
+    revalidatePath("/projects");
+    revalidatePath("/");
     return { success: true };
 }
 
@@ -232,5 +234,7 @@ export async function reorderProject(
     await current.save();
     await swapWith.save();
     revalidatePath("/admin/projects");
+    revalidatePath("/projects");
+    revalidatePath("/");
     return { success: true };
 }
