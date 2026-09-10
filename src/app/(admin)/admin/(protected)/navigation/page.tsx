@@ -9,12 +9,12 @@ import Link from "next/link";
 
 export const metadata = { title: "Navigation" };
 
-// The public nav bar's links (Projects/Experience/Stack/Exploring/Contact)
-// are wired directly to real page sections in code — reordering, renaming,
-// or hiding one is a code change, not content, so this page doesn't try to
-// make navigation itself dynamic. What IS real data is surfaced here
-// instead: the things that determine what actually shows in the nav and
-// on the page right now.
+// The public nav bar's links (Work/Experience/Stack/Now/Contact) are wired
+// directly to real page sections in code — reordering, renaming, or hiding
+// one is a code change, not content, so this page doesn't try to make
+// navigation itself dynamic. What IS real data is surfaced here instead:
+// the things that determine what actually shows in the nav and on the page
+// right now.
 export default async function AdminNavigationPage() {
     await requireSession();
     await connectDB();
@@ -83,7 +83,7 @@ export default async function AdminNavigationPage() {
 
             <AdminCard title="Nav structure" className="mt-4">
                 <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                    The nav bar&apos;s links (Projects, Experience, Stack, Exploring, Contact) are wired
+                    The nav bar&apos;s links (Work, Experience, Stack, Now, Contact) are wired
                     to real sections on the single-page site and numbered in code — reordering or
                     renaming them is a code change, not something this page edits. Everything above
                     is the actual content that determines what shows.
