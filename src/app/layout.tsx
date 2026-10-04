@@ -3,8 +3,8 @@ import { ISiteSettings } from "@/types";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { Space_Grotesk } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 
@@ -52,11 +52,9 @@ export async function generateMetadata(): Promise<Metadata> {
         s?.seo?.description ??
         "Full stack engineer specialising in React, Next.js, TypeScript and Node.js. Building production-grade web applications.";
     const ogImage = s?.seo?.ogImage ?? "";
-    const url =
-        process.env.NEXT_PUBLIC_URL ?? "https://sajjadulislam.vercel.app";
+    const url = process.env.NEXT_PUBLIC_URL ?? "https://sajjadul.is-a.dev";
 
     return {
-        // metadataBase is REQUIRED — without it Next.js can't resolve relative OG image paths
         metadataBase: new URL(url),
         title: {
             template: "%s | Sajjadul Islam",

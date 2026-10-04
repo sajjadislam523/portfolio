@@ -164,6 +164,10 @@ export async function generateMetadata(): Promise<Metadata> {
         // shouldn't.
         title: { absolute: title },
         description: seo?.description || DEFAULT_DESCRIPTION,
+        // Set here, not in the root layout — a layout's `alternates` is
+        // inherited by every child page that doesn't override it, which
+        // would mark each project page as a duplicate of the homepage.
+        alternates: { canonical: "/" },
         openGraph: {
             images: seo?.ogImage ? [seo.ogImage] : [],
         },
@@ -223,7 +227,7 @@ export default async function HomePage() {
         <>
             <JsonLdPerson
                 name={name}
-                url={process.env.NEXT_PUBLIC_URL ?? "https://sajjadulislam.dev"}
+                url={process.env.NEXT_PUBLIC_URL ?? "https://sajjadul.is-a.dev"}
                 email={settings?.email}
                 jobTitle={latestRole?.role ?? "Full Stack Engineer"}
                 description={bio || undefined}

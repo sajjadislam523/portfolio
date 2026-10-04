@@ -14,8 +14,11 @@ const nextConfig: NextConfig = {
                 "localhost:3000",
                 "127.0.0.1:3000",
                 "192.168.1.219:3000",
-                "https://sajjadulislam.vercel.app",
-                "https://sajjadulislamportfolio-eyzlbz60d-sajjadul-islams-projects.vercel.app/",
+                // Bare hosts — Next compares these against the request
+                // origin's `host`, so a scheme or trailing slash never matches.
+                "sajjadulislam.vercel.app",
+                "sajjadulislamportfolio-eyzlbz60d-sajjadul-islams-projects.vercel.app",
+                "sajjadul.is-a.dev",
             ],
         },
     },
