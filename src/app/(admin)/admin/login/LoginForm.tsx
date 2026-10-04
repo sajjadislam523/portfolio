@@ -87,7 +87,7 @@ export function LoginForm() {
                         className="text-sm mt-1"
                         style={{ color: "var(--text-tertiary)" }}
                     >
-                        sajjadulislam.dev
+                        sajjadul.is-a.dev
                     </p>
                 </div>
 
