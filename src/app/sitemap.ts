@@ -14,7 +14,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let projectRoutes: MetadataRoute.Sitemap = []
   try {
     await connectDB()
-    const projects = await Project.find({ status: 'featured' })
+    // Same `published` gate as the homepage and /projects/[slug] — an
+    // unpublished project 404s, so it mustn't be advertised here either.
+    const projects = await Project.find({ status: 'featured', published: { $ne: false } })
       .select('slug updatedAt')
       .lean()
 
