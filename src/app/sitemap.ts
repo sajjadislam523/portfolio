@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { connectDB, Project } from '@/lib/db'
 
-const BASE_URL = process.env.NEXT_PUBLIC_URL ?? 'https://sajjadulislam.dev'
+const BASE_URL = process.env.NEXT_PUBLIC_URL ?? 'https://sajjadul.is-a.dev'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // /projects, /experience, /stack, /contact now just redirect back to

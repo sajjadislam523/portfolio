@@ -13,7 +13,7 @@
 [![Vercel](https://img.shields.io/badge/Vercel-black?style=flat-square&logo=vercel)](https://vercel.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
-[Live Site](https://sajjadulislam.vercel.app) · [Admin Panel](https://sajjadulislam.vercel.app/admin) · [Report a Bug](https://github.com/sajjadislam523/portfolio/issues)
+[Live Site](https://sajjadul.is-a.dev) · [Admin Panel](https://sajjadul.is-a.dev/admin) · [Report a Bug](https://github.com/sajjadislam523/portfolio/issues)
 
 </div>
 
@@ -34,18 +34,25 @@ This isn't a template — it's a fully custom-built platform, designed around on
 
 ## Contents
 
-- [Features](#features)
-- [Design language](#design-language)
-- [Tech stack](#tech-stack)
-- [Quick start](#quick-start)
-- [Environment variables](#environment-variables)
-- [Deployment](#deployment)
-- [Admin panel](#admin-panel)
-- [Command palette](#command-palette)
-- [Project structure](#project-structure)
-- [Scripts](#scripts)
-- [Local dev workflow](#local-dev-workflow)
-- [License](#license)
+- [Sajjadul Islam — Portfolio Platform](#sajjadul-islam--portfolio-platform)
+    - [Contents](#contents)
+    - [Features](#features)
+        - [Public site](#public-site)
+        - [Admin CMS](#admin-cms)
+        - [Under the hood](#under-the-hood)
+    - [Design language](#design-language)
+    - [Tech stack](#tech-stack)
+    - [Quick start](#quick-start)
+    - [Environment variables](#environment-variables)
+    - [Deployment](#deployment)
+        - [Vercel (recommended)](#vercel-recommended)
+        - [Docker (self-hosted / local network)](#docker-self-hosted--local-network)
+    - [Admin panel](#admin-panel)
+    - [Command palette](#command-palette)
+    - [Project structure](#project-structure)
+    - [Scripts](#scripts)
+    - [Local dev workflow](#local-dev-workflow)
+    - [License](#license)
 
 ## Features
 
@@ -85,23 +92,23 @@ This isn't a template — it's a fully custom-built platform, designed around on
 Everything under `/admin`, protected by JWT auth, organized into four groups
 (Content / Media / Site / System) plus a standalone dashboard:
 
-| Group | Section | What it manages |
-| --- | --- | --- |
-| — | **Dashboard** | Stats overview + recent messages |
-| Content | **Profile** | Name, title, bio, avatar |
-| Content | **Hero** | Landing headline, subheading, terminal-card copy |
-| Content | **Projects** | Full CRUD — slug, tagline, overview, challenges, solutions, stack, links, gallery images, published/featured/archived state |
-| Content | **Experience** | Inline expandable work-history manager |
-| Content | **Stack** (Skills) | Category-grouped, with proficiency tiers |
-| Content | **Currently Exploring** | What's being learned right now — reorderable, with an active/primary/completed state |
-| Content | **Certifications** | Simple list manager |
-| Media | **Files** | Shared media library (Vercel Blob-backed) used by project galleries, avatar, OG image |
-| Media | **Resume** | Upload new resume versions, pick the active one, delete old versions — the public Resume button always points at whichever version is marked active |
-| Site | **Navigation** | Live state of what drives the public nav bar (resume link, availability, Currently Exploring) |
-| Site | **Social Links** | GitHub, LinkedIn, etc. |
-| Site | **SEO** | Title, description, keywords, OG image |
-| System | **Messages** | Contact-form inbox — read / archive / delete, with toast feedback on each action |
-| System | **Settings** | Site-wide system settings (availability toggle, etc.) |
+| Group   | Section                 | What it manages                                                                                                                                     |
+| ------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| —       | **Dashboard**           | Stats overview + recent messages                                                                                                                    |
+| Content | **Profile**             | Name, title, bio, avatar                                                                                                                            |
+| Content | **Hero**                | Landing headline, subheading, terminal-card copy                                                                                                    |
+| Content | **Projects**            | Full CRUD — slug, tagline, overview, challenges, solutions, stack, links, gallery images, published/featured/archived state                         |
+| Content | **Experience**          | Inline expandable work-history manager                                                                                                              |
+| Content | **Stack** (Skills)      | Category-grouped, with proficiency tiers                                                                                                            |
+| Content | **Currently Exploring** | What's being learned right now — reorderable, with an active/primary/completed state                                                                |
+| Content | **Certifications**      | Simple list manager                                                                                                                                 |
+| Media   | **Files**               | Shared media library (Vercel Blob-backed) used by project galleries, avatar, OG image                                                               |
+| Media   | **Resume**              | Upload new resume versions, pick the active one, delete old versions — the public Resume button always points at whichever version is marked active |
+| Site    | **Navigation**          | Live state of what drives the public nav bar (resume link, availability, Currently Exploring)                                                       |
+| Site    | **Social Links**        | GitHub, LinkedIn, etc.                                                                                                                              |
+| Site    | **SEO**                 | Title, description, keywords, OG image                                                                                                              |
+| System  | **Messages**            | Contact-form inbox — read / archive / delete, with toast feedback on each action                                                                    |
+| System  | **Settings**            | Site-wide system settings (availability toggle, etc.)                                                                                               |
 
 Changes go live on the public site within 5 minutes via ISR, or immediately
 via on-demand revalidation for anything that touches the resume or hero —
@@ -148,17 +155,17 @@ and colors stripped — hierarchy has to survive on type and spacing alone.
 
 ## Tech stack
 
-| Layer | Technology |
-| --- | --- |
-| Framework | Next.js 16 (App Router, Turbopack) |
-| Language | TypeScript |
-| Styling | TailwindCSS v4 + CSS custom properties |
-| Database | MongoDB + Mongoose |
-| Auth | JWT in httpOnly cookies |
-| Animation | Framer Motion + CSS transitions |
-| Forms | React Hook Form + Zod |
-| File storage | Vercel Blob |
-| Deployment | Docker / Vercel |
+| Layer        | Technology                             |
+| ------------ | -------------------------------------- |
+| Framework    | Next.js 16 (App Router, Turbopack)     |
+| Language     | TypeScript                             |
+| Styling      | TailwindCSS v4 + CSS custom properties |
+| Database     | MongoDB + Mongoose                     |
+| Auth         | JWT in httpOnly cookies                |
+| Animation    | Framer Motion + CSS transitions        |
+| Forms        | React Hook Form + Zod                  |
+| File storage | Vercel Blob                            |
+| Deployment   | Docker / Vercel                        |
 
 ## Quick start
 
@@ -181,24 +188,24 @@ npm run seed
 npm run dev
 ```
 
-| URL | What's there |
-| --- | --- |
-| `http://localhost:3000` | Public portfolio |
-| `http://localhost:3000/admin/login` | Admin login |
+| URL                                 | What's there     |
+| ----------------------------------- | ---------------- |
+| `http://localhost:3000`             | Public portfolio |
+| `http://localhost:3000/admin/login` | Admin login      |
 
 ## Environment variables
 
 Copy `.env.local.example` to `.env.local` and fill these in:
 
-| Variable | Required | Description |
-| --- | --- | --- |
-| `MONGODB_URI` | Yes | MongoDB connection string |
-| `JWT_SECRET` | Yes | 64-char random hex. Generate with `node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"` |
-| `ADMIN_EMAIL` | Yes, for seeding | Admin login email — used once by `npm run seed` to create the account |
-| `ADMIN_PASSWORD` | Yes, for seeding | Admin password — hashed by the seed script, change it after first login |
-| `NEXT_PUBLIC_URL` | Yes | Full deployment URL, no trailing slash — used for sitemap, OG images, metadata |
-| `BLOB_READ_WRITE_TOKEN` | Optional | Vercel Blob token, for resume/image uploads. Leave empty to skip upload functionality |
-| `NEXT_PUBLIC_ANALYTICS_ENABLED` | Optional | Set to `true` to enable page-view tracking to MongoDB |
+| Variable                        | Required         | Description                                                                                                  |
+| ------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------ |
+| `MONGODB_URI`                   | Yes              | MongoDB connection string                                                                                    |
+| `JWT_SECRET`                    | Yes              | 64-char random hex. Generate with `node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"` |
+| `ADMIN_EMAIL`                   | Yes, for seeding | Admin login email — used once by `npm run seed` to create the account                                        |
+| `ADMIN_PASSWORD`                | Yes, for seeding | Admin password — hashed by the seed script, change it after first login                                      |
+| `NEXT_PUBLIC_URL`               | Yes              | Full deployment URL, no trailing slash — used for sitemap, OG images, metadata                               |
+| `BLOB_READ_WRITE_TOKEN`         | Optional         | Vercel Blob token, for resume/image uploads. Leave empty to skip upload functionality                        |
+| `NEXT_PUBLIC_ANALYTICS_ENABLED` | Optional         | Set to `true` to enable page-view tracking to MongoDB                                                        |
 
 ## Deployment
 
@@ -234,33 +241,33 @@ The app is then reachable from any device on the network at `http://192.168.1.x:
 
 Log in at `/admin/login` with the credentials from `.env.local`.
 
-| Page | Purpose |
-| --- | --- |
-| `/admin/dashboard` | Stats overview + recent messages |
-| `/admin/profile` | Name, title, bio, avatar |
-| `/admin/hero` | Landing hero content |
-| `/admin/projects` | CRUD for portfolio projects |
-| `/admin/experience` | Work history management |
-| `/admin/skills` | Tech stack by category |
-| `/admin/exploring` | Currently-exploring list |
-| `/admin/certifications` | Courses and certifications |
-| `/admin/media` | Shared file/media library |
-| `/admin/resume` | Resume version management |
-| `/admin/navigation` | Live state of what drives the public nav |
-| `/admin/social-links` | Social profile links |
-| `/admin/seo` | SEO metadata and OG image |
-| `/admin/messages` | Contact form inbox |
-| `/admin/settings` | System settings (availability toggle, etc.) |
+| Page                    | Purpose                                     |
+| ----------------------- | ------------------------------------------- |
+| `/admin/dashboard`      | Stats overview + recent messages            |
+| `/admin/profile`        | Name, title, bio, avatar                    |
+| `/admin/hero`           | Landing hero content                        |
+| `/admin/projects`       | CRUD for portfolio projects                 |
+| `/admin/experience`     | Work history management                     |
+| `/admin/skills`         | Tech stack by category                      |
+| `/admin/exploring`      | Currently-exploring list                    |
+| `/admin/certifications` | Courses and certifications                  |
+| `/admin/media`          | Shared file/media library                   |
+| `/admin/resume`         | Resume version management                   |
+| `/admin/navigation`     | Live state of what drives the public nav    |
+| `/admin/social-links`   | Social profile links                        |
+| `/admin/seo`            | SEO metadata and OG image                   |
+| `/admin/messages`       | Contact form inbox                          |
+| `/admin/settings`       | System settings (availability toggle, etc.) |
 
 ## Command palette
 
 Open it with **⌘K** (Mac) or **Ctrl+K** (Windows/Linux) from any public page.
 
-| Command | Action |
-| --- | --- |
-| Navigate → Home / Projects / Experience / Stack / Contact | Jump to that page |
-| Download Resume | Opens the active resume PDF |
-| Switch to light/dark theme | Toggles the site theme |
+| Command                                                   | Action                      |
+| --------------------------------------------------------- | --------------------------- |
+| Navigate → Home / Projects / Experience / Stack / Contact | Jump to that page           |
+| Download Resume                                           | Opens the active resume PDF |
+| Switch to light/dark theme                                | Toggles the site theme      |
 
 ## Project structure
 
@@ -307,18 +314,18 @@ src/
 
 ## Scripts
 
-| Command | What it does |
-| --- | --- |
-| `npm run dev` | Start the dev server (Turbopack) |
-| `npm run build` | Production build |
-| `npm run start` | Run the production build |
-| `npm run lint` | ESLint |
-| `npm run seed` | Create the admin user + sample content |
-| `npm run backup:db` | Read-only snapshot of every collection before running a migration |
-| `npm run migrate:skill-tier` | One-off: migrate legacy `Skill.proficiency` → `Skill.tier` |
-| `npm run migrate:exploration-status` | One-off: backfill `Exploration.status` |
-| `npm run migrate:resume-filename` | One-off: backfill resume version filenames |
-| `npm run backfill:cms-defaults` | One-off: backfill defaults for CMS documents saved before a field existed |
+| Command                              | What it does                                                              |
+| ------------------------------------ | ------------------------------------------------------------------------- |
+| `npm run dev`                        | Start the dev server (Turbopack)                                          |
+| `npm run build`                      | Production build                                                          |
+| `npm run start`                      | Run the production build                                                  |
+| `npm run lint`                       | ESLint                                                                    |
+| `npm run seed`                       | Create the admin user + sample content                                    |
+| `npm run backup:db`                  | Read-only snapshot of every collection before running a migration         |
+| `npm run migrate:skill-tier`         | One-off: migrate legacy `Skill.proficiency` → `Skill.tier`                |
+| `npm run migrate:exploration-status` | One-off: backfill `Exploration.status`                                    |
+| `npm run migrate:resume-filename`    | One-off: backfill resume version filenames                                |
+| `npm run backfill:cms-defaults`      | One-off: backfill defaults for CMS documents saved before a field existed |
 
 ## Local dev workflow
 
@@ -339,6 +346,6 @@ MIT — see [LICENSE](LICENSE). Feel free to use this as inspiration, but please
 
 Designed & built with ❤️ by **Sajjadul Islam**
 
-[sajjadulislam.vercel.app](https://sajjadulislam.vercel.app) · [GitHub](https://github.com/sajjadislam523) · [LinkedIn](https://linkedin.com/in/sajjadislam523)
+[sajjadul.is-a.dev](https://sajjadul.is-a.dev) · [GitHub](https://github.com/sajjadislam523) · [LinkedIn](https://linkedin.com/in/sajjadislam523)
 
 </div>
