@@ -61,6 +61,8 @@ export async function generateMetadata(): Promise<Metadata> {
             default: title,
         },
         description,
+        authors: [{ name: "Sajjadul Islam", url }],
+        creator: "Sajjadul Islam",
         openGraph: {
             type: "website",
             url,
@@ -83,6 +85,9 @@ export async function generateMetadata(): Promise<Metadata> {
             index: true,
             follow: true,
             googleBot: { index: true, follow: true },
+        },
+        other: {
+            publish_date: "2026-10-05T00:00:00+06:00",
         },
     };
 }
